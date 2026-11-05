@@ -1,0 +1,50 @@
+name: raman_baseline
+version: 0.1.0
+created: 2026-11-05
+description: >-
+  便携式 785 nm 拉曼光谱系统方案任务。全部为合成资料（器件、厂商、文档、文献均为虚构），
+  用于在各开发阶段重复验收 MIS 的 Stage 1 流程。
+
+# 固定汇率：保证预算计算可重复。真实系统必须使用带时间戳的汇率证据。
+fx:
+  USD_CNY: 7.10
+  as_of: 2026-11-05
+  source: fixture-fixed
+
+task:
+  goal: 为课题组设计一台便携式 785 nm 拉曼光谱系统，选出激光器、光谱仪、探头，给出带证据的方案和候选 BOM
+  input: requirements.csv
+  answer_key: checkpoints.yaml
+
+files:
+  requirements:
+    - requirements.csv
+  lab_docs:
+    - lab_docs/lab_doc_01_prototype_review.md
+    - lab_docs/lab_doc_02_procurement_rules.md
+    - lab_docs/lab_doc_03_snr_sop.md
+  papers:
+    - papers/paper_01_excitation_fluorescence.md
+    - papers/paper_02_resolution_polymorph.md
+  component_pages:
+    - component_pages/LAS-A.md
+    - component_pages/LAS-B.md
+    - component_pages/LAS-C.md
+    - component_pages/SPEC-A.md
+    - component_pages/SPEC-B.md
+    - component_pages/SPEC-C.md
+    - component_pages/SPEC-D.md
+    - component_pages/PRB-A.md
+  vendor_responses:
+    - vendor_responses/LAS-A.json
+    - vendor_responses/LAS-B.json
+    - vendor_responses/LAS-C.json
+    - vendor_responses/SPEC-A.json
+    - vendor_responses/SPEC-B.json
+    - vendor_responses/SPEC-C.json
+    - vendor_responses/SPEC-D.json
+    - vendor_responses/PRB-A.json
+  answer_key:
+    - checkpoints.yaml
+  docs:
+    - README.md

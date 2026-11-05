@@ -1,0 +1,1408 @@
+{
+  "sha": "012b51ed6c1e9f80133a4add5ec170b817b9465e",
+  "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/012b51ed6c1e9f80133a4add5ec170b817b9465e",
+  "tree": [
+    {
+      "path": ".env.example",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "323d6136e18eabe5b02fa3421e71b77f2a239a06",
+      "size": 2614,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/323d6136e18eabe5b02fa3421e71b77f2a239a06"
+    },
+    {
+      "path": ".gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a7dc77e56b36ba65d537f738b4f00ef4b873685d",
+      "size": 2609,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/a7dc77e56b36ba65d537f738b4f00ef4b873685d"
+    },
+    {
+      "path": "LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4dc770a7d8a37896989d8c9eb64c95a5cadbddba",
+      "size": 1068,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/4dc770a7d8a37896989d8c9eb64c95a5cadbddba"
+    },
+    {
+      "path": "README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e162fa4a3bd617445464d577863a63a07ccdca8d",
+      "size": 54539,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/e162fa4a3bd617445464d577863a63a07ccdca8d"
+    },
+    {
+      "path": "docker",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a4c0440d7b5adf28ab1c9ec72bb861915ff0dd0e",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/a4c0440d7b5adf28ab1c9ec72bb861915ff0dd0e"
+    },
+    {
+      "path": "docker/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fcd010c360263c5eae4557300dc36d492d3ae6e7",
+      "size": 3183,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/fcd010c360263c5eae4557300dc36d492d3ae6e7"
+    },
+    {
+      "path": "docker/docker-compose.yml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1e9a646a41fbd02d917e5bc3c3f2ee14c9212ba9",
+      "size": 2854,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/1e9a646a41fbd02d917e5bc3c3f2ee14c9212ba9"
+    },
+    {
+      "path": "docker/opensandbox.toml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f2741e83846302dc2e73c5acfda7c58c1c28f92e",
+      "size": 1339,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/f2741e83846302dc2e73c5acfda7c58c1c28f92e"
+    },
+    {
+      "path": "docker/sandbox-image",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3ad48250e1f58f79589418e8ee8b231ad2997bea",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/3ad48250e1f58f79589418e8ee8b231ad2997bea"
+    },
+    {
+      "path": "docker/sandbox-image/Dockerfile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ab372570f269d6a4441473c13eb40002575202ef",
+      "size": 948,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/ab372570f269d6a4441473c13eb40002575202ef"
+    },
+    {
+      "path": "docker/sandbox-image/requirements-sandbox.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "513afa2953dd61ac29c0f8ec4599f19defb673ec",
+      "size": 118,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/513afa2953dd61ac29c0f8ec4599f19defb673ec"
+    },
+    {
+      "path": "docs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f32fa6772e62d4ccb4c15d6cf0967ec6d2708e7d",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/f32fa6772e62d4ccb4c15d6cf0967ec6d2708e7d"
+    },
+    {
+      "path": "docs/CODEBASE_GUIDE.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0dc57eb6103f531e08627141f002bdf7ae00c864",
+      "size": 51468,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/0dc57eb6103f531e08627141f002bdf7ae00c864"
+    },
+    {
+      "path": "docs/CONTRIBUTING.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "554dd6dbe6e95a89044156faf17e12ef9363c173",
+      "size": 2515,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/554dd6dbe6e95a89044156faf17e12ef9363c173"
+    },
+    {
+      "path": "docs/QUICK_START.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f07e143509f71050a6bc0f02f9328d059b91d1bd",
+      "size": 200,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/f07e143509f71050a6bc0f02f9328d059b91d1bd"
+    },
+    {
+      "path": "docs/SECURITY.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5db6b26dd96d45b5782403ee723f9786ea4259e3",
+      "size": 2360,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/5db6b26dd96d45b5782403ee723f9786ea4259e3"
+    },
+    {
+      "path": "docs/agent-backend-stress-test-report.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "80e6fd6e9bd2eef6c7bee615d847b1e4f2875912",
+      "size": 13360,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/80e6fd6e9bd2eef6c7bee615d847b1e4f2875912"
+    },
+    {
+      "path": "docs/frontend-multi-user-api.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "07973e059c9008bc8bf2b3d8c20bf84e57635435",
+      "size": 3302,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/07973e059c9008bc8bf2b3d8c20bf84e57635435"
+    },
+    {
+      "path": "frontend",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "83396ffb13fd70d15a85b5128533f7c6fd86016b",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/83396ffb13fd70d15a85b5128533f7c6fd86016b"
+    },
+    {
+      "path": "frontend/index.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5a0be9056f8d3b64275bc6c3136c6f40e7f415f4",
+      "size": 637,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/5a0be9056f8d3b64275bc6c3136c6f40e7f415f4"
+    },
+    {
+      "path": "frontend/package-lock.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f5a2773dd9949f8fce877341e32b8f6fd6fc3ca3",
+      "size": 52865,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/f5a2773dd9949f8fce877341e32b8f6fd6fc3ca3"
+    },
+    {
+      "path": "frontend/package.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b72f55a72b422de9176c0f3897d55f29bfd7b09d",
+      "size": 442,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/b72f55a72b422de9176c0f3897d55f29bfd7b09d"
+    },
+    {
+      "path": "frontend/public",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6fb0c8a1e63b93509b8fd71b7b520eea954075d2",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/6fb0c8a1e63b93509b8fd71b7b520eea954075d2"
+    },
+    {
+      "path": "frontend/public/assets",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "24bf8595e7c90894d5d59003788b722f98651a73",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/24bf8595e7c90894d5d59003788b722f98651a73"
+    },
+    {
+      "path": "frontend/public/assets/whale-girl-hero.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "44f12f6d11495f0e7b86b73aabe86a5c9d40248d",
+      "size": 1788650,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/44f12f6d11495f0e7b86b73aabe86a5c9d40248d"
+    },
+    {
+      "path": "frontend/public/assets/whale-girl-logo.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3b802eed339886767dc54a241335adf26ee88668",
+      "size": 1788189,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/3b802eed339886767dc54a241335adf26ee88668"
+    },
+    {
+      "path": "frontend/src",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5f68d6f9aacbf07a17b71c9f307ea16ec34769bf",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/5f68d6f9aacbf07a17b71c9f307ea16ec34769bf"
+    },
+    {
+      "path": "frontend/src/App.vue",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a9d2aba892fbbc0af32df68eaeae5fbd00189ff2",
+      "size": 18538,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/a9d2aba892fbbc0af32df68eaeae5fbd00189ff2"
+    },
+    {
+      "path": "frontend/src/api",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "eb57d4646ddc3845cd4164cb83f4e924a7373931",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/eb57d4646ddc3845cd4164cb83f4e924a7373931"
+    },
+    {
+      "path": "frontend/src/api/auth.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6006d298fe07b7591496922abb56dbe2d99846aa",
+      "size": 992,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/6006d298fe07b7591496922abb56dbe2d99846aa"
+    },
+    {
+      "path": "frontend/src/api/chat.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ab248248104ec7fa8c4473a0470cd8a91b250925",
+      "size": 9010,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/ab248248104ec7fa8c4473a0470cd8a91b250925"
+    },
+    {
+      "path": "frontend/src/api/client.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d7f5657c94065da68fa35fe84e60d0a4400af667",
+      "size": 867,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/d7f5657c94065da68fa35fe84e60d0a4400af667"
+    },
+    {
+      "path": "frontend/src/api/history.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7faa93355d2d805a7d69495b1499e7852300b9ed",
+      "size": 1883,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/7faa93355d2d805a7d69495b1499e7852300b9ed"
+    },
+    {
+      "path": "frontend/src/api/tasks.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3ba5a816bcdf2ac18985519dbe843a38ec21c5ec",
+      "size": 273,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/3ba5a816bcdf2ac18985519dbe843a38ec21c5ec"
+    },
+    {
+      "path": "frontend/src/components",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b4dc011b8d6bbe95ac64387e67644fc1836743b7",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/b4dc011b8d6bbe95ac64387e67644fc1836743b7"
+    },
+    {
+      "path": "frontend/src/components/AsyncTaskPanel.vue",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6995b888fdf0ce5ec6102f67b58d2b7564bd430e",
+      "size": 7003,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/6995b888fdf0ce5ec6102f67b58d2b7564bd430e"
+    },
+    {
+      "path": "frontend/src/components/AuthScreen.vue",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2ccdfed4cda25f9bac8dc84b3befe2d3ed7554d3",
+      "size": 13364,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/2ccdfed4cda25f9bac8dc84b3befe2d3ed7554d3"
+    },
+    {
+      "path": "frontend/src/components/ChatArea.vue",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "220d9fff18e5d56b061ed85e6704146d8036184b",
+      "size": 11829,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/220d9fff18e5d56b061ed85e6704146d8036184b"
+    },
+    {
+      "path": "frontend/src/components/InputArea.vue",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fe4b9e04816ead785a001ef85962a84aa6235940",
+      "size": 8588,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/fe4b9e04816ead785a001ef85962a84aa6235940"
+    },
+    {
+      "path": "frontend/src/components/InterruptBanner.vue",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cb790fa37ec3e3627f0c6ce64dcd2ea7a7269d31",
+      "size": 12690,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/cb790fa37ec3e3627f0c6ce64dcd2ea7a7269d31"
+    },
+    {
+      "path": "frontend/src/components/MarkdownRenderer.vue",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b25820fb2d8d6fc486b814cd940083a2aa62d6d4",
+      "size": 8785,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/b25820fb2d8d6fc486b814cd940083a2aa62d6d4"
+    },
+    {
+      "path": "frontend/src/components/MessageItem.vue",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "05551fb97ee0d430ec6e62353108467498449f18",
+      "size": 18772,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/05551fb97ee0d430ec6e62353108467498449f18"
+    },
+    {
+      "path": "frontend/src/components/Sidebar.vue",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f14abb6a23c7ba484a5252ff0a8197280d2e3399",
+      "size": 16016,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/f14abb6a23c7ba484a5252ff0a8197280d2e3399"
+    },
+    {
+      "path": "frontend/src/components/ToolCallPanel.vue",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5e0d996a5dbddad3e162c832a73af76c3a0115c4",
+      "size": 7299,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/5e0d996a5dbddad3e162c832a73af76c3a0115c4"
+    },
+    {
+      "path": "frontend/src/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "75c73ebb55650cd94eea68ecc1f543bbc9d9f8ec",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/75c73ebb55650cd94eea68ecc1f543bbc9d9f8ec"
+    },
+    {
+      "path": "frontend/src/config/assets.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a2d361fd97e3f6b827ea351dea0a128db7897fbf",
+      "size": 321,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/a2d361fd97e3f6b827ea351dea0a128db7897fbf"
+    },
+    {
+      "path": "frontend/src/main.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bd157bb2f29d041dd29db71171b6b68b0e70e796",
+      "size": 254,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/bd157bb2f29d041dd29db71171b6b68b0e70e796"
+    },
+    {
+      "path": "frontend/src/styles",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c114ff6c1409ee6d1d83bbf7862ecb119ed0ce90",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/c114ff6c1409ee6d1d83bbf7862ecb119ed0ce90"
+    },
+    {
+      "path": "frontend/src/styles/main.css",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a2de944b6873d8aa9973c582a4912a0c64ab3065",
+      "size": 3616,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/a2de944b6873d8aa9973c582a4912a0c64ab3065"
+    },
+    {
+      "path": "frontend/vite.config.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff56799230011ee3e6ea32b3e8ce9f3fd76bd7a5",
+      "size": 514,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/ff56799230011ee3e6ea32b3e8ce9f3fd76bd7a5"
+    },
+    {
+      "path": "langgraph.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b38dc97c82c39914e7cab57a61d8920d5462595d",
+      "size": 162,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/b38dc97c82c39914e7cab57a61d8920d5462595d"
+    },
+    {
+      "path": "motorparts_db.sql",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ed153831c851aabdb6975fe2849fdca65efa67fa",
+      "size": 186994,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/ed153831c851aabdb6975fe2849fdca65efa67fa"
+    },
+    {
+      "path": "pyproject.toml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b24dc644fac83cc35915d2acb8cac3f383b8412d",
+      "size": 2260,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/b24dc644fac83cc35915d2acb8cac3f383b8412d"
+    },
+    {
+      "path": "pytest.ini",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "454cf257257a367261e071b4ad083671049f4ff7",
+      "size": 259,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/454cf257257a367261e071b4ad083671049f4ff7"
+    },
+    {
+      "path": "reports",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d7d76a94bd1097f8c01dfc8061c91c6e621a3215",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/d7d76a94bd1097f8c01dfc8061c91c6e621a3215"
+    },
+    {
+      "path": "reports/benchmark-20260821-141746.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dd0c220a4fa9e7d58a9400a00677880650a55c21",
+      "size": 614,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/dd0c220a4fa9e7d58a9400a00677880650a55c21"
+    },
+    {
+      "path": "reports/benchmark-20260821-141746.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c932e9ae17a97fbde6bd5a0ce09ab217f930a289",
+      "size": 467,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/c932e9ae17a97fbde6bd5a0ce09ab217f930a289"
+    },
+    {
+      "path": "reports/benchmark-20260821-141814.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7980a6c60f54984af34c36288fe5d55c4a70c006",
+      "size": 614,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/7980a6c60f54984af34c36288fe5d55c4a70c006"
+    },
+    {
+      "path": "reports/benchmark-20260821-141814.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f2409722364ee44792730112ec1235560bfbfce6",
+      "size": 467,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/f2409722364ee44792730112ec1235560bfbfce6"
+    },
+    {
+      "path": "reports/benchmark-20260821-141913.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4e2a28190f70ce9200230b1e112dd0b698190ff7",
+      "size": 614,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/4e2a28190f70ce9200230b1e112dd0b698190ff7"
+    },
+    {
+      "path": "reports/benchmark-20260821-141913.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9988b5b5184460191760f857d7163cd7b4bda022",
+      "size": 467,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/9988b5b5184460191760f857d7163cd7b4bda022"
+    },
+    {
+      "path": "requirements.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e79f6e2ab0f0154bd6f4f41cb1e9271caeb875fe",
+      "size": 13044,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/e79f6e2ab0f0154bd6f4f41cb1e9271caeb875fe"
+    },
+    {
+      "path": "scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5c6794f4157073d83a67178369f652fe791a12b3",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/5c6794f4157073d83a67178369f652fe791a12b3"
+    },
+    {
+      "path": "scripts/generate_report.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f53973ab6080a9ff60bafae8bfd75702ee65b2ab",
+      "size": 2150,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/f53973ab6080a9ff60bafae8bfd75702ee65b2ab"
+    },
+    {
+      "path": "scripts/run_agent_smoke.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "477044265c6d92bc647efdd4fc478190714c2af8",
+      "size": 14220,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/477044265c6d92bc647efdd4fc478190714c2af8"
+    },
+    {
+      "path": "scripts/run_benchmark.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "422ade353558e7a929cc76eca0eafec6f5eaa0cf",
+      "size": 6926,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/422ade353558e7a929cc76eca0eafec6f5eaa0cf"
+    },
+    {
+      "path": "scripts/run_mcp_smoke.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a667adc0f5ea8712ac2db88d7db0799e7c318c47",
+      "size": 2934,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/a667adc0f5ea8712ac2db88d7db0799e7c318c47"
+    },
+    {
+      "path": "src",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3c3a1c3668b28310e7f2a437e75b5ebb6005dbd9",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/3c3a1c3668b28310e7f2a437e75b5ebb6005dbd9"
+    },
+    {
+      "path": "src/agent",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "844fe76bddb7d7e91a70b6edc16573396b7d6407",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/844fe76bddb7d7e91a70b6edc16573396b7d6407"
+    },
+    {
+      "path": "src/agent/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/agent/backends",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b2cae4d833cf3bcb5ae01f31b6370d7fbdca2892",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/b2cae4d833cf3bcb5ae01f31b6370d7fbdca2892"
+    },
+    {
+      "path": "src/agent/backends/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/agent/backends/custom_opensandbox.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "168bcbd5fe876a93aea14cf875e0374486c44fb3",
+      "size": 9402,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/168bcbd5fe876a93aea14cf875e0374486c44fb3"
+    },
+    {
+      "path": "src/agent/backends/sandbox_manager.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1b93e12dd91399b832460b11a52bb694713c525c",
+      "size": 12647,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/1b93e12dd91399b832460b11a52bb694713c525c"
+    },
+    {
+      "path": "src/agent/backends/sandbox_proxy.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "824548f7012381200cdb3dc4b8fd5eee0d79d4ee",
+      "size": 3738,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/824548f7012381200cdb3dc4b8fd5eee0d79d4ee"
+    },
+    {
+      "path": "src/agent/backends/sandbox_setup.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3a5bb8982e831a15ca8eb2b8134da401a2ecaf62",
+      "size": 9485,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/3a5bb8982e831a15ca8eb2b8134da401a2ecaf62"
+    },
+    {
+      "path": "src/agent/core",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0446591b1764ec102b39060cba52cbb6512c6166",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/0446591b1764ec102b39060cba52cbb6512c6166"
+    },
+    {
+      "path": "src/agent/core/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "659c21f7f1d3f01fcb7acd7c278501cc63d3d3f5",
+      "size": 79,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/659c21f7f1d3f01fcb7acd7c278501cc63d3d3f5"
+    },
+    {
+      "path": "src/agent/core/async_sandbox_claims.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6afa7e85b01c56d46328b38b5fd2d9b0868718c2",
+      "size": 1614,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/6afa7e85b01c56d46328b38b5fd2d9b0868718c2"
+    },
+    {
+      "path": "src/agent/core/config.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f857165209a90249298c217d0b7c551b0fc5bd09",
+      "size": 4709,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/f857165209a90249298c217d0b7c551b0fc5bd09"
+    },
+    {
+      "path": "src/agent/core/env_utils.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9728673746d089cae994dbc464bcbdab8f2f3814",
+      "size": 761,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/9728673746d089cae994dbc464bcbdab8f2f3814"
+    },
+    {
+      "path": "src/agent/core/schema.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4684322074af664e83166dcb2214c824b2d04859",
+      "size": 5704,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/4684322074af664e83166dcb2214c824b2d04859"
+    },
+    {
+      "path": "src/agent/graphs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "32aa0a4c8ddf6647032f928835774af239216cfb",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/32aa0a4c8ddf6647032f928835774af239216cfb"
+    },
+    {
+      "path": "src/agent/graphs/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "000b769bad5934bcd704887f1a98e7a62e7566bc",
+      "size": 47,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/000b769bad5934bcd704887f1a98e7a62e7566bc"
+    },
+    {
+      "path": "src/agent/graphs/async_analyst.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "788cda010e9fa11eef550e779d996d7463e27c11",
+      "size": 5735,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/788cda010e9fa11eef550e779d996d7463e27c11"
+    },
+    {
+      "path": "src/agent/graphs/main_agent.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "141a3ed17ba084c5bda83f84ebdade69975dcd36",
+      "size": 12393,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/141a3ed17ba084c5bda83f84ebdade69975dcd36"
+    },
+    {
+      "path": "src/agent/memory",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ccaf71eae1aa828f053135553243347c8cbf7814",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/ccaf71eae1aa828f053135553243347c8cbf7814"
+    },
+    {
+      "path": "src/agent/memory/AGENTS.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "903982b4918405761efdeffccc81808518e6af6e",
+      "size": 9572,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/903982b4918405761efdeffccc81808518e6af6e"
+    },
+    {
+      "path": "src/agent/memory/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/agent/memory/prompts.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "405b1ab6c7874237cff70a2d6914e5e900cea4d6",
+      "size": 1895,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/405b1ab6c7874237cff70a2d6914e5e900cea4d6"
+    },
+    {
+      "path": "src/agent/middlewares",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "834fc83626328c21a9421430b2f763ccca37bc98",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/834fc83626328c21a9421430b2f763ccca37bc98"
+    },
+    {
+      "path": "src/agent/middlewares/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/agent/middlewares/context_injection.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "41184ede2c57bd490d67cf837fb70ef450cd0f0f",
+      "size": 2346,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/41184ede2c57bd490d67cf837fb70ef450cd0f0f"
+    },
+    {
+      "path": "src/agent/middlewares/factories.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e2bce1510b6574ba02d687f1668c26c6dc6d8629",
+      "size": 1457,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/e2bce1510b6574ba02d687f1668c26c6dc6d8629"
+    },
+    {
+      "path": "src/agent/middlewares/memory_update.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8aff3315d81ec1b15409fd5615d4c43397a0f5e8",
+      "size": 13132,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/8aff3315d81ec1b15409fd5615d4c43397a0f5e8"
+    },
+    {
+      "path": "src/agent/middlewares/sandbox_breaker.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a851fde4636578e0a19619b6efad9c12ffa0cf1",
+      "size": 3463,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/2a851fde4636578e0a19619b6efad9c12ffa0cf1"
+    },
+    {
+      "path": "src/agent/middlewares/sandbox_health.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ca608edf1efda10ac1ba6cfeca05419a88fba9b9",
+      "size": 2105,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/ca608edf1efda10ac1ba6cfeca05419a88fba9b9"
+    },
+    {
+      "path": "src/agent/middlewares/skills_sync.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9b6bedb50ad6f53edf04be73266fe20f6f38b41a",
+      "size": 4744,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/9b6bedb50ad6f53edf04be73266fe20f6f38b41a"
+    },
+    {
+      "path": "src/agent/middlewares/tools_summarization.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8ee786994655d5da322738fd685a1e6659ef51bb",
+      "size": 1845,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/8ee786994655d5da322738fd685a1e6659ef51bb"
+    },
+    {
+      "path": "src/agent/middlewares/user_async_subagents.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a03e4c862ca0768c5ed6b923cdce5f66c0c7ecbd",
+      "size": 10067,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/a03e4c862ca0768c5ed6b923cdce5f66c0c7ecbd"
+    },
+    {
+      "path": "src/agent/middlewares/user_skills_restore.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2bdd0863f6c82f8441f562cdd15041909a05194e",
+      "size": 3707,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/2bdd0863f6c82f8441f562cdd15041909a05194e"
+    },
+    {
+      "path": "src/agent/stores",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4a46cd06055104bde7c4dcda7a13f752c3701dbe",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/4a46cd06055104bde7c4dcda7a13f752c3701dbe"
+    },
+    {
+      "path": "src/agent/stores/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "336365beed3d4bdce1023a3c6dabe57cd3694f32",
+      "size": 139,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/336365beed3d4bdce1023a3c6dabe57cd3694f32"
+    },
+    {
+      "path": "src/agent/stores/async_task_store.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "30dcb98fe844cd894eca8af3445d3fa7e2182cb5",
+      "size": 2114,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/30dcb98fe844cd894eca8af3445d3fa7e2182cb5"
+    },
+    {
+      "path": "src/agent/stores/mongodb_store.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "af5f21d1674e4aaa8d07440dbee9a050280c2869",
+      "size": 7172,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/af5f21d1674e4aaa8d07440dbee9a050280c2869"
+    },
+    {
+      "path": "src/agent/subagents",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "33b0cc1edbea7b02d729a9cd87f6ea9ec08a3146",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/33b0cc1edbea7b02d729a9cd87f6ea9ec08a3146"
+    },
+    {
+      "path": "src/agent/subagents/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/agent/subagents/configs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "fd551014c741bb7a4cdfbfec49bdf1bac9eb5a29",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/fd551014c741bb7a4cdfbfec49bdf1bac9eb5a29"
+    },
+    {
+      "path": "src/agent/subagents/configs/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/agent/subagents/configs/procurement_analyst.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fb2f5794159b0053444ae9539b3855be75111f94",
+      "size": 5511,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/fb2f5794159b0053444ae9539b3855be75111f94"
+    },
+    {
+      "path": "src/agent/subagents/configs/procurement_order.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1a4804523afdc11daf3253ab5126455827d2793b",
+      "size": 8228,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/1a4804523afdc11daf3253ab5126455827d2793b"
+    },
+    {
+      "path": "src/agent/subagents/loader.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b34d7f776beded2eae2a9539507ce99728a68287",
+      "size": 6508,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/b34d7f776beded2eae2a9539507ce99728a68287"
+    },
+    {
+      "path": "src/agent/tools",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5e58bfa47a7ebd196db0e3382724af3c9972c509",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/5e58bfa47a7ebd196db0e3382724af3c9972c509"
+    },
+    {
+      "path": "src/agent/tools/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "846eb908d9b2e356289443b34957390d4215f3ae",
+      "size": 233,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/846eb908d9b2e356289443b34957390d4215f3ae"
+    },
+    {
+      "path": "src/agent/tools/assign_skill.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "271b8edcb9277321009b2edbe0242f722f9f8255",
+      "size": 6382,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/271b8edcb9277321009b2edbe0242f722f9f8255"
+    },
+    {
+      "path": "src/agent/tools/chart_generator.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "af4d9f1ef11fc794c96faa53475cf911f7fe9b77",
+      "size": 14401,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/af4d9f1ef11fc794c96faa53475cf911f7fe9b77"
+    },
+    {
+      "path": "src/agent/tools/download_sandbox_file.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a358c0444cfa630dfaca99c55ca3082b9e3562ad",
+      "size": 3497,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/a358c0444cfa630dfaca99c55ca3082b9e3562ad"
+    },
+    {
+      "path": "src/agent/tools/hitl_tools.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "60554555c676426adddabb13b7401c436ea84207",
+      "size": 1177,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/60554555c676426adddabb13b7401c436ea84207"
+    },
+    {
+      "path": "src/agent/tools/mcp_client.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ef40d9f67cbf64076cf004bbabde29c9ce93ebf1",
+      "size": 3436,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/ef40d9f67cbf64076cf004bbabde29c9ce93ebf1"
+    },
+    {
+      "path": "src/agent/tools/web_search.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3170103acabe076c8b69873288aa330f158dc243",
+      "size": 1194,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/3170103acabe076c8b69873288aa330f158dc243"
+    },
+    {
+      "path": "src/api_view",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4eab6df1b44825b777d93669f1bc46feb6a88f83",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/4eab6df1b44825b777d93669f1bc46feb6a88f83"
+    },
+    {
+      "path": "src/api_view/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/api_view/agent_loader.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "752110440fa7853c5db77c5bfc4c9b96aa394857",
+      "size": 17165,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/752110440fa7853c5db77c5bfc4c9b96aa394857"
+    },
+    {
+      "path": "src/api_view/api",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "9aed5a16b1ab2b5206de6eb3b4e7f01d632593da",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/9aed5a16b1ab2b5206de6eb3b4e7f01d632593da"
+    },
+    {
+      "path": "src/api_view/api/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/api_view/api/auth.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8c1191395437215c809f2892c198f4858d8bdd25",
+      "size": 1776,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/8c1191395437215c809f2892c198f4858d8bdd25"
+    },
+    {
+      "path": "src/api_view/api/chat.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f13cb88f1eb0c0cab9f80bffb251c5e659d8ed82",
+      "size": 28673,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/f13cb88f1eb0c0cab9f80bffb251c5e659d8ed82"
+    },
+    {
+      "path": "src/api_view/api/history.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "718fb39048d6c65f1a772ea9c0c0d2e2dbeccf5b",
+      "size": 14270,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/718fb39048d6c65f1a772ea9c0c0d2e2dbeccf5b"
+    },
+    {
+      "path": "src/api_view/api/tasks.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f938235d700849337f336826e0f8e65ecf065cd0",
+      "size": 3381,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/f938235d700849337f336826e0f8e65ecf065cd0"
+    },
+    {
+      "path": "src/api_view/auth_service.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8cf3bc9e9e4e8b97e31c2c211ced140f5c79f9a9",
+      "size": 5556,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/8cf3bc9e9e4e8b97e31c2c211ced140f5c79f9a9"
+    },
+    {
+      "path": "src/api_view/web_config.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5eafd7b35b586f0bdae75d42c94dc7b647a95de6",
+      "size": 1915,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/5eafd7b35b586f0bdae75d42c94dc7b647a95de6"
+    },
+    {
+      "path": "src/api_view/web_main.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1936bb8ceeccfd88894fd3be8c63952f9d897f6b",
+      "size": 3508,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/1936bb8ceeccfd88894fd3be8c63952f9d897f6b"
+    },
+    {
+      "path": "src/mcp_server",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c84ad5abe0f17199e3485da1ec0f1eb949f64385",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/c84ad5abe0f17199e3485da1ec0f1eb949f64385"
+    },
+    {
+      "path": "src/mcp_server/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/mcp_server/http_base.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5688a73a15f24dd247ea7b229b7bedd5a60c2ed9",
+      "size": 959,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/5688a73a15f24dd247ea7b229b7bedd5a60c2ed9"
+    },
+    {
+      "path": "src/mcp_server/server_config.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4e974d2c5f14a1967b6b45a875f7124094ce16ce",
+      "size": 197,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/4e974d2c5f14a1967b6b45a875f7124094ce16ce"
+    },
+    {
+      "path": "src/mcp_server/server_main.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a05efa0229ec8fee8c0720ed6ba3ec302458f4bc",
+      "size": 1479,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/a05efa0229ec8fee8c0720ed6ba3ec302458f4bc"
+    },
+    {
+      "path": "src/mcp_server/tools",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "79ebcbb804562e777393212cc36604d43f3af7b2",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/79ebcbb804562e777393212cc36604d43f3af7b2"
+    },
+    {
+      "path": "src/mcp_server/tools/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/mcp_server/tools/inventory_tools.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ccc7f02ce07d5bf1509bbb2604924978167a5b39",
+      "size": 948,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/ccc7f02ce07d5bf1509bbb2604924978167a5b39"
+    },
+    {
+      "path": "src/mcp_server/tools/order_tools.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "895a69c777a20a525a6dc46c7e5a7f5f35a47b8f",
+      "size": 9410,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/895a69c777a20a525a6dc46c7e5a7f5f35a47b8f"
+    },
+    {
+      "path": "src/mcp_server/tools/parts_tools.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6104e2e5136b0a3cbc37c658a049b655a6cc69a6",
+      "size": 3837,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/6104e2e5136b0a3cbc37c658a049b655a6cc69a6"
+    },
+    {
+      "path": "src/mcp_server/tools/suppliers_tools.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1f914a1021f6a9d08c9c91e5be9fc97fd8d6f2f",
+      "size": 966,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/c1f914a1021f6a9d08c9c91e5be9fc97fd8d6f2f"
+    },
+    {
+      "path": "src/skills",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "32bae00cd5a967270d1f05f233be5dca5b157b0e",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/32bae00cd5a967270d1f05f233be5dca5b157b0e"
+    },
+    {
+      "path": "src/skills/main",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a795344a6e4cb2247a2ff52aec8a5cbed7b666e4",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/a795344a6e4cb2247a2ff52aec8a5cbed7b666e4"
+    },
+    {
+      "path": "src/skills/main/skill-management",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "912001438ccd1cac4ecb5f9b269a7bc767bf4068",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/912001438ccd1cac4ecb5f9b269a7bc767bf4068"
+    },
+    {
+      "path": "src/skills/main/skill-management/SKILL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "85f63e7b2d4c1bb3d5da905bc21c82725cd39ede",
+      "size": 4773,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/85f63e7b2d4c1bb3d5da905bc21c82725cd39ede"
+    },
+    {
+      "path": "src/skills/main/skill-management/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4bb6e9360a50d68b382053fde9a7f481b9310c20",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/4bb6e9360a50d68b382053fde9a7f481b9310c20"
+    },
+    {
+      "path": "src/skills/main/skill-management/scripts/download_skill.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "59fd2b4ebc89a7a60e97cf95cdfad5a1eb50003f",
+      "size": 4584,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/59fd2b4ebc89a7a60e97cf95cdfad5a1eb50003f"
+    },
+    {
+      "path": "src/skills/procurement",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c1195313d2664fc53e4c4ca36af297dc02cac622",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/c1195313d2664fc53e4c4ca36af297dc02cac622"
+    },
+    {
+      "path": "src/skills/procurement/chart_params.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1cdc940869c321db70c943a949428060a79eab50",
+      "size": 5316,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/1cdc940869c321db70c943a949428060a79eab50"
+    },
+    {
+      "path": "src/skills/procurement/procurement-analysis",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "83e92598e78ded49bb6c8d1bab36584d967764e9",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/83e92598e78ded49bb6c8d1bab36584d967764e9"
+    },
+    {
+      "path": "src/skills/procurement/procurement-analysis/SKILL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f4a0c24d08f91f41943168b82f144dd9519995b3",
+      "size": 5610,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/f4a0c24d08f91f41943168b82f144dd9519995b3"
+    },
+    {
+      "path": "src/skills/procurement/supplier-price-urls",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "743f99cd57dadd558e5fc67dc25737ab3c4f4433",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/743f99cd57dadd558e5fc67dc25737ab3c4f4433"
+    },
+    {
+      "path": "src/skills/procurement/supplier-price-urls/SKILL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d60007e737aa4c14820b27f1ae3d77da5eb01878",
+      "size": 2171,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/d60007e737aa4c14820b27f1ae3d77da5eb01878"
+    },
+    {
+      "path": "src/skills/procurement/supplier-price-urls/data",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "460a2eb8a0a0c21af52700cc3c867d647d043326",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/460a2eb8a0a0c21af52700cc3c867d647d043326"
+    },
+    {
+      "path": "src/skills/procurement/supplier-price-urls/data/url_mapping.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aa01646d7c19b63dd053eab87a4c06c1def5925f",
+      "size": 1249,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/aa01646d7c19b63dd053eab87a4c06c1def5925f"
+    },
+    {
+      "path": "src/skills/procurement/web-content-fetcher",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4a2049a324636ad3a68538cc384a8a691e9fdc2b",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/4a2049a324636ad3a68538cc384a8a691e9fdc2b"
+    },
+    {
+      "path": "src/skills/procurement/web-content-fetcher/SKILL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e21d2efedf87944f2fc33281abb77375f7b1823d",
+      "size": 1814,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/e21d2efedf87944f2fc33281abb77375f7b1823d"
+    },
+    {
+      "path": "src/skills/procurement/web-content-fetcher/_meta.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3afdbdf3dfcb32bfb2464454cc20671814cd3756",
+      "size": 138,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/3afdbdf3dfcb32bfb2464454cc20671814cd3756"
+    },
+    {
+      "path": "src/skills/procurement/web-content-fetcher/fetch.sh",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "35af7ebdf30ef53037f4cb6cea4ef1c42d685338",
+      "size": 1300,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/35af7ebdf30ef53037f4cb6cea4ef1c42d685338"
+    },
+    {
+      "path": "src/skills/procurement/web-content-fetcher/fetch_content.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bfc3def046187d5cb09ea10dec500b67a9cd18c9",
+      "size": 3119,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/bfc3def046187d5cb09ea10dec500b67a9cd18c9"
+    },
+    {
+      "path": "src/skills/procurement/web-scraper",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "174bb417f424542398206702422654cef0b8d6cb",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/174bb417f424542398206702422654cef0b8d6cb"
+    },
+    {
+      "path": "src/skills/procurement/web-scraper/SKILL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "af5fac5694082f4e22fdd98e529b25cdde2fed07",
+      "size": 2218,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/af5fac5694082f4e22fdd98e529b25cdde2fed07"
+    },
+    {
+      "path": "src/skills/procurement/web-scraper/_meta.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "04b3a92946a5752335d1fb4eeacdb1d112da7fce",
+      "size": 131,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/04b3a92946a5752335d1fb4eeacdb1d112da7fce"
+    },
+    {
+      "path": "src/skills/procurement/web-scraper/scrape_page.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6ac5785b085ddcc87f2b20aae4124a2082880d5f",
+      "size": 14285,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/6ac5785b085ddcc87f2b20aae4124a2082880d5f"
+    },
+    {
+      "path": "start_web.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "767657617b093f437d27b57a3dee61b72c70e32b",
+      "size": 9338,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/767657617b093f437d27b57a3dee61b72c70e32b"
+    },
+    {
+      "path": "tests",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "dc7c24aa52de05970283abf7f69cce23253d6739",
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/trees/dc7c24aa52de05970283abf7f69cce23253d6739"
+    },
+    {
+      "path": "tests/conftest.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8422c543863e850f51bc4b7d23af9107e1a270bc",
+      "size": 705,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/8422c543863e850f51bc4b7d23af9107e1a270bc"
+    },
+    {
+      "path": "tests/test_agent_resource_paths.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e9e0bfb702404363fb3fb35a6a94bbab4adca0d5",
+      "size": 955,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/e9e0bfb702404363fb3fb35a6a94bbab4adca0d5"
+    },
+    {
+      "path": "tests/test_all_tools.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cc9b12cb2d679204a357ac6ffa085498a9cf7f21",
+      "size": 14429,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/cc9b12cb2d679204a357ac6ffa085498a9cf7f21"
+    },
+    {
+      "path": "tests/test_async_sandbox_binding.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "74563c5957b248241f7c6c05ef81169b7d418c26",
+      "size": 3430,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/74563c5957b248241f7c6c05ef81169b7d418c26"
+    },
+    {
+      "path": "tests/test_auth_isolation.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1e4b60771cfa3038cf4a0f7f0c7755947914a50f",
+      "size": 1221,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/1e4b60771cfa3038cf4a0f7f0c7755947914a50f"
+    },
+    {
+      "path": "tests/test_benchmark_client_lifecycle.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9c903d6847eebab4a849a92b7f991b3cacecc7e8",
+      "size": 1127,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/9c903d6847eebab4a849a92b7f991b3cacecc7e8"
+    },
+    {
+      "path": "tests/test_mcp_integration.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "37bd1930fa92b86689e4aba24ede0e3a453573e0",
+      "size": 773,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/37bd1930fa92b86689e4aba24ede0e3a453573e0"
+    },
+    {
+      "path": "tests/test_mongodb_store_namespace.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1354546e4da6fb363477ca83fa22bc46a4d413bc",
+      "size": 652,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/1354546e4da6fb363477ca83fa22bc46a4d413bc"
+    },
+    {
+      "path": "tests/test_sandbox_prebuilt_environment.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d4713a0b6baff6e3c70a460077c0c5dbb6f51eb",
+      "size": 1852,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/7d4713a0b6baff6e3c70a460077c0c5dbb6f51eb"
+    },
+    {
+      "path": "tests/test_sse_stream.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6d75dd903dd057fa15a438515b42d544891f1988",
+      "size": 1172,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/6d75dd903dd057fa15a438515b42d544891f1988"
+    },
+    {
+      "path": "tests/test_user_skill_isolation.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ed9b25aaab90ccc19988ec4ca52fd54acd90058d",
+      "size": 3106,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/ed9b25aaab90ccc19988ec4ca52fd54acd90058d"
+    },
+    {
+      "path": "uv.lock",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e6b6afeacfec39bee59e1248c991d35d7d4f5584",
+      "size": 822300,
+      "url": "https://api.github.com/repos/KagaribiDev/procurepilot/git/blobs/e6b6afeacfec39bee59e1248c991d35d7d4f5584"
+    }
+  ],
+  "truncated": false
+}

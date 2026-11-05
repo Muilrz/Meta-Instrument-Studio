@@ -1,0 +1,1536 @@
+{
+  "sha": "81a163f1e05205e1152add2be69094ca06216208",
+  "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/81a163f1e05205e1152add2be69094ca06216208",
+  "tree": [
+    {
+      "path": ".claude-plugin",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "050e90cc8a7126ac49698ef2601e7837dc62dd8c",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/050e90cc8a7126ac49698ef2601e7837dc62dd8c"
+    },
+    {
+      "path": ".claude-plugin/plugin.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cddde9beab13ff79903cca468a47866f154da70e",
+      "size": 1681,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/cddde9beab13ff79903cca468a47866f154da70e"
+    },
+    {
+      "path": "README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1ab847c6875b8ed3a476fb1b43f0d6c2633718fb",
+      "size": 25246,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/1ab847c6875b8ed3a476fb1b43f0d6c2633718fb"
+    },
+    {
+      "path": "admin",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "75a529c1605ec553b7e5ce95a11f5dee1ff115a5",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/75a529c1605ec553b7e5ce95a11f5dee1ff115a5"
+    },
+    {
+      "path": "admin/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c5a366319f01d3c785255d76bbef6b2b22715c4e",
+      "size": 1879,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/c5a366319f01d3c785255d76bbef6b2b22715c4e"
+    },
+    {
+      "path": "admin/debugging.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "893c353c4e1e34e39321daaaeba801f2e1a833df",
+      "size": 5135,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/893c353c4e1e34e39321daaaeba801f2e1a833df"
+    },
+    {
+      "path": "admin/decisions.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "40b5d1a5384f8878692d58abc6dcbd29608fae49",
+      "size": 3748,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/40b5d1a5384f8878692d58abc6dcbd29608fae49"
+    },
+    {
+      "path": "admin/roadmap.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "574c033e1b8d5e96a538fe3e32bcffb71680c002",
+      "size": 3071,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/574c033e1b8d5e96a538fe3e32bcffb71680c002"
+    },
+    {
+      "path": "agents",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "17e166050b808424ddb3879bd6a5fbf934ded754",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/17e166050b808424ddb3879bd6a5fbf934ded754"
+    },
+    {
+      "path": "agents/manufacturer-research.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "86f948648fa1b7c178a54cf3defee7ad425f0133",
+      "size": 2075,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/86f948648fa1b7c178a54cf3defee7ad425f0133"
+    },
+    {
+      "path": "agents/preference-curator.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1a1f5ec09f814c57d5b1e3f69ce7c6841d71e29c",
+      "size": 3877,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/1a1f5ec09f814c57d5b1e3f69ce7c6841d71e29c"
+    },
+    {
+      "path": "agents/price-comparison.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8eb9b48a9356cbb515f2a1dcf2c212fcf8c46fdc",
+      "size": 1946,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/8eb9b48a9356cbb515f2a1dcf2c212fcf8c46fdc"
+    },
+    {
+      "path": "agents/product-extraction.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6070152139cde0792af34578b6ae63742e4dd64c",
+      "size": 1844,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/6070152139cde0792af34578b6ae63742e4dd64c"
+    },
+    {
+      "path": "agents/recommender.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ed4f1b1381f51732420e8bd4128ff730d6fa727c",
+      "size": 4674,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/ed4f1b1381f51732420e8bd4128ff730d6fa727c"
+    },
+    {
+      "path": "agents/review-aggregation.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b0c8c405ed3a3037c6c8a22789a3824963d5a1ac",
+      "size": 1965,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/b0c8c405ed3a3037c6c8a22789a3824963d5a1ac"
+    },
+    {
+      "path": "agents/spec-verification.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "81dd25cc847f0f3a30d4322beaf4ea5f63744403",
+      "size": 2016,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/81dd25cc847f0f3a30d4322beaf4ea5f63744403"
+    },
+    {
+      "path": "assets",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ecc74a3969209ba4c0beb0834f0bc8de9288a174",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/ecc74a3969209ba4c0beb0834f0bc8de9288a174"
+    },
+    {
+      "path": "assets/report",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "06618202c542335e7084abf3be7cf31bb39d5ee1",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/06618202c542335e7084abf3be7cf31bb39d5ee1"
+    },
+    {
+      "path": "assets/report/base.typ",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f4a86f7775d6a5f6c8fca2f38de9340ee12bad86",
+      "size": 3816,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/f4a86f7775d6a5f6c8fca2f38de9340ee12bad86"
+    },
+    {
+      "path": "commands",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c248986e248d65afc81aacec1b946c9bc6c4cfc2",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/c248986e248d65afc81aacec1b946c9bc6c4cfc2"
+    },
+    {
+      "path": "commands/apply-profile.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "125f0722f0adbe4fa433b8990fb8e57d727186d0",
+      "size": 5703,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/125f0722f0adbe4fa433b8990fb8e57d727186d0"
+    },
+    {
+      "path": "commands/compare.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "016937282f2c9de4f1279909472f7d13865a8ed7",
+      "size": 2293,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/016937282f2c9de4f1279909472f7d13865a8ed7"
+    },
+    {
+      "path": "commands/define-spec.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ea87643749aadf447ce43d7445858fd67270e433",
+      "size": 7559,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/ea87643749aadf447ce43d7445858fd67270e433"
+    },
+    {
+      "path": "commands/evaluate.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "acf7fe031fecfad854e7d53824262ea72de2d06b",
+      "size": 2184,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/acf7fe031fecfad854e7d53824262ea72de2d06b"
+    },
+    {
+      "path": "commands/extract.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ed170f66bf30a00ef2c465da98ab608ff8763d12",
+      "size": 2461,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/ed170f66bf30a00ef2c465da98ab608ff8763d12"
+    },
+    {
+      "path": "commands/intake.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9a646a56ae192a2be42489c182514369c54cf186",
+      "size": 5607,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/9a646a56ae192a2be42489c182514369c54cf186"
+    },
+    {
+      "path": "commands/load-preferences.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "37d483ac7d7c3e32bb630dc1d031aaa5db3b68c2",
+      "size": 4200,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/37d483ac7d7c3e32bb630dc1d031aaa5db3b68c2"
+    },
+    {
+      "path": "commands/market-check.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "64b2f691b7700c971431fbcbbc5162369e4fc374",
+      "size": 3076,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/64b2f691b7700c971431fbcbbc5162369e4fc374"
+    },
+    {
+      "path": "commands/mkt-gaps.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9291fac325d1d8024763880dde56297eaf270e42",
+      "size": 3445,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/9291fac325d1d8024763880dde56297eaf270e42"
+    },
+    {
+      "path": "commands/mkt-matrix.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d5549f8bb7a1a2ee3d018223712a60495486ce59",
+      "size": 3790,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/d5549f8bb7a1a2ee3d018223712a60495486ce59"
+    },
+    {
+      "path": "commands/mkt-refresh.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "55ef2dd399c7e79c3865f10ba1eb64932bafa779",
+      "size": 3273,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/55ef2dd399c7e79c3865f10ba1eb64932bafa779"
+    },
+    {
+      "path": "commands/mkt-report.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3a94082f0a8fc633b8a249e88b229243460a1b93",
+      "size": 4895,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/3a94082f0a8fc633b8a249e88b229243460a1b93"
+    },
+    {
+      "path": "commands/mkt-segment.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aa10f473c290118e246a3d67354ad5580e1a54f5",
+      "size": 3336,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/aa10f473c290118e246a3d67354ad5580e1a54f5"
+    },
+    {
+      "path": "commands/mkt-spec.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "45eb0ea76e5ff29329770545ae14b33cf51a258c",
+      "size": 5208,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/45eb0ea76e5ff29329770545ae14b33cf51a258c"
+    },
+    {
+      "path": "commands/mkt-survey.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d4157336b9474b41f57b991a20d3542b993de1f0",
+      "size": 4845,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/d4157336b9474b41f57b991a20d3542b993de1f0"
+    },
+    {
+      "path": "commands/rec-list.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "133a4bf9f79690cc56496c2152ec8badb5e916b9",
+      "size": 1149,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/133a4bf9f79690cc56496c2152ec8badb5e916b9"
+    },
+    {
+      "path": "commands/rec-log-feedback.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8eec0b622fe1c452397c2c61b5fe64466cd1651e",
+      "size": 2065,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/8eec0b622fe1c452397c2c61b5fe64466cd1651e"
+    },
+    {
+      "path": "commands/rec-more-like-this.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e930e879b8a96d6f0bf3eb7e3cf14c9604baace8",
+      "size": 2211,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e930e879b8a96d6f0bf3eb7e3cf14c9604baace8"
+    },
+    {
+      "path": "commands/rec-onboard.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ce19471fff1bcbdabf0abb4430768ff2d09b1032",
+      "size": 5562,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/ce19471fff1bcbdabf0abb4430768ff2d09b1032"
+    },
+    {
+      "path": "commands/rec-opml-ingest.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6e897ce8b175190f4ba2b35ae2c345603732fe52",
+      "size": 1770,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/6e897ce8b175190f4ba2b35ae2c345603732fe52"
+    },
+    {
+      "path": "commands/rec-reading-list-ingest.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a0352061900e7e159e6a84f05d027f558c90916b",
+      "size": 2362,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/a0352061900e7e159e6a84f05d027f558c90916b"
+    },
+    {
+      "path": "commands/rec-watch-history-ingest.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ca4ef4d38a08397425f56571c1f79b37af9234cf",
+      "size": 2194,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/ca4ef4d38a08397425f56571c1f79b37af9234cf"
+    },
+    {
+      "path": "commands/recommend.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "beb4665df114642356a409d8e92a298f07ec962e",
+      "size": 3828,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/beb4665df114642356a409d8e92a298f07ec962e"
+    },
+    {
+      "path": "commands/recompare.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6a3fdc6184e2f6134986fef8a5199b5b9a4b8261",
+      "size": 1697,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/6a3fdc6184e2f6134986fef8a5199b5b9a4b8261"
+    },
+    {
+      "path": "commands/research.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bde731a3b7ae77eefc7fa3dd4c9119c0b0eeb970",
+      "size": 4859,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/bde731a3b7ae77eefc7fa3dd4c9119c0b0eeb970"
+    },
+    {
+      "path": "commands/rig-analyze.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "37ced35682b93389a924e6ab6b46d2bbaa5cf290",
+      "size": 3026,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/37ced35682b93389a924e6ab6b46d2bbaa5cf290"
+    },
+    {
+      "path": "commands/rig-compare.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ebb1d5adc62dc199b4f309031daea99d6f10c393",
+      "size": 3166,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/ebb1d5adc62dc199b4f309031daea99d6f10c393"
+    },
+    {
+      "path": "commands/rig-estimate.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7c444d2a50ef0d2de044ff9ee91e4a0faa9007ba",
+      "size": 3102,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/7c444d2a50ef0d2de044ff9ee91e4a0faa9007ba"
+    },
+    {
+      "path": "commands/rig-profile.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ee3d26a91b9d965628bca9b7229e593104b9ebd6",
+      "size": 2801,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/ee3d26a91b9d965628bca9b7229e593104b9ebd6"
+    },
+    {
+      "path": "commands/rig-recommend.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "28b5bc9148e3ad8369598c7f0a0ba007d161b7f0",
+      "size": 3095,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/28b5bc9148e3ad8369598c7f0a0ba007d161b7f0"
+    },
+    {
+      "path": "commands/rig-setup.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f45cc95944d63a28364973c39307fe072993e4ca",
+      "size": 3641,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/f45cc95944d63a28364973c39307fe072993e4ca"
+    },
+    {
+      "path": "commands/save-preferences.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "afeabb7fb0eaffd801d615cf655baa90eb2c76b3",
+      "size": 3625,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/afeabb7fb0eaffd801d615cf655baa90eb2c76b3"
+    },
+    {
+      "path": "commands/shop-setup.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "78d71a0ba148bea7d4664d35b810463934f55cb4",
+      "size": 5396,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/78d71a0ba148bea7d4664d35b810463934f55cb4"
+    },
+    {
+      "path": "commands/update-spec.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "37a084a6088896631b67c361432c453b0782b574",
+      "size": 1880,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/37a084a6088896631b67c361432c453b0782b574"
+    },
+    {
+      "path": "docs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4bb0609d4cd1adc2dd925a981cf24eedba053b63",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/4bb0609d4cd1adc2dd925a981cf24eedba053b63"
+    },
+    {
+      "path": "docs/artefact-chain.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "055f7bf6dd7ec5874b1298f3d597f9256ad5b6f9",
+      "size": 9307,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/055f7bf6dd7ec5874b1298f3d597f9256ad5b6f9"
+    },
+    {
+      "path": "examples",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "caf5cbea14b920292da4faff1c8b8775e80ee0fb",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/caf5cbea14b920292da4faff1c8b8775e80ee0fb"
+    },
+    {
+      "path": "examples/bom.example.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b878a7d2c7e12489e5409ca3723822323833c218",
+      "size": 2945,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/b878a7d2c7e12489e5409ca3723822323833c218"
+    },
+    {
+      "path": "examples/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "002fbb159f571f3190df11e2a0ecc6d25309ee34",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/002fbb159f571f3190df11e2a0ecc6d25309ee34"
+    },
+    {
+      "path": "examples/config/addresses.example.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "40a5d6d50f8cff94b4592189ce294c2d9c462b84",
+      "size": 2034,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/40a5d6d50f8cff94b4592189ce294c2d9c462b84"
+    },
+    {
+      "path": "examples/config/marketplaces.example.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2180ef4ed751a41816d1dab754041e758b957f80",
+      "size": 4435,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/2180ef4ed751a41816d1dab754041e758b957f80"
+    },
+    {
+      "path": "examples/conformance",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1e60eaca05ba32ab5f778706913245ce55ef1fd6",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/1e60eaca05ba32ab5f778706913245ce55ef1fd6"
+    },
+    {
+      "path": "examples/conformance/bosch-glm165-27c.example.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2d64a38b988242ea8b97e401bc9fc6d2cce70889",
+      "size": 4157,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/2d64a38b988242ea8b97e401bc9fc6d2cce70889"
+    },
+    {
+      "path": "examples/price-watchlist.example.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "66d41f071bb61b924b5b528d5cb0c37dd5f380c5",
+      "size": 1464,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/66d41f071bb61b924b5b528d5cb0c37dd5f380c5"
+    },
+    {
+      "path": "examples/spec-budget.example.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "943eeb2e619dceca326d99d43b51dd8ba398ab9e",
+      "size": 1885,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/943eeb2e619dceca326d99d43b51dd8ba398ab9e"
+    },
+    {
+      "path": "examples/spec-premium.example.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5f3fa2d5711260da8f4a8845a74434201f321693",
+      "size": 2147,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/5f3fa2d5711260da8f4a8845a74434201f321693"
+    },
+    {
+      "path": "examples/spec.example.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "048eec187098dec0cc5aab2e5efffc8ec01aa4b0",
+      "size": 7715,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/048eec187098dec0cc5aab2e5efffc8ec01aa4b0"
+    },
+    {
+      "path": "schema",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "aa8797812373781bcbf92c695b0ff7172c595d04",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/aa8797812373781bcbf92c695b0ff7172c595d04"
+    },
+    {
+      "path": "schema/bom.schema.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "536d7e3d8f9c3e3c358d48366966286a0ec2c60f",
+      "size": 5853,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/536d7e3d8f9c3e3c358d48366966286a0ec2c60f"
+    },
+    {
+      "path": "schema/conformance.schema.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "334e0754e996ceaaf60b845189af0c11bca96fb1",
+      "size": 6752,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/334e0754e996ceaaf60b845189af0c11bca96fb1"
+    },
+    {
+      "path": "schema/datasheet.schema.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d890248632cf3c9c619b0565fc5bb826a318096c",
+      "size": 5851,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/d890248632cf3c9c619b0565fc5bb826a318096c"
+    },
+    {
+      "path": "schema/equivalence.schema.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "32843911768319947ad0fbec1ce6441a20db3d26",
+      "size": 4991,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/32843911768319947ad0fbec1ce6441a20db3d26"
+    },
+    {
+      "path": "schema/spec.schema.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "99fcaf596f896013a795be41e5fe0a5f3d3ae559",
+      "size": 9830,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/99fcaf596f896013a795be41e5fe0a5f3d3ae559"
+    },
+    {
+      "path": "schema/workspace.schema.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff8126438e37a48731fea1b30256f2faa9791adc",
+      "size": 7896,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/ff8126438e37a48731fea1b30256f2faa9791adc"
+    },
+    {
+      "path": "scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1dcb19a932185225cc2c5c263bafd9cc4f3e4627",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/1dcb19a932185225cc2c5c263bafd9cc4f3e4627"
+    },
+    {
+      "path": "scripts/price_scan.py",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "edd863d676422c25a2e7c83a3e77c10f4e9c8884",
+      "size": 26429,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/edd863d676422c25a2e7c83a3e77c10f4e9c8884"
+    },
+    {
+      "path": "scripts/spec_tools.py",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "4b49704e192515a9d74132ee9279d6a5e6b72b43",
+      "size": 50778,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/4b49704e192515a9d74132ee9279d6a5e6b72b43"
+    },
+    {
+      "path": "scripts/vpn_control.py",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "d1bdf4621253f4eebc566ffe5b58d8a78cccd890",
+      "size": 14866,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/d1bdf4621253f4eebc566ffe5b58d8a78cccd890"
+    },
+    {
+      "path": "scripts/workspace.py",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "1104ca7e6454e9afd6e0907dedd7b92f914b00d6",
+      "size": 23335,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/1104ca7e6454e9afd6e0907dedd7b92f914b00d6"
+    },
+    {
+      "path": "skills",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3b6b7b1a7b3620cc30bf957e3c30115efb13cb20",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/3b6b7b1a7b3620cc30bf957e3c30115efb13cb20"
+    },
+    {
+      "path": "skills/bom-build",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "24f27b1be6c8608ef1411062c683b2a21bca6567",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/24f27b1be6c8608ef1411062c683b2a21bca6567"
+    },
+    {
+      "path": "skills/bom-build/SKILL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ed8b1a03201ae66dd94c7b3b43790da9a7f038bf",
+      "size": 5252,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/ed8b1a03201ae66dd94c7b3b43790da9a7f038bf"
+    },
+    {
+      "path": "skills/evaluation-matrix",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a847332fb4ebb78c859b5b4f4d3453616e751469",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/a847332fb4ebb78c859b5b4f4d3453616e751469"
+    },
+    {
+      "path": "skills/evaluation-matrix/SKILL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7bbe3386dac3a631d3711b2dba49d03fec8f669e",
+      "size": 7238,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/7bbe3386dac3a631d3711b2dba49d03fec8f669e"
+    },
+    {
+      "path": "skills/market-evaluator",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a2b72deac389b3f503dc8ecbe95288c22e002714",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/a2b72deac389b3f503dc8ecbe95288c22e002714"
+    },
+    {
+      "path": "skills/market-evaluator/SKILL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a44d0f122bea821596d6e1e13fcbf2b279880e63",
+      "size": 7522,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/a44d0f122bea821596d6e1e13fcbf2b279880e63"
+    },
+    {
+      "path": "skills/marketplace-handoff",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c79448b01bf86197d00732d7715b62e2211799e5",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/c79448b01bf86197d00732d7715b62e2211799e5"
+    },
+    {
+      "path": "skills/marketplace-handoff/SKILL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "46abe5fc8fabbb3ef3a68745bbfe23423e1c4520",
+      "size": 3030,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/46abe5fc8fabbb3ef3a68745bbfe23423e1c4520"
+    },
+    {
+      "path": "skills/new-workspace",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c6ecac0c3c9b3a3c4759f118864fe12f534c383c",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/c6ecac0c3c9b3a3c4759f118864fe12f534c383c"
+    },
+    {
+      "path": "skills/new-workspace/SKILL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "596564904f5b405f171d8293d930a4a47a920b52",
+      "size": 8516,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/596564904f5b405f171d8293d930a4a47a920b52"
+    },
+    {
+      "path": "skills/part-number-equivalence",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f195d218f3d862b693ee230b6f9334ea3caf5ef1",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/f195d218f3d862b693ee230b6f9334ea3caf5ef1"
+    },
+    {
+      "path": "skills/part-number-equivalence/SKILL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6af56156152f77d52196dfd08aca5e45f607d88c",
+      "size": 7827,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/6af56156152f77d52196dfd08aca5e45f607d88c"
+    },
+    {
+      "path": "skills/price-scan",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b351fa8cb450e370d675f7f36f825dc02e3cb897",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/b351fa8cb450e370d675f7f36f825dc02e3cb897"
+    },
+    {
+      "path": "skills/price-scan/SKILL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d32156149dbd0685f959f5722977e6893e342a27",
+      "size": 6675,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/d32156149dbd0685f959f5722977e6893e342a27"
+    },
+    {
+      "path": "skills/procurement-report",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "743060b83dffd75998e6590d7168d33199052bc8",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/743060b83dffd75998e6590d7168d33199052bc8"
+    },
+    {
+      "path": "skills/procurement-report/SKILL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1cb72ebe4258edb8ec94f31e8409f4b81b7d778f",
+      "size": 7018,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/1cb72ebe4258edb8ec94f31e8409f4b81b7d778f"
+    },
+    {
+      "path": "skills/rfq-package",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4f7ff4a2e3c14c1ca8dc4ab517c018bf2783bc8a",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/4f7ff4a2e3c14c1ca8dc4ab517c018bf2783bc8a"
+    },
+    {
+      "path": "skills/rfq-package/SKILL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "74872287d0473e394dbb02dc1f6abbb141319761",
+      "size": 6514,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/74872287d0473e394dbb02dc1f6abbb141319761"
+    },
+    {
+      "path": "skills/spec-as-code",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6c77e763e64696a4189cf1a3a0138892b0856a63",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/6c77e763e64696a4189cf1a3a0138892b0856a63"
+    },
+    {
+      "path": "skills/spec-as-code/SKILL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c5ac4db502292a10f6d0173c116d4f89dd000f71",
+      "size": 7361,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/c5ac4db502292a10f6d0173c116d4f89dd000f71"
+    },
+    {
+      "path": "skills/spec-sheet-retrieval",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "517577b15d76f0c3b568cc8c8792785ed4c2376c",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/517577b15d76f0c3b568cc8c8792785ed4c2376c"
+    },
+    {
+      "path": "skills/spec-sheet-retrieval/SKILL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "677ae24e6260d9fcad55af12d0c8ea5ec6980fe5",
+      "size": 8171,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/677ae24e6260d9fcad55af12d0c8ea5ec6980fe5"
+    },
+    {
+      "path": "skills/spec-variants",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ea35f621316dd0b5a9814cf3e02b8cbaff1762c0",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/ea35f621316dd0b5a9814cf3e02b8cbaff1762c0"
+    },
+    {
+      "path": "skills/spec-variants/SKILL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c16bd05d71ba275d88a278e8270e1b1a063312e0",
+      "size": 7954,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/c16bd05d71ba275d88a278e8270e1b1a063312e0"
+    },
+    {
+      "path": "skills/technical-sourcing",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "68bbbe6d93447a11aef70ef76952358460eaa8fd",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/68bbbe6d93447a11aef70ef76952358460eaa8fd"
+    },
+    {
+      "path": "skills/technical-sourcing/SKILL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ffe9ef823efe1b6590566247801e585f61fa0537",
+      "size": 8799,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/ffe9ef823efe1b6590566247801e585f61fa0537"
+    },
+    {
+      "path": "skills/workspace-folder",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b57a70549d4c3d005cd4d4bf638732461381842f",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/b57a70549d4c3d005cd4d4bf638732461381842f"
+    },
+    {
+      "path": "skills/workspace-folder/SKILL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5a2fecb9d4ef137fe6fc6a1fdd13b40ab1ef884b",
+      "size": 7696,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/5a2fecb9d4ef137fe6fc6a1fdd13b40ab1ef884b"
+    },
+    {
+      "path": "template",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7626aefe838286bd634a35d7b941c60161f7bff3",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/7626aefe838286bd634a35d7b941c60161f7bff3"
+    },
+    {
+      "path": "template/general-purchasing",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "278c6f7e3a4aec91b68a38bf1f1aa570136325aa",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/278c6f7e3a4aec91b68a38bf1f1aa570136325aa"
+    },
+    {
+      "path": "template/general-purchasing/.mcp.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6d794fef26e714dd2a47d0701453f5ca91c4f852",
+      "size": 153,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/6d794fef26e714dd2a47d0701453f5ca91c4f852"
+    },
+    {
+      "path": "template/general-purchasing/CLAUDE.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ee92a501aaffc35f0fb539ef5e8bf16b939510a1",
+      "size": 15680,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/ee92a501aaffc35f0fb539ef5e8bf16b939510a1"
+    },
+    {
+      "path": "template/general-purchasing/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6f89b05964919a253dce572eb73bc326125c395a",
+      "size": 9300,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/6f89b05964919a253dce572eb73bc326125c395a"
+    },
+    {
+      "path": "template/general-purchasing/buyer-profiles",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "eddb7baaddf9d54e810bd877ac19c446254ddac4",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/eddb7baaddf9d54e810bd877ac19c446254ddac4"
+    },
+    {
+      "path": "template/general-purchasing/buyer-profiles/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ba94cc126e93c7bfab95f7055bf3d7fe86caee33",
+      "size": 4698,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/ba94cc126e93c7bfab95f7055bf3d7fe86caee33"
+    },
+    {
+      "path": "template/general-purchasing/buyer-profiles/bifl-buyer.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0137d63b1edd8031a519126282b5f5da0c5351a7",
+      "size": 4442,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/0137d63b1edd8031a519126282b5f5da0c5351a7"
+    },
+    {
+      "path": "template/general-purchasing/buyer-profiles/budget-buyer.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4590c2269ac319fad398cd7e32024847a7d001df",
+      "size": 3864,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/4590c2269ac319fad398cd7e32024847a7d001df"
+    },
+    {
+      "path": "template/general-purchasing/buyer-profiles/early-adopter.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2e12767226a97880f86eaa5da3713845d6a4ee85",
+      "size": 4520,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/2e12767226a97880f86eaa5da3713845d6a4ee85"
+    },
+    {
+      "path": "template/general-purchasing/buyer-profiles/ethical-buyer.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "427830c81be14ff8ed6779d4edaaba1f7ae5cfe3",
+      "size": 4880,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/427830c81be14ff8ed6779d4edaaba1f7ae5cfe3"
+    },
+    {
+      "path": "template/general-purchasing/buyer-profiles/feature-maximiser.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3ebc2e03cffc8912a1ee12a84ec7f6a3e3d39754",
+      "size": 4128,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/3ebc2e03cffc8912a1ee12a84ec7f6a3e3d39754"
+    },
+    {
+      "path": "template/general-purchasing/buyer-profiles/minimalist.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4afbc3cee4dd08f3b88e05155783992e20bf3030",
+      "size": 3941,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/4afbc3cee4dd08f3b88e05155783992e20bf3030"
+    },
+    {
+      "path": "template/general-purchasing/buyer-profiles/power-user.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3a9aaa8325a3e698c82a60fb8a6cea41b9ac0690",
+      "size": 4495,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/3a9aaa8325a3e698c82a60fb8a6cea41b9ac0690"
+    },
+    {
+      "path": "template/general-purchasing/buyer-profiles/premium-aesthete.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0ea9d1661ebfe413917aba180d91e3e6be2609ff",
+      "size": 4767,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/0ea9d1661ebfe413917aba180d91e3e6be2609ff"
+    },
+    {
+      "path": "template/general-purchasing/buyer-profiles/reliability-buyer.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b8b0f87173d7486a60ab50950f2795dc2bd6d714",
+      "size": 3963,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/b8b0f87173d7486a60ab50950f2795dc2bd6d714"
+    },
+    {
+      "path": "template/general-purchasing/data",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "bf87f3c60046074a92224318c682b40544b8c58a",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/bf87f3c60046074a92224318c682b40544b8c58a"
+    },
+    {
+      "path": "template/general-purchasing/data/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c6e2642dbaed45840bbf3011eabbd4d96982822a",
+      "size": 1404,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/c6e2642dbaed45840bbf3011eabbd4d96982822a"
+    },
+    {
+      "path": "template/general-purchasing/data/extracted",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/d564d0bc3dd917926892c55e3706cc116d5b165e"
+    },
+    {
+      "path": "template/general-purchasing/data/extracted/.gitkeep",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "template/general-purchasing/data/products",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/d564d0bc3dd917926892c55e3706cc116d5b165e"
+    },
+    {
+      "path": "template/general-purchasing/data/products/.gitkeep",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "template/general-purchasing/for-ai",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f71fd1f97ab8ed86a93727e4ef5c0e391b992110",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/f71fd1f97ab8ed86a93727e4ef5c0e391b992110"
+    },
+    {
+      "path": "template/general-purchasing/for-ai/.gitkeep",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "template/general-purchasing/for-ai/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fb357f5654de492f59c903dda78d416621513682",
+      "size": 589,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/fb357f5654de492f59c903dda78d416621513682"
+    },
+    {
+      "path": "template/general-purchasing/from-ai",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "59eac4ca0e0031306433f0afc430faafc6f69373",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/59eac4ca0e0031306433f0afc430faafc6f69373"
+    },
+    {
+      "path": "template/general-purchasing/from-ai/.gitkeep",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "template/general-purchasing/from-ai/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7023b09c0b08cb65eefe7335f34fa23012241d5f",
+      "size": 448,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/7023b09c0b08cb65eefe7335f34fa23012241d5f"
+    },
+    {
+      "path": "template/general-purchasing/search-terms.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "983b910b75306d3f7948eb8c89147c88561fefed",
+      "size": 1779,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/983b910b75306d3f7948eb8c89147c88561fefed"
+    },
+    {
+      "path": "template/general-purchasing/spec.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5975656fc57d738b2857767895ba490fae324547",
+      "size": 4080,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/5975656fc57d738b2857767895ba490fae324547"
+    },
+    {
+      "path": "template/market-landscape",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d604d0d9311cb68eaad956c246ba5c1d9d2fc7f2",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/d604d0d9311cb68eaad956c246ba5c1d9d2fc7f2"
+    },
+    {
+      "path": "template/market-landscape/CLAUDE.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8dc47695915fc0d8e00cf4f6cc7cb24018ecfa7e",
+      "size": 8382,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/8dc47695915fc0d8e00cf4f6cc7cb24018ecfa7e"
+    },
+    {
+      "path": "template/market-landscape/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5dfc38f44106e545b795dad3404abb8a59e79839",
+      "size": 4411,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/5dfc38f44106e545b795dad3404abb8a59e79839"
+    },
+    {
+      "path": "template/market-landscape/candidates",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "bb1c963cd82fc4adeb66caa3c4e40bee2161d196",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/bb1c963cd82fc4adeb66caa3c4e40bee2161d196"
+    },
+    {
+      "path": "template/market-landscape/candidates/.gitkeep",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "template/market-landscape/candidates/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d559977e8f9178f848827b90903fffd26abd5a6f",
+      "size": 1095,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/d559977e8f9178f848827b90903fffd26abd5a6f"
+    },
+    {
+      "path": "template/market-landscape/landscape",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0020a5fce335dbb938743e19ba593a91a2b14fbe",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/0020a5fce335dbb938743e19ba593a91a2b14fbe"
+    },
+    {
+      "path": "template/market-landscape/landscape/field.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f422d099d0ba39a5c42d1b75d885b4de688bbd7e",
+      "size": 2840,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/f422d099d0ba39a5c42d1b75d885b4de688bbd7e"
+    },
+    {
+      "path": "template/market-landscape/landscape/gaps.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a18651239c4f8351ef62054263bfaff4c5f69d65",
+      "size": 3166,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/a18651239c4f8351ef62054263bfaff4c5f69d65"
+    },
+    {
+      "path": "template/market-landscape/landscape/matrix.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "51749ec292738d02f31765d2a0a230f6206685e1",
+      "size": 1889,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/51749ec292738d02f31765d2a0a230f6206685e1"
+    },
+    {
+      "path": "template/market-landscape/landscape/segments.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b6af152c5b609dad549a294e4b73e014b9432dab",
+      "size": 3048,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/b6af152c5b609dad549a294e4b73e014b9432dab"
+    },
+    {
+      "path": "template/market-landscape/notes",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/d564d0bc3dd917926892c55e3706cc116d5b165e"
+    },
+    {
+      "path": "template/market-landscape/notes/.gitkeep",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "template/market-landscape/outputs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "9d3e1cf8fc0f1a52e2eff7f3759c32e5b2cf0e80",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/9d3e1cf8fc0f1a52e2eff7f3759c32e5b2cf0e80"
+    },
+    {
+      "path": "template/market-landscape/outputs/.gitkeep",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "template/market-landscape/outputs/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3508c12ade2c4bf4d32367b988c65afe0c8972db",
+      "size": 480,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/3508c12ade2c4bf4d32367b988c65afe0c8972db"
+    },
+    {
+      "path": "template/market-landscape/sources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ad142ad7cb53ee2eea259ace4a0410e60b66ad6d",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/ad142ad7cb53ee2eea259ace4a0410e60b66ad6d"
+    },
+    {
+      "path": "template/market-landscape/sources/.gitkeep",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "template/market-landscape/sources/index.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "10361ebf8ce1cdca416caa51cbdff16df7343779",
+      "size": 1123,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/10361ebf8ce1cdca416caa51cbdff16df7343779"
+    },
+    {
+      "path": "template/market-landscape/spec.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dbf4b04844d74dc5ff4d9bdbe19b791045f23127",
+      "size": 4015,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/dbf4b04844d74dc5ff4d9bdbe19b791045f23127"
+    },
+    {
+      "path": "template/tech-procurement",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f728fe47a4aadfd4bbf9de4e3f1db267ea0d3d0c",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/f728fe47a4aadfd4bbf9de4e3f1db267ea0d3d0c"
+    },
+    {
+      "path": "template/tech-procurement/.gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "048dec37daf5de4b16ca0b84be3de91a57ea4fc5",
+      "size": 730,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/048dec37daf5de4b16ca0b84be3de91a57ea4fc5"
+    },
+    {
+      "path": "template/tech-procurement/CLAUDE.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1d8ac26345793e5e058f946ddba9eb616249384e",
+      "size": 7478,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/1d8ac26345793e5e058f946ddba9eb616249384e"
+    },
+    {
+      "path": "template/tech-procurement/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5dfd700714e747803dcc3aec761d5eecd00b9226",
+      "size": 5742,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/5dfd700714e747803dcc3aec761d5eecd00b9226"
+    },
+    {
+      "path": "template/tech-procurement/agent-instructions",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e451489cdf6e3c86abd987d94bbe34c32bb248e2",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/e451489cdf6e3c86abd987d94bbe34c32bb248e2"
+    },
+    {
+      "path": "template/tech-procurement/agent-instructions/context-structure.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "664fcf6f80469b9bc0ed900644096258a9226b1f",
+      "size": 5619,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/664fcf6f80469b9bc0ed900644096258a9226b1f"
+    },
+    {
+      "path": "template/tech-procurement/agent-instructions/mcp-recommendations.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "505c5aaa31f325cfcbda102749f1940a7189ce63",
+      "size": 3867,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/505c5aaa31f325cfcbda102749f1940a7189ce63"
+    },
+    {
+      "path": "template/tech-procurement/data",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0c5d8c5f18255762d05010442a239e1176c2b680",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/0c5d8c5f18255762d05010442a239e1176c2b680"
+    },
+    {
+      "path": "template/tech-procurement/data/.gitkeep",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "template/tech-procurement/data/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0e7c0d368de66115e9f0db76c567f80398cb7fc5",
+      "size": 676,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/0e7c0d368de66115e9f0db76c567f80398cb7fc5"
+    },
+    {
+      "path": "template/tech-procurement/inputs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6e35f507d1313b6a9f2b398fb8005ce67d767a4e",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/6e35f507d1313b6a9f2b398fb8005ce67d767a4e"
+    },
+    {
+      "path": "template/tech-procurement/inputs/.gitkeep",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "template/tech-procurement/inputs/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e46d9fcb10e502d60eb8d1baf5ee34c95859776c",
+      "size": 1102,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e46d9fcb10e502d60eb8d1baf5ee34c95859776c"
+    },
+    {
+      "path": "template/tech-procurement/outputs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d9dbec2aaf3a21779a4123bbdc9fb14a1e4abfe5",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/d9dbec2aaf3a21779a4123bbdc9fb14a1e4abfe5"
+    },
+    {
+      "path": "template/tech-procurement/outputs/.gitkeep",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "template/tech-procurement/outputs/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "12b437f7e29ef5b0c51c0266f0654a9a3cf9a34d",
+      "size": 842,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/12b437f7e29ef5b0c51c0266f0654a9a3cf9a34d"
+    },
+    {
+      "path": "template/tech-procurement/prompts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "9743f38ba4d35e3e5b45041ec0403ca10fb5d395",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/9743f38ba4d35e3e5b45041ec0403ca10fb5d395"
+    },
+    {
+      "path": "template/tech-procurement/prompts/.gitkeep",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "template/tech-procurement/prompts/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "87d95ee00ea50fbf230a0dcd227d73143711ae85",
+      "size": 665,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/87d95ee00ea50fbf230a0dcd227d73143711ae85"
+    },
+    {
+      "path": "template/vendor-recommendations",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a2dae0e3aeb29ae7ff869d1e0f0d505266ae055f",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/a2dae0e3aeb29ae7ff869d1e0f0d505266ae055f"
+    },
+    {
+      "path": "template/vendor-recommendations/CLAUDE.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1a97a48cca95ea18a391cbd4aa9e5e2475033adc",
+      "size": 4341,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/1a97a48cca95ea18a391cbd4aa9e5e2475033adc"
+    },
+    {
+      "path": "template/vendor-recommendations/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3ab618a7845a95b0bd46471bf8ce10e381c0dfa9",
+      "size": 2307,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/3ab618a7845a95b0bd46471bf8ce10e381c0dfa9"
+    },
+    {
+      "path": "template/vendor-recommendations/context",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/d564d0bc3dd917926892c55e3706cc116d5b165e"
+    },
+    {
+      "path": "template/vendor-recommendations/context/.gitkeep",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "template/vendor-recommendations/feedback",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/d564d0bc3dd917926892c55e3706cc116d5b165e"
+    },
+    {
+      "path": "template/vendor-recommendations/feedback/.gitkeep",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "template/vendor-recommendations/ingest",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/d564d0bc3dd917926892c55e3706cc116d5b165e"
+    },
+    {
+      "path": "template/vendor-recommendations/ingest/.gitkeep",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "template/vendor-recommendations/mcp.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bab086584ea8ba662f871df39a6b287436eb4b98",
+      "size": 2102,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/bab086584ea8ba662f871df39a6b287436eb4b98"
+    },
+    {
+      "path": "template/vendor-recommendations/memory",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "78f4dcd1981e318e3b2aaa2c97b85ea0fa10902c",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/78f4dcd1981e318e3b2aaa2c97b85ea0fa10902c"
+    },
+    {
+      "path": "template/vendor-recommendations/memory/.gitkeep",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "template/vendor-recommendations/memory/preferences.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "705bfe7b2acc1f6f6b4cb1ca110704621d2fef8f",
+      "size": 1968,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/705bfe7b2acc1f6f6b4cb1ca110704621d2fef8f"
+    },
+    {
+      "path": "template/vendor-recommendations/outputs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/d564d0bc3dd917926892c55e3706cc116d5b165e"
+    },
+    {
+      "path": "template/vendor-recommendations/outputs/.gitkeep",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "template/vendor-recommendations/recommendations",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/d564d0bc3dd917926892c55e3706cc116d5b165e"
+    },
+    {
+      "path": "template/vendor-recommendations/recommendations/.gitkeep",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "tests",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "2dce97491092187c3d009207baffc6085c231a63",
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/trees/2dce97491092187c3d009207baffc6085c231a63"
+    },
+    {
+      "path": "tests/test_price_scan.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b6e49b6489af29e7ef581810602c5db18cbe4f80",
+      "size": 5624,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/b6e49b6489af29e7ef581810602c5db18cbe4f80"
+    },
+    {
+      "path": "tests/test_spec_tools.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8d404530245ecaad12a83904b598b8f0051756fb",
+      "size": 27993,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/8d404530245ecaad12a83904b598b8f0051756fb"
+    },
+    {
+      "path": "tests/test_workspace.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "df6927ed43a5e0b65b8d43bf4912b7cacb0d4eeb",
+      "size": 11540,
+      "url": "https://api.github.com/repos/danielrosehill/procurement-tools-plugin/git/blobs/df6927ed43a5e0b65b8d43bf4912b7cacb0d4eeb"
+    }
+  ],
+  "truncated": false
+}

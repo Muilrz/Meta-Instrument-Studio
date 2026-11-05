@@ -1,0 +1,18 @@
+{
+  "_note": "合成的模拟厂商响应，用于 MIS 基准任务包测试；null 表示厂商未提供该字段",
+  "part_id": "SPEC-C",
+  "vendor": "Vendor Gamma 光谱（虚构）",
+  "currency": "CNY",
+  "price_tiers": [
+    {
+      "min_qty": 1,
+      "unit_price": 26000
+    }
+  ],
+  "stock": null,
+  "lead_time_days": null,
+  "quote_valid_until": "2026-12-31",
+  "region": "CN",
+  "tax_included": true,
+  "retrieved_at": "2026-11-02T09:00:00+08:00"
+}

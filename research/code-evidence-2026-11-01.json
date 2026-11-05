@@ -1,0 +1,321 @@
+[
+  {
+    "repo": "bytedance/deer-flow",
+    "commit": "3f86f071f3d26cb3fcf91841523f6f7be2796914",
+    "path": "backend/packages/harness/deerflow/subagents/config.py",
+    "url": "https://raw.githubusercontent.com/bytedance/deer-flow/3f86f071f3d26cb3fcf91841523f6f7be2796914/backend/packages/harness/deerflow/subagents/config.py",
+    "sha256": "E9BD01FCEB049ED8E514100DE79758ED510EFD8DE1740A05FD1A98FE028D8FB3",
+    "lines": 78,
+    "definitions": [
+      "class SubagentConfig:",
+      "def _default_model_name(app_config: \"AppConfig\") -> str:",
+      "def resolve_subagent_model_name(config: SubagentConfig, parent_model: str | None, *, app_config: \"AppConfig | None\" = None) -> str:"
+    ],
+    "observations": [
+      "            into the LangGraph ``recursion_limit`` that buys that many turns",
+      "        timeout_seconds: Bare fallback execution-time cap. For built-in agents the",
+      "            effective limit is the global ``subagents.timeout_seconds`` (default",
+      "    timeout_seconds: int = 900"
+    ]
+  },
+  {
+    "repo": "bytedance/deer-flow",
+    "commit": "3f86f071f3d26cb3fcf91841523f6f7be2796914",
+    "path": "backend/packages/harness/deerflow/subagents/report_contract.py",
+    "url": "https://raw.githubusercontent.com/bytedance/deer-flow/3f86f071f3d26cb3fcf91841523f6f7be2796914/backend/packages/harness/deerflow/subagents/report_contract.py",
+    "sha256": "FD703DE3FB400720ABB9FFCB6134962302E3227CF199E9A1327F7113F0771B00",
+    "lines": 157,
+    "definitions": [
+      "def build_report_contract_section(*, receipts_enabled: bool = True) -> str:",
+      "def build_acceptance_criteria_system_note(*, receipts_enabled: bool = True) -> str:",
+      "def normalize_acceptance_criteria(acceptance_criteria: list[str] | None) -> list[str]:",
+      "def render_acceptance_criteria_block(acceptance_criteria: list[str] | None) -> str:"
+    ],
+    "observations": []
+  },
+  {
+    "repo": "bytedance/deer-flow",
+    "commit": "3f86f071f3d26cb3fcf91841523f6f7be2796914",
+    "path": "backend/packages/harness/deerflow/subagents/executor.py",
+    "url": "https://raw.githubusercontent.com/bytedance/deer-flow/3f86f071f3d26cb3fcf91841523f6f7be2796914/backend/packages/harness/deerflow/subagents/executor.py",
+    "sha256": "44256495995456D69F34321A7F50A884EBED3AA831921A7C93CD63CDC7986309",
+    "lines": 2517,
+    "definitions": [
+      "def _utcnow() -> datetime:",
+      "class SubagentStatus(Enum):",
+      "    def is_terminal(self) -> bool:",
+      "class SubagentResult:",
+      "    def __post_init__(self):",
+      "    def update_token_usage_records(self, records: list[dict[str, int | str | None]]) -> None:",
+      "    def update_tool_receipts(self, receipts: list[dict[str, Any]] | None) -> None:",
+      "    def update_bash_executions(self, executions: list[dict[str, Any]] | None) -> None:",
+      "    def snapshot_tool_receipts(self) -> list[dict[str, Any]] | None:",
+      "    def update_knowledge_sources(self, messages: list[Any] | None) -> None:",
+      "    def try_set_terminal(",
+      "def _terminal_direct_results(final_state: Any, return_direct_tools: set[str]) -> list[ToolMessage] | None:",
+      "def _extract_final_result(final_state: Any, *, trace_id: str, name: str, return_direct_tools: set[str] | None = None) -> str:",
+      "def _extract_llm_error_fallback(final_state: Any) -> str | None:",
+      "def _harvest_tool_receipts(",
+      "def _bash_evidence_status(content: str, meta_status: str) -> tuple[str, str | None]:",
+      "def _harvest_shell_persistence(final_state: Any) -> bool | None:",
+      "def _harvest_bash_executions("
+    ],
+    "observations": [
+      "from langgraph.errors import GraphRecursionError",
+      "_EXTENSION_TASK_NOTIFY_TIMEOUT_SECONDS = 3.0",
+      "    parent's ``thread_id`` (see ``_aexecute``'s ``run_config``), and LangGraph",
+      "    LangGraph keeps the current runnable config in a ``ContextVar``. Crossing",
+      "    metadata, user identity, and tracing context. LangGraph merges inherited",
+      "                standalone LangGraph Server), ``_aexecute`` falls back to the",
+      "        # LangGraph super-step budget that buys ``config.max_turns`` turns,",
+      "        from langgraph.prebuilt import ToolNode"
+    ]
+  },
+  {
+    "repo": "bytedance/deer-flow",
+    "commit": "3f86f071f3d26cb3fcf91841523f6f7be2796914",
+    "path": "backend/packages/harness/deerflow/agents/lead_agent/agent.py",
+    "url": "https://raw.githubusercontent.com/bytedance/deer-flow/3f86f071f3d26cb3fcf91841523f6f7be2796914/backend/packages/harness/deerflow/agents/lead_agent/agent.py",
+    "sha256": "0C49A2A6C3E3350A20DD492809B4C9CE0E1D6FED084972D472CEEDE96982BA62",
+    "lines": 1458,
+    "definitions": [
+      "class LeadAgentAssembly:",
+      "def unwrap_agent_graph(agent_result: Any) -> Any:",
+      "def _subagent_release_policy(",
+      "def _resolve_runtime_option(cfg: dict, key: str, agent_value, default):",
+      "def _append_named_tools_without_conflicts(tools: list, new_tools: list, *, kind: str) -> None:",
+      "def _append_memory_tools_without_name_conflicts(tools: list) -> None:",
+      "def _append_project_document_tools_if_pinned(tools: list, cfg: dict) -> None:",
+      "def _get_runtime_config(config: RunnableConfig) -> dict:",
+      "def _resolve_model_name(requested_model_name: str | None = None, *, app_config: AppConfig | None = None) -> str:",
+      "def _authorize_model_name(",
+      "def _create_summarization_middleware(",
+      "def _create_todo_list_middleware(is_plan_mode: bool) -> TodoMiddleware | None:",
+      "def build_middlewares(",
+      "def _available_skill_names(agent_config, is_bootstrap: bool) -> set[str] | None:",
+      "def _load_enabled_available_skills(available_skills: set[str] | None, *, app_config: AppConfig, user_id: str | None = None) -> list[Skill]:",
+      "def make_lead_agent(config: RunnableConfig):",
+      "def assemble_lead_agent(",
+      "def _make_lead_agent(config: RunnableConfig, *, app_config: AppConfig):"
+    ],
+    "observations": [
+      "    LangGraph Server startup and must not pull the extension contract package",
+      "            \"timeout_seconds\": subagent_config.timeout_seconds,",
+      "    \"\"\"Merge legacy configurable options with LangGraph runtime context.\"\"\"",
+      "    \"\"\"LangGraph graph factory; keep the signature compatible with LangGraph Server.\"\"\"",
+      "    built from does not have to be recovered from LangGraph private runtime",
+      "    graph-only LangGraph Server ABI declared in ``langgraph.json``.",
+      "    #   configurable key is ignored so a direct LangGraph request cannot",
+      "    # Inject tracing callbacks at the graph invocation root so a single LangGraph"
+    ]
+  },
+  {
+    "repo": "bytedance/deer-flow",
+    "commit": "3f86f071f3d26cb3fcf91841523f6f7be2796914",
+    "path": "backend/packages/harness/deerflow/community/ragflow/tools.py",
+    "url": "https://raw.githubusercontent.com/bytedance/deer-flow/3f86f071f3d26cb3fcf91841523f6f7be2796914/backend/packages/harness/deerflow/community/ragflow/tools.py",
+    "sha256": "27F3BAED81D089C07A79D4B720BE1B9CD11BB1447850D97A7C0B6826631B9499",
+    "lines": 659,
+    "definitions": [
+      "class _ResolvedDataset:",
+      "class _RetrievalGroup:",
+      "class _RAGFlowRetrievalSettings(BaseModel):",
+      "    def _normalize_dataset_ids(cls, value: list[str] | None) -> list[str] | None:",
+      "    def _reject_url_userinfo(cls, value: AnyHttpUrl) -> AnyHttpUrl:",
+      "    def _reject_boolean_integers(cls, value: object, info: ValidationInfo) -> object:",
+      "    def _reject_boolean_numbers(cls, value: object, info: ValidationInfo) -> object:",
+      "def _api_key(settings: _RAGFlowRetrievalSettings) -> str | None:",
+      "def _redact_error(value: object, api_key: str | None) -> str:",
+      "def _settings_from_extra(extra: Mapping[str, object]) -> _RAGFlowRetrievalSettings:",
+      "def _settings_or_error(app_config: Any | None = None) -> tuple[_RAGFlowRetrievalSettings | None, str | None]:",
+      "def _build_client(settings: _RAGFlowRetrievalSettings) -> RAGFlowClient:",
+      "def _tool_error(exc: Exception, settings: _RAGFlowRetrievalSettings) -> str:",
+      "def _resolved_dataset(dataset: Mapping[str, object], *, expected_id: str | None = None) -> _ResolvedDataset | None:",
+      "def _current_dataset(datasets: list[dict], bound_id: str) -> _ResolvedDataset | None:",
+      "def _ordinal(value: int) -> str:",
+      "def _missing_dataset_error(position: int) -> str:",
+      "def _log_missing_dataset(*, position: int, dataset_id: str, code: object = None) -> None:"
+    ],
+    "observations": [
+      "    raw_results = await asyncio.gather(",
+      "    results = await asyncio.gather(*(retrieve_group(group) for group in groups), return_exceptions=True)"
+    ]
+  },
+  {
+    "repo": "bytedance/deer-flow",
+    "commit": "3f86f071f3d26cb3fcf91841523f6f7be2796914",
+    "path": "Install.md",
+    "url": "https://raw.githubusercontent.com/bytedance/deer-flow/3f86f071f3d26cb3fcf91841523f6f7be2796914/Install.md",
+    "sha256": "4D84CDA8985620D76D12449CFD2276CEF66F6FD9D797079310F8C0FEBB4937CB",
+    "lines": 88,
+    "definitions": [],
+    "observations": []
+  },
+  {
+    "repo": "agentscope-ai/agentscope",
+    "commit": "300398e3108af2bac1b84f72564c8db323636184",
+    "path": "src/agentscope/pipeline/_team_pipeline.py",
+    "url": "https://raw.githubusercontent.com/agentscope-ai/agentscope/300398e3108af2bac1b84f72564c8db323636184/src/agentscope/pipeline/_team_pipeline.py",
+    "sha256": "F8E4B7F62D00E84B82CF3945C84E6309BDCDB2B9E3593806733772852F844D4A",
+    "lines": 414,
+    "definitions": [
+      "class TeamMember(BaseModel):",
+      "class _TeamAssign(ToolBase):",
+      "    def __init__(self, members: list[TeamMember]) -> None:",
+      "    async def check_permissions(",
+      "class TeamPipeline:",
+      "    def __init__(",
+      "    async def reply_stream(",
+      "    async def _reply(",
+      "    async def _run_assignments(",
+      "        async def run_group(name: str, calls: list[ToolCallBlock]) -> None:",
+      "        async def run_all() -> None:",
+      "    def _is_parked(member: TeamMember) -> bool:",
+      "    def _parked_members(self) -> list[TeamMember]:",
+      "    def _parked_member(self, reply_id: str) -> TeamMember:",
+      "    def _parse(self, tool_call: ToolCallBlock) -> dict:",
+      "    def _assigning_calls(self, member: TeamMember) -> list[ToolCallBlock]:"
+    ],
+    "observations": [
+      "\"\"\"The team pipeline class.\"\"\"",
+      "class TeamMember(BaseModel):",
+      "    \"\"\"A member of the team: an existing agent plus the description the",
+      "    must be unique within the team.\"\"\"",
+      "class _TeamAssign(ToolBase):",
+      "    name: str = \"TeamAssign\"",
+      "    def __init__(self, members: list[TeamMember]) -> None:",
+      "            \"Assign a task to a team member and get its reply back as the \""
+    ]
+  },
+  {
+    "repo": "langchain-ai/deepagents",
+    "commit": "2b33a4c0cf60bc4927f27eae8b86f84e7a897b99",
+    "path": "libs/deepagents/deepagents/graph.py",
+    "url": "https://raw.githubusercontent.com/langchain-ai/deepagents/2b33a4c0cf60bc4927f27eae8b86f84e7a897b99/libs/deepagents/deepagents/graph.py",
+    "sha256": "5964F538571F415331870230B86EAE1833F11E52C0D91B38E3C37E6E0C609569",
+    "lines": 1031,
+    "definitions": [
+      "class DeepAgentState(AgentState):",
+      "def __getattr__(name: str) -> str:",
+      "def _build_default_model() -> \"ChatAnthropic\":",
+      "def get_default_model() -> \"ChatAnthropic\":",
+      "def _merge_fs_interrupt_on(",
+      "def _passed_skills_sources(middleware: Sequence[AgentMiddleware[Any, Any, Any]]) -> list[str] | None:",
+      "def _apply_custom_middleware(",
+      "def create_deep_agent(  # noqa: C901, PLR0912, PLR0915  # Complex graph assembly logic with many conditional branches",
+      "            class MyState(DeepAgentState):"
+    ],
+    "observations": [
+      "Provides [`create_deep_agent`][deepagents.graph.create_deep_agent], the main entry",
+      "from langgraph.cache.base import BaseCache",
+      "from langgraph.channels.delta import DeltaChannel",
+      "from langgraph.graph.state import CompiledStateGraph",
+      "from langgraph.store.base import BaseStore",
+      "from langgraph.types import Checkpointer",
+      "from langgraph.typing import ContextT",
+      "    Internal helper used by `create_deep_agent` so the parameter-level"
+    ]
+  },
+  {
+    "repo": "assafelovic/gpt-researcher",
+    "commit": "3582a6841fe7dc801e2a34e34ee408641aea9bce",
+    "path": "gpt_researcher/agent.py",
+    "url": "https://raw.githubusercontent.com/assafelovic/gpt-researcher/3582a6841fe7dc801e2a34e34ee408641aea9bce/gpt_researcher/agent.py",
+    "sha256": "49C7B6BE798B628C32B4D59C3E36055C098910C6F79177AB280E45EEA44F3492",
+    "lines": 806,
+    "definitions": [
+      "class GPTResearcher:",
+      "    def __init__(",
+      "    def _generate_research_id(self) -> str:",
+      "    def _resolve_mcp_strategy(self, mcp_strategy: str | None, mcp_max_iterations: int | None) -> str:",
+      "    def memory(self) -> Memory:",
+      "    def memory(self, value: Memory) -> None:",
+      "    def _process_mcp_configs(self, mcp_configs: list[dict]) -> None:",
+      "    async def _log_event(self, event_type: str, **kwargs):",
+      "    async def conduct_research(self, on_progress=None):",
+      "    async def _handle_deep_research(self, on_progress=None):",
+      "    async def write_report(",
+      "    async def write_report_conclusion(self, report_body: str) -> str:",
+      "    async def write_introduction(self) -> str:",
+      "    async def quick_search(",
+      "    async def _search_all_retrievers(",
+      "    async def get_subtopics(self):",
+      "    async def get_draft_section_titles(self, current_subtopic: str) -> list[str]:",
+      "    async def get_similar_written_contents_by_draft_section_titles("
+    ],
+    "observations": [
+      "        results = await asyncio.gather(*tasks, return_exceptions=True)"
+    ]
+  },
+  {
+    "repo": "somebox/bomi",
+    "commit": "f95b66e4b373bbf0b0a8b62f0aa479c182473b38",
+    "path": "src/bomi/models.py",
+    "url": "https://raw.githubusercontent.com/somebox/bomi/f95b66e4b373bbf0b0a8b62f0aa479c182473b38/src/bomi/models.py",
+    "sha256": "3D79F8F0488A44D985753557835362F6071FCDF2F3D5233B0A94592BA173AD31",
+    "lines": 52,
+    "definitions": [
+      "class PriceTier:",
+      "class Attribute:",
+      "class Part:",
+      "class Analysis:"
+    ],
+    "observations": []
+  },
+  {
+    "repo": "somebox/bomi",
+    "commit": "f95b66e4b373bbf0b0a8b62f0aa479c182473b38",
+    "path": "src/bomi/filters.py",
+    "url": "https://raw.githubusercontent.com/somebox/bomi/f95b66e4b373bbf0b0a8b62f0aa479c182473b38/src/bomi/filters.py",
+    "sha256": "41FF4A2AB8C89F20193522F7326731E6D888F8D09BEF3FFE2A2D153441AB3CB6",
+    "lines": 127,
+    "definitions": [
+      "def numeric_compare(value: float, op: str, threshold: float) -> bool:",
+      "def part_matches_one_attr(",
+      "def _part_matches_price_cap(part: Part, max_price: float) -> bool:",
+      "def apply_post_fetch_filters(",
+      "def append_attr_filter_sql("
+    ],
+    "observations": []
+  },
+  {
+    "repo": "somebox/bomi",
+    "commit": "f95b66e4b373bbf0b0a8b62f0aa479c182473b38",
+    "path": "src/bomi/api.py",
+    "url": "https://raw.githubusercontent.com/somebox/bomi/f95b66e4b373bbf0b0a8b62f0aa479c182473b38/src/bomi/api.py",
+    "sha256": "E3BDE446EEEC77DE320FCEC6174EFA70DFA058AA7E223690AFE98A1E2B9A8D1C",
+    "lines": 110,
+    "definitions": [
+      "class JLCPCBClient:",
+      "    def __init__(self, session: requests.Session | None = None):",
+      "    def _throttle(self):",
+      "    def _sync_xsrf_token(self):",
+      "    def search(",
+      "def fetch_openrouter_model_pricing() -> dict[str, dict[str, float]]:"
+    ],
+    "observations": []
+  },
+  {
+    "repo": "KagaribiDev/procurepilot",
+    "commit": "012b51ed6c1e9f80133a4add5ec170b817b9465e",
+    "path": "src/agent/graphs/main_agent.py",
+    "url": "https://raw.githubusercontent.com/KagaribiDev/procurepilot/012b51ed6c1e9f80133a4add5ec170b817b9465e/src/agent/graphs/main_agent.py",
+    "sha256": "371FD3D8AB762B13FEC5A84BBA940FEFCC1C088DCA7BD4F15313F29E98490181",
+    "lines": 321,
+    "definitions": [
+      "def _setup_logging() -> None:",
+      "class PrecomputedContext:",
+      "async def precompute_agent_context() -> PrecomputedContext:",
+      "async def create_main_agent(",
+      "    def backend_factory(runtime):"
+    ],
+    "observations": [
+      "使用 DeepAgents `create_deep_agent` 将所有组件串联为一个可运行的",
+      "from deepagents import create_deep_agent",
+      "        config: LangGraph RunnableConfig，含 thread_id + user_id。",
+      "                \"/memories/\": StoreBackend(  # langgraph 框架的store来存数据",
+      "    # ---- Phase 9: create_deep_agent ----",
+      "    agent_graph = create_deep_agent("
+    ]
+  }
+]

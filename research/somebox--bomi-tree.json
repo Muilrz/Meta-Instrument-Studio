@@ -1,0 +1,806 @@
+{
+  "sha": "f95b66e4b373bbf0b0a8b62f0aa479c182473b38",
+  "url": "https://api.github.com/repos/somebox/bomi/git/trees/f95b66e4b373bbf0b0a8b62f0aa479c182473b38",
+  "tree": [
+    {
+      "path": ".github",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "bb8b619594ac855abcc8bb25bce2fe168df57e21",
+      "url": "https://api.github.com/repos/somebox/bomi/git/trees/bb8b619594ac855abcc8bb25bce2fe168df57e21"
+    },
+    {
+      "path": ".github/workflows",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "9339c472ca0a5755fc51f82d72635fa94a5fb5c6",
+      "url": "https://api.github.com/repos/somebox/bomi/git/trees/9339c472ca0a5755fc51f82d72635fa94a5fb5c6"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fc8acab622eb6fea8367943d7a50d801c23f18ab",
+      "size": 525,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/fc8acab622eb6fea8367943d7a50d801c23f18ab"
+    },
+    {
+      "path": ".github/workflows/pages.yml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b40ab73f49e11bcc661689b5ac005ee0264d51a2",
+      "size": 1174,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/b40ab73f49e11bcc661689b5ac005ee0264d51a2"
+    },
+    {
+      "path": ".gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2baa6ebf53e738e54a62e83552d6185fdcf3b11b",
+      "size": 527,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/2baa6ebf53e738e54a62e83552d6185fdcf3b11b"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "488f3e97e42b9c6fa6399b492cdf22b90d9c1ba0",
+      "size": 2495,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/488f3e97e42b9c6fa6399b492cdf22b90d9c1ba0"
+    },
+    {
+      "path": "LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f245755beb5ea1573e00bd3b89ce375870f2aab1",
+      "size": 1069,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/f245755beb5ea1573e00bd3b89ce375870f2aab1"
+    },
+    {
+      "path": "README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "95baf488379f7a3e47478c42a3d624e68fcf498b",
+      "size": 10871,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/95baf488379f7a3e47478c42a3d624e68fcf498b"
+    },
+    {
+      "path": "build_site.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e459f6366fe7a7b5a34ff9e8097be582bba1841c",
+      "size": 1064,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/e459f6366fe7a7b5a34ff9e8097be582bba1841c"
+    },
+    {
+      "path": "config.yaml.example",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "67ff963724dde3a51ac8c68ae251d719e515aabb",
+      "size": 1423,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/67ff963724dde3a51ac8c68ae251d719e515aabb"
+    },
+    {
+      "path": "debt-ledger.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "85277778ed380f0d719afe5a2ce16b005807734c",
+      "size": 14229,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/85277778ed380f0d719afe5a2ce16b005807734c"
+    },
+    {
+      "path": "demo",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3c7a0e08c8121fe642772698e621dd394710dec3",
+      "url": "https://api.github.com/repos/somebox/bomi/git/trees/3c7a0e08c8121fe642772698e621dd394710dec3"
+    },
+    {
+      "path": "demo/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ad2f7160e0fff62a0fcec4dbea558ade826a6b3f",
+      "size": 3477,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/ad2f7160e0fff62a0fcec4dbea558ade826a6b3f"
+    },
+    {
+      "path": "demo/dev-notes.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "598ecf304977f4f28b53c209d878629fa59fa57c",
+      "size": 5155,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/598ecf304977f4f28b53c209d878629fa59fa57c"
+    },
+    {
+      "path": "demo/generator",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ab8a8d72670a92d17c9b50076f7e1e763956d1b1",
+      "url": "https://api.github.com/repos/somebox/bomi/git/trees/ab8a8d72670a92d17c9b50076f7e1e763956d1b1"
+    },
+    {
+      "path": "demo/generator/cast_generator.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0fb60cf01d9de9602f57fdc9da40dd9b7a9e9bf1",
+      "size": 9891,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/0fb60cf01d9de9602f57fdc9da40dd9b7a9e9bf1"
+    },
+    {
+      "path": "demo/generator/make_agent_demo.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0236b22895eb891d7da4edddf2bde21059c7be35",
+      "size": 12855,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/0236b22895eb891d7da4edddf2bde21059c7be35"
+    },
+    {
+      "path": "demo/generator/record_all.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e1b1a484b3086b640d92f0579909d3c0e0456160",
+      "size": 4034,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/e1b1a484b3086b640d92f0579909d3c0e0456160"
+    },
+    {
+      "path": "demo/generator/scenes.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "80ebca089aa32261c4a23c2431d0dc262961a7c3",
+      "size": 5689,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/80ebca089aa32261c4a23c2431d0dc262961a7c3"
+    },
+    {
+      "path": "demo/presentation",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "2fc14846dd1271dbd469723d23c0585cba47ec9d",
+      "url": "https://api.github.com/repos/somebox/bomi/git/trees/2fc14846dd1271dbd469723d23c0585cba47ec9d"
+    },
+    {
+      "path": "demo/presentation/demo-project",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e",
+      "url": "https://api.github.com/repos/somebox/bomi/git/trees/d564d0bc3dd917926892c55e3706cc116d5b165e"
+    },
+    {
+      "path": "demo/presentation/demo-project/.gitkeep",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "demo/presentation/index.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d089cd0ed67921386b75de46796890562c032c3f",
+      "size": 23616,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/d089cd0ed67921386b75de46796890562c032c3f"
+    },
+    {
+      "path": "demo/script.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fae25cb03892eca03658d9b01fd07995791acb4e",
+      "size": 5404,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/fae25cb03892eca03658d9b01fd07995791acb4e"
+    },
+    {
+      "path": "docs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c44ca615fe6d7ee662b278f844c5830a4bc14124",
+      "url": "https://api.github.com/repos/somebox/bomi/git/trees/c44ca615fe6d7ee662b278f844c5830a4bc14124"
+    },
+    {
+      "path": "docs/bomi-api-internals.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0251a6a1288aa91da49fd234f16c0328d40b3566",
+      "size": 6269,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/0251a6a1288aa91da49fd234f16c0328d40b3566"
+    },
+    {
+      "path": "docs/bomi-guide.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f58d8864f4b6ac00109510cbf89a579fe8bd42e0",
+      "size": 9414,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/f58d8864f4b6ac00109510cbf89a579fe8bd42e0"
+    },
+    {
+      "path": "docs/examples.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7b435f5a49e82803a1cbf705350e0f0a95c49e21",
+      "size": 5557,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/7b435f5a49e82803a1cbf705350e0f0a95c49e21"
+    },
+    {
+      "path": "docs/features.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "84bb4deef04d35a66d61494bc35722d1d23e5d07",
+      "size": 3109,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/84bb4deef04d35a66d61494bc35722d1d23e5d07"
+    },
+    {
+      "path": "docs/sqlite-database-guide.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "99e63a8166665740ef8be68529dd0b6ffe511ffd",
+      "size": 6865,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/99e63a8166665740ef8be68529dd0b6ffe511ffd"
+    },
+    {
+      "path": "inventory.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c5f55be5e7989eb841d55c34ff4321db095d96f6",
+      "size": 1790,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/c5f55be5e7989eb841d55c34ff4321db095d96f6"
+    },
+    {
+      "path": "issues-all.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f1514b8e6b2eaa2f05f2895c059ae3554f308725",
+      "size": 9081,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/f1514b8e6b2eaa2f05f2895c059ae3554f308725"
+    },
+    {
+      "path": "pyproject.toml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9562e6b0ac71fe0898e3471382865f116e38a8a7",
+      "size": 688,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/9562e6b0ac71fe0898e3471382865f116e38a8a7"
+    },
+    {
+      "path": "site",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "efde283170028a03a348e366161b332479fc5154",
+      "url": "https://api.github.com/repos/somebox/bomi/git/trees/efde283170028a03a348e366161b332479fc5154"
+    },
+    {
+      "path": "site/assets",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1ed806337ebe5af1a7f4b5e80be76832e8298294",
+      "url": "https://api.github.com/repos/somebox/bomi/git/trees/1ed806337ebe5af1a7f4b5e80be76832e8298294"
+    },
+    {
+      "path": "site/assets/logo.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f9c06e73cdfc537fc8c5f2eda52d29cd857a42b0",
+      "size": 10858,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/f9c06e73cdfc537fc8c5f2eda52d29cd857a42b0"
+    },
+    {
+      "path": "site/assets/style.css",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "639dd5a2bfecf6c34d6ec97a7f47446ecebef1d6",
+      "size": 29967,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/639dd5a2bfecf6c34d6ec97a7f47446ecebef1d6"
+    },
+    {
+      "path": "site/examples.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ce6676725cf9f35877407fab612f139397e4cc3f",
+      "size": 26078,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/ce6676725cf9f35877407fab612f139397e4cc3f"
+    },
+    {
+      "path": "site/guide.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "69c0bd93c9b46f8d8285ded6fab3181183345fbf",
+      "size": 16189,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/69c0bd93c9b46f8d8285ded6fab3181183345fbf"
+    },
+    {
+      "path": "site/index.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bf373f51d625a8b8d7cb4d15a19ee5c5058e9740",
+      "size": 18886,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/bf373f51d625a8b8d7cb4d15a19ee5c5058e9740"
+    },
+    {
+      "path": "site/presentation",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8d8742aa5c8cd056305c3b14d24d6fc60f64c750",
+      "url": "https://api.github.com/repos/somebox/bomi/git/trees/8d8742aa5c8cd056305c3b14d24d6fc60f64c750"
+    },
+    {
+      "path": "site/presentation/index.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d089cd0ed67921386b75de46796890562c032c3f",
+      "size": 23616,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/d089cd0ed67921386b75de46796890562c032c3f"
+    },
+    {
+      "path": "site/presentation/recordings",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "90b2bd073c9f3b5d3d413638b058dcdf6a2c8fd4",
+      "url": "https://api.github.com/repos/somebox/bomi/git/trees/90b2bd073c9f3b5d3d413638b058dcdf6a2c8fd4"
+    },
+    {
+      "path": "site/presentation/recordings/scene-agent-bom-review.cast",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ef4310589e6da2f74cf25769bab73a371f792a61",
+      "size": 9312,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/ef4310589e6da2f74cf25769bab73a371f792a61"
+    },
+    {
+      "path": "site/presentation/recordings/scene-artifacts-and-git.cast",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1cf15c060691d800352dd347a8a4235e4272b8a9",
+      "size": 3057,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/1cf15c060691d800352dd347a8a4235e4272b8a9"
+    },
+    {
+      "path": "site/presentation/recordings/scene-compare-switch-options.cast",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "91d8d86d2e326a2d544f4c3919ecef64548ae806",
+      "size": 3855,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/91d8d86d2e326a2d544f4c3919ecef64548ae806"
+    },
+    {
+      "path": "site/presentation/recordings/scene-example-categories-search.cast",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ad2e5e52d217cd6409c204f0f57c0fc33841b14f",
+      "size": 3561,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/ad2e5e52d217cd6409c204f0f57c0fc33841b14f"
+    },
+    {
+      "path": "site/presentation/recordings/scene-init-bomi.cast",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "98203183917e06d10a3958a1eb31624dcfa18653",
+      "size": 3192,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/98203183917e06d10a3958a1eb31624dcfa18653"
+    },
+    {
+      "path": "site/presentation/recordings/scene-inspect-driver.cast",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9c6b409f9461b4f698e4895d26ce33db42afae38",
+      "size": 3791,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/9c6b409f9461b4f698e4895d26ce33db42afae38"
+    },
+    {
+      "path": "site/presentation/recordings/scene-refine-validate.cast",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4307ef791d4304a42f362b91dc4e718b691ad711",
+      "size": 15093,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/4307ef791d4304a42f362b91dc4e718b691ad711"
+    },
+    {
+      "path": "site/presentation/recordings/scene-review-bom-status.cast",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5106d46552bf977e4983d3cffa5ddf46b2afd9d1",
+      "size": 2806,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/5106d46552bf977e4983d3cffa5ddf46b2afd9d1"
+    },
+    {
+      "path": "site/presentation/recordings/scene-search-core-parts.cast",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "810fbc985c03eb4c29472bae814aaa406e1cd46f",
+      "size": 3660,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/810fbc985c03eb4c29472bae814aaa406e1cd46f"
+    },
+    {
+      "path": "site/presentation/recordings/scene-search-supporting-parts.cast",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "26f8d4f13f580a7bed4bb31609c1b8a87c8ec135",
+      "size": 5101,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/26f8d4f13f580a7bed4bb31609c1b8a87c8ec135"
+    },
+    {
+      "path": "site/presentation/recordings/scene-select-bom-parts.cast",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "43a9e1611b38fe6f4524d0a88562e95a32089e3c",
+      "size": 6800,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/43a9e1611b38fe6f4524d0a88562e95a32089e3c"
+    },
+    {
+      "path": "site/presentation/recordings/scene-setup-project.cast",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "26f020af40e7e5720cd27ec9507a62fcbc0eab4e",
+      "size": 2849,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/26f020af40e7e5720cd27ec9507a62fcbc0eab4e"
+    },
+    {
+      "path": "site/vibe.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "472ef0cb84f349cf36a67ac5ac74dcc6476cea71",
+      "size": 13015,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/472ef0cb84f349cf36a67ac5ac74dcc6476cea71"
+    },
+    {
+      "path": "src",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "dedeb8266dc7a4a9fc00ace69c0c67de0c410b83",
+      "url": "https://api.github.com/repos/somebox/bomi/git/trees/dedeb8266dc7a4a9fc00ace69c0c67de0c410b83"
+    },
+    {
+      "path": "src/bomi",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d041418613106cfa5ad3920c096fbcd052512cd6",
+      "url": "https://api.github.com/repos/somebox/bomi/git/trees/d041418613106cfa5ad3920c096fbcd052512cd6"
+    },
+    {
+      "path": "src/bomi/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d4d0cbe5df39f84651ee6d4c84575ac5e4e06c3",
+      "size": 66,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/7d4d0cbe5df39f84651ee6d4c84575ac5e4e06c3"
+    },
+    {
+      "path": "src/bomi/analysis.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "604eabb6b19c8b8bff1f94de4af89336f2d62735",
+      "size": 16001,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/604eabb6b19c8b8bff1f94de4af89336f2d62735"
+    },
+    {
+      "path": "src/bomi/api.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c327c5f4ae58c86a9abcabb2b8cd5285afc0b911",
+      "size": 3521,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/c327c5f4ae58c86a9abcabb2b8cd5285afc0b911"
+    },
+    {
+      "path": "src/bomi/categories.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "39cb49a05bd51d9fcfd606fff83cd7ea15859692",
+      "size": 4120,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/39cb49a05bd51d9fcfd606fff83cd7ea15859692"
+    },
+    {
+      "path": "src/bomi/cli.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a7146583bb9fec7f2ab8247449f483498be8884f",
+      "size": 41156,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/a7146583bb9fec7f2ab8247449f483498be8884f"
+    },
+    {
+      "path": "src/bomi/config.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "18bc7c425d585cf48d55b76392f014c6aa00503a",
+      "size": 2454,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/18bc7c425d585cf48d55b76392f014c6aa00503a"
+    },
+    {
+      "path": "src/bomi/db.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3630a42b0e72888ddf9abd3bfc785ede62e57678",
+      "size": 17096,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/3630a42b0e72888ddf9abd3bfc785ede62e57678"
+    },
+    {
+      "path": "src/bomi/filters.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3bd52d976abdc2fe6f8e112446a1bec6dfcda38c",
+      "size": 4104,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/3bd52d976abdc2fe6f8e112446a1bec6dfcda38c"
+    },
+    {
+      "path": "src/bomi/kicad.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a78588b6cb55e547445f17653988ac65d98c0678",
+      "size": 11029,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/a78588b6cb55e547445f17653988ac65d98c0678"
+    },
+    {
+      "path": "src/bomi/models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "adee959b7c5fc763996ece842ef892eb328d5fb3",
+      "size": 1170,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/adee959b7c5fc763996ece842ef892eb328d5fb3"
+    },
+    {
+      "path": "src/bomi/normalize.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0f0b71029881fd21a109761ee4915feeefdbef61",
+      "size": 2553,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/0f0b71029881fd21a109761ee4915feeefdbef61"
+    },
+    {
+      "path": "src/bomi/output.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "33b719114a5f38c0805e35061efafd4334109888",
+      "size": 16939,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/33b719114a5f38c0805e35061efafd4334109888"
+    },
+    {
+      "path": "src/bomi/project.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d6af99fdfb5b0cdaf0a112ab75f1c7e5049fca05",
+      "size": 11631,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/d6af99fdfb5b0cdaf0a112ab75f1c7e5049fca05"
+    },
+    {
+      "path": "src/bomi/refs.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0257ead429519ee887af6c0215bfd6649bc4b59c",
+      "size": 3926,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/0257ead429519ee887af6c0215bfd6649bc4b59c"
+    },
+    {
+      "path": "src/bomi/scrape.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a9815ebf0e9f9c6d05a798d883f03a35690c796",
+      "size": 3099,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/2a9815ebf0e9f9c6d05a798d883f03a35690c796"
+    },
+    {
+      "path": "src/bomi/search.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6982835a4c21dea59ca070314998773ff3df456a",
+      "size": 1469,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/6982835a4c21dea59ca070314998773ff3df456a"
+    },
+    {
+      "path": "src/bomi/units.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b2a56bd0e31494eb1d73814b4f47fe510a0b1c32",
+      "size": 4180,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/b2a56bd0e31494eb1d73814b4f47fe510a0b1c32"
+    },
+    {
+      "path": "tests",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7a78e7e8e471a23337d9fb80f06c64552ab6b072",
+      "url": "https://api.github.com/repos/somebox/bomi/git/trees/7a78e7e8e471a23337d9fb80f06c64552ab6b072"
+    },
+    {
+      "path": "tests/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "tests/conftest.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9d239bec456a6a9245b75e6dc8a408ab666c3f74",
+      "size": 4352,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/9d239bec456a6a9245b75e6dc8a408ab666c3f74"
+    },
+    {
+      "path": "tests/fixtures",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "28216923d6c7ee721ffa71b9c7abd1d71c615318",
+      "url": "https://api.github.com/repos/somebox/bomi/git/trees/28216923d6c7ee721ffa71b9c7abd1d71c615318"
+    },
+    {
+      "path": "tests/fixtures/kicad",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6fd8229ecc592c9dcb9b71461ff25701dc5054c4",
+      "url": "https://api.github.com/repos/somebox/bomi/git/trees/6fd8229ecc592c9dcb9b71461ff25701dc5054c4"
+    },
+    {
+      "path": "tests/fixtures/kicad/bom_grouped.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b022c5f1e88bf3c2b319ae15e99c230500ef6581",
+      "size": 163,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/b022c5f1e88bf3c2b319ae15e99c230500ef6581"
+    },
+    {
+      "path": "tests/fixtures/kicad/bom_per_component.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c2627fe78e9480e76c08fe2a310c5033f493ebef",
+      "size": 1044,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/c2627fe78e9480e76c08fe2a310c5033f493ebef"
+    },
+    {
+      "path": "tests/fixtures/kicad/mini",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f4d7c1f29de2f3c73d388ca8093c35fda87e2c2e",
+      "url": "https://api.github.com/repos/somebox/bomi/git/trees/f4d7c1f29de2f3c73d388ca8093c35fda87e2c2e"
+    },
+    {
+      "path": "tests/fixtures/kicad/mini/mini.kicad_pro",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3f2dd71abdf335fb1d544fe27f16f79ce4c187f4",
+      "size": 71,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/3f2dd71abdf335fb1d544fe27f16f79ce4c187f4"
+    },
+    {
+      "path": "tests/fixtures/kicad/mini/mini.kicad_sch",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f2e70d23fcb44b8877565c5d106f8f72abfeef1e",
+      "size": 8767,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/f2e70d23fcb44b8877565c5d106f8f72abfeef1e"
+    },
+    {
+      "path": "tests/test_analysis.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f2d4d0006d21256f6cda6bf9e879340ea2166241",
+      "size": 8960,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/f2d4d0006d21256f6cda6bf9e879340ea2166241"
+    },
+    {
+      "path": "tests/test_api.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5778a44ff354c027dabb402e13911569bc5c9c1b",
+      "size": 1413,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/5778a44ff354c027dabb402e13911569bc5c9c1b"
+    },
+    {
+      "path": "tests/test_categories.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c101aae63d6627ce678c497a0f2f0779a4b241a4",
+      "size": 2243,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/c101aae63d6627ce678c497a0f2f0779a4b241a4"
+    },
+    {
+      "path": "tests/test_cli.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f410165e4da64c1b3b053044be19395c04d18851",
+      "size": 31765,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/f410165e4da64c1b3b053044be19395c04d18851"
+    },
+    {
+      "path": "tests/test_config.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b81ab18eeaa686027dbb6667cd9cd764f536f306",
+      "size": 3944,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/b81ab18eeaa686027dbb6667cd9cd764f536f306"
+    },
+    {
+      "path": "tests/test_db.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "735c7d79d8c87c4c980dc90642221ff3a416f0c1",
+      "size": 11373,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/735c7d79d8c87c4c980dc90642221ff3a416f0c1"
+    },
+    {
+      "path": "tests/test_filters.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "32cee68973339b60b2767a3a786390ed30b461cc",
+      "size": 2743,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/32cee68973339b60b2767a3a786390ed30b461cc"
+    },
+    {
+      "path": "tests/test_kicad.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e3c4a681e1188a5b826dd39618fbde099c9e593b",
+      "size": 10032,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/e3c4a681e1188a5b826dd39618fbde099c9e593b"
+    },
+    {
+      "path": "tests/test_models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "017b15f0c7e17c713f43841d3d8c8f36a10184fc",
+      "size": 6458,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/017b15f0c7e17c713f43841d3d8c8f36a10184fc"
+    },
+    {
+      "path": "tests/test_normalize.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2d0d9750eb0d928a58523ccefb882142468afd95",
+      "size": 3565,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/2d0d9750eb0d928a58523ccefb882142468afd95"
+    },
+    {
+      "path": "tests/test_output_bom.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4b73c03071bd10a46316abcd7e9234374bd6dc9f",
+      "size": 2417,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/4b73c03071bd10a46316abcd7e9234374bd6dc9f"
+    },
+    {
+      "path": "tests/test_project.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "26bab1124740feb24c1498c42449593744ef14d6",
+      "size": 8699,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/26bab1124740feb24c1498c42449593744ef14d6"
+    },
+    {
+      "path": "tests/test_refs.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ec706a3cce1cbd95ddbb4075fa1ad58ada8cc019",
+      "size": 1122,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/ec706a3cce1cbd95ddbb4075fa1ad58ada8cc019"
+    },
+    {
+      "path": "tests/test_scrape.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eba43e8b786ad8665e561a9bc034b97a5f589cae",
+      "size": 2899,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/eba43e8b786ad8665e561a9bc034b97a5f589cae"
+    },
+    {
+      "path": "tests/test_search.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ee26911e56bc83644594bb8f3f3deeb9143e4cbe",
+      "size": 4781,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/ee26911e56bc83644594bb8f3f3deeb9143e4cbe"
+    },
+    {
+      "path": "tests/test_units.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e73a105fab91dfe29f9d9a4a3f8ba08d953c5ad8",
+      "size": 5438,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/e73a105fab91dfe29f9d9a4a3f8ba08d953c5ad8"
+    },
+    {
+      "path": "uv.lock",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d9e2c4c8c65bc619f8791036e8a9ecfe102531c",
+      "size": 66762,
+      "url": "https://api.github.com/repos/somebox/bomi/git/blobs/7d9e2c4c8c65bc619f8791036e8a9ecfe102531c"
+    }
+  ],
+  "truncated": false
+}

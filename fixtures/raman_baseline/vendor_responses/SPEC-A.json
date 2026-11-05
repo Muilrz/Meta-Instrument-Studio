@@ -1,0 +1,22 @@
+{
+  "_note": "合成的模拟厂商响应，用于 MIS 基准任务包测试；null 表示厂商未提供该字段",
+  "part_id": "SPEC-A",
+  "vendor": "Vendor Beta Spectral（虚构）",
+  "currency": "USD",
+  "price_tiers": [
+    {
+      "min_qty": 1,
+      "unit_price": 4200
+    },
+    {
+      "min_qty": 5,
+      "unit_price": 3900
+    }
+  ],
+  "stock": 2,
+  "lead_time_days": 28,
+  "quote_valid_until": "2026-12-31",
+  "region": "US",
+  "tax_included": true,
+  "retrieved_at": "2026-11-02T09:00:00+08:00"
+}

@@ -1,0 +1,194 @@
+# Raman 基准任务的标准答案检查点。
+#
+# 每个检查点说明：系统在处理这个任务包时必须得出什么结论，以及依据在哪里。
+# - expected: include（应入选/应找到）| exclude（必须排除）| unknown（必须标为未知/待确认）| mention（方案中必须提到）
+# - evidence: 依据所在文件（相对本目录）和其中必须出现的原文片段
+# - check: 可选。可由代码复算的数值依据，tests/test_raman_baseline.py 会验证它与 expected 一致
+
+- id: CP01
+  type: must_find
+  requirement: R01
+  summary: 选择 785 nm 激发的依据是降低生物样品荧光背景，内部复盘和文献都能支持
+  expected: mention
+  evidence:
+    - file: lab_docs/lab_doc_01_prototype_review.md
+      quote: 下一代应改用 785 nm 激发
+    - file: papers/paper_01_excitation_fluorescence.md
+      quote: 785 nm 激发的荧光背景比 532 nm 低约一个数量级
+
+- id: CP02
+  type: must_find
+  requirement: R08
+  part: LAS-A
+  summary: LAS-A 线宽 0.08 nm，满足 ≤ 0.1 nm
+  expected: include
+  evidence:
+    - file: component_pages/LAS-A.md
+      quote: 0.08 nm
+  check:
+    kind: unit_compare
+    value: 0.08
+    unit: nm
+    op: le
+    threshold: 0.1
+    threshold_unit: nm
+
+- id: CP03
+  type: unit_trap
+  requirement: R04
+  part: LAS-B
+  summary: LAS-B 功率标为 0.35 W，换算为 350 mW，低于 450 mW，必须排除
+  expected: exclude
+  evidence:
+    - file: component_pages/LAS-B.md
+      quote: 0.35 W
+  check:
+    kind: unit_compare
+    value: 0.35
+    unit: W
+    op: ge
+    threshold: 450
+    threshold_unit: mW
+
+- id: CP04
+  type: must_exclude
+  requirement: R08
+  part: LAS-C
+  summary: LAS-C 是多模激光器，线宽 2 nm，远超 0.1 nm，必须排除
+  expected: exclude
+  evidence:
+    - file: component_pages/LAS-C.md
+      quote: 2 nm（多模）
+  check:
+    kind: unit_compare
+    value: 2
+    unit: nm
+    op: le
+    threshold: 0.1
+    threshold_unit: nm
+
+- id: CP05
+  type: unit_trap
+  requirement: R03
+  part: SPEC-B
+  summary: SPEC-B 分辨率标为 0.6 nm；在 200 cm⁻¹ 处换算约 9.4 cm⁻¹，超过 8 cm⁻¹，必须排除
+  expected: exclude
+  evidence:
+    - file: component_pages/SPEC-B.md
+      quote: 0.6 nm（FWHM）
+    - file: papers/paper_02_resolution_polymorph.md
+      quote: 应在测量范围的短波端检查最差值
+  check:
+    kind: raman_resolution
+    excitation_nm: 785
+    resolution_nm: 0.6
+    shift_range_cm1: [200, 2000]
+    threshold_cm1: 8
+    worst_cm1_approx: 9.43
+
+- id: CP06
+  type: unit_trap
+  requirement: R02
+  part: SPEC-A
+  summary: SPEC-A 波长范围 790–1000 nm，按 785 nm 激发换算为约 81–2739 cm⁻¹，覆盖 200–2000 cm⁻¹
+  expected: include
+  evidence:
+    - file: component_pages/SPEC-A.md
+      quote: 790–1000 nm
+  check:
+    kind: raman_coverage
+    excitation_nm: 785
+    wavelength_range_nm: [790, 1000]
+    required_shift_cm1: [200, 2000]
+
+- id: CP07
+  type: must_unknown
+  requirement: R07
+  part: SPEC-C
+  summary: SPEC-C 页面没有写探测器制冷温度，必须标为未知/待确认，不能推断为满足
+  expected: unknown
+  evidence:
+    - file: component_pages/SPEC-C.md
+      quote: 更多参数请联系销售
+
+- id: CP08
+  type: must_unknown
+  requirement: R05
+  part: SPEC-C
+  summary: SPEC-C 没有给出信噪比，必须标为未知；不能因为上一代产品实测 650:1 就认为第二代满足
+  expected: unknown
+  evidence:
+    - file: component_pages/SPEC-C.md
+      quote: 全新第二代产品
+    - file: lab_docs/lab_doc_01_prototype_review.md
+      quote: 上一代光谱仪
+
+- id: CP09
+  type: must_unknown
+  part: SPEC-C
+  summary: SPEC-C 的报价缺少库存和交期，按采购规定须向厂商补齐，不能当作现货
+  expected: unknown
+  evidence:
+    - file: vendor_responses/SPEC-C.json
+      quote: '"lead_time_days": null'
+    - file: lab_docs/lab_doc_02_procurement_rules.md
+      quote: 须向厂商补齐
+
+- id: CP10
+  type: budget
+  requirement: R11
+  part: SPEC-D
+  summary: SPEC-D 单价 9,800 USD，按固定汇率约 69,580 CNY，单件已超 60,000 CNY 预算，必须排除
+  expected: exclude
+  evidence:
+    - file: vendor_responses/SPEC-D.json
+      quote: '"unit_price": 9800'
+  check:
+    kind: budget
+    items:
+      - {part: SPEC-D, price: 9800, currency: USD}
+    limit_cny: 60000
+    total_cny: 69580
+
+- id: CP11
+  type: budget
+  requirement: R11
+  summary: 推荐组合 LAS-A + SPEC-A + PRB-A 合计 55,320 CNY，在预算内
+  expected: include
+  evidence:
+    - file: vendor_responses/LAS-A.json
+      quote: '"unit_price": 18000'
+    - file: vendor_responses/SPEC-A.json
+      quote: '"unit_price": 4200'
+    - file: vendor_responses/PRB-A.json
+      quote: '"unit_price": 7500'
+  check:
+    kind: budget
+    items:
+      - {part: LAS-A, price: 18000, currency: CNY}
+      - {part: SPEC-A, price: 4200, currency: USD}
+      - {part: PRB-A, price: 7500, currency: CNY}
+    limit_cny: 60000
+    total_cny: 55320
+
+- id: CP12
+  type: lab_knowledge
+  part: PRB-A
+  summary: 实验室库存中有 1 支未使用的 PRB-A 探头，方案应提出复用（复用后合计 47,820 CNY）
+  expected: mention
+  evidence:
+    - file: lab_docs/lab_doc_01_prototype_review.md
+      quote: 1 支 PRB-A 785 nm 拉曼探头
+    - file: lab_docs/lab_doc_02_procurement_rules.md
+      quote: 实验室已有库存的器件应优先复用
+
+- id: CP13
+  type: must_find
+  requirement: R05
+  summary: R05 的验收方法应引用实验室 SNR SOP；厂商在不同条件下给出的信噪比（如 SPEC-B 的“满量程信号”）不能直接用于判定
+  expected: mention
+  evidence:
+    - file: lab_docs/lab_doc_03_snr_sop.md
+      quote: 不能直接用来判定
+    - file: component_pages/SPEC-B.md
+      quote: 1000:1（满量程信号）

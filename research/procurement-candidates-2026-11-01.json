@@ -1,0 +1,77 @@
+[
+  {
+    "repo": "KagaribiDev/procurepilot",
+    "branch": "main",
+    "archived": false,
+    "pushed_at_utc": "2026-08-28T08:40:16Z",
+    "license": "MIT",
+    "sha": "012b51ed6c1e9f80133a4add5ec170b817b9465e",
+    "url": "https://github.com/KagaribiDev/procurepilot",
+    "paths": [
+      "LICENSE",
+      "src/agent/core/schema.py",
+      "src/agent/graphs/main_agent.py",
+      "src/skills/procurement/web-content-fetcher/fetch_content.py",
+      "src/skills/procurement/web-scraper/scrape_page.py"
+    ]
+  },
+  {
+    "repo": "danielrosehill/procurement-tools-plugin",
+    "branch": "master",
+    "archived": false,
+    "pushed_at_utc": "2026-10-21T20:16:37Z",
+    "license": null,
+    "sha": "81a163f1e05205e1152add2be69094ca06216208",
+    "url": "https://github.com/danielrosehill/procurement-tools-plugin",
+    "paths": [
+      "schema/bom.schema.json",
+      "schema/conformance.schema.json",
+      "schema/datasheet.schema.json",
+      "schema/equivalence.schema.json",
+      "schema/spec.schema.json",
+      "schema/workspace.schema.json"
+    ]
+  },
+  {
+    "repo": "pandysp/PCBS-BOM-AI-Agent",
+    "branch": "main",
+    "archived": false,
+    "pushed_at_utc": "2025-06-25T18:21:13Z",
+    "license": "MIT",
+    "sha": "1e1f33ad79652037bb929c8d09a19a4103d1b059",
+    "url": "https://github.com/pandysp/PCBS-BOM-AI-Agent",
+    "paths": [
+      "LICENSE.md",
+      "backend/app/bom/schemas.py"
+    ]
+  },
+  {
+    "repo": "somebox/bomi",
+    "branch": "master",
+    "archived": false,
+    "pushed_at_utc": "2026-09-30T15:15:12Z",
+    "license": "MIT",
+    "sha": "f95b66e4b373bbf0b0a8b62f0aa479c182473b38",
+    "url": "https://github.com/somebox/bomi",
+    "paths": [
+      "LICENSE",
+      "src/bomi/__init__.py",
+      "src/bomi/analysis.py",
+      "src/bomi/api.py",
+      "src/bomi/categories.py",
+      "src/bomi/cli.py",
+      "src/bomi/config.py",
+      "src/bomi/db.py",
+      "src/bomi/filters.py",
+      "src/bomi/kicad.py",
+      "src/bomi/models.py",
+      "src/bomi/normalize.py",
+      "src/bomi/output.py",
+      "src/bomi/project.py",
+      "src/bomi/refs.py",
+      "src/bomi/scrape.py",
+      "src/bomi/search.py",
+      "src/bomi/units.py"
+    ]
+  }
+]

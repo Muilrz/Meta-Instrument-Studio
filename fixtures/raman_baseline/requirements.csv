@@ -1,0 +1,12 @@
+id,名称,指标键,比较方式,下限,上限,单位,优先级,验收方法
+R01,激发波长,laser.center_wavelength,range,784.5,785.5,nm,must,用光谱仪测量激光谱线中心波长
+R02,拉曼位移覆盖范围,spectrometer.raman_shift_coverage,covers,200,2000,cm^-1,must,按 785 nm 激发换算光谱仪波长范围，须完整覆盖 200–2000 cm^-1
+R03,光谱分辨率,spectrometer.resolution,max,,8,cm^-1,must,在 R02 全范围内的最差分辨率（FWHM）
+R04,激光最大输出功率,laser.max_power,min,450,,mW,must,功率计测量激光出口功率
+R05,信噪比,system.snr_cyclohexane_802,min,500,,ratio,must,按 lab_docs/lab_doc_03_snr_sop.md 测试：环己烷 802 cm^-1 峰、积分 1 s
+R06,积分时间范围,spectrometer.integration_time,covers,10,10000,ms,must,软件可设置的积分时间须覆盖 10 ms–10 s
+R07,探测器制冷温度,spectrometer.detector_temperature,max,,-10,degC,should,厂商规格或实测；需 TE 制冷
+R08,激光线宽,laser.linewidth,max,,0.1,nm,must,厂商规格（FWHM）
+R09,光纤接口,optics.fiber_connector,enum,SMA905|FC/PC,,,must,激光、探头、光谱仪三者接口一致
+R10,软件开发接口,software.sdk,enum,Windows+C|Windows+Python,,,must,提供 Windows 下的 C 或 Python SDK
+R11,BOM 总预算,project.bom_total,max,,60000,CNY,must,激光器 + 光谱仪 + 探头的单件含税价合计；外币按 manifest 中的固定汇率换算

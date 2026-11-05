@@ -1,0 +1,789 @@
+{
+  "sha": "1e1f33ad79652037bb929c8d09a19a4103d1b059",
+  "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/trees/1e1f33ad79652037bb929c8d09a19a4103d1b059",
+  "tree": [
+    {
+      "path": ".gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d6c96da62caf014a6974521184c9f31f900ad528",
+      "size": 84,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/d6c96da62caf014a6974521184c9f31f900ad528"
+    },
+    {
+      "path": ".vscode",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ac09a4ce5cc3ed7f548c7a2f331bc19708478128",
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/trees/ac09a4ce5cc3ed7f548c7a2f331bc19708478128"
+    },
+    {
+      "path": ".vscode/settings.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3b219918d13bc8168ee83962829237aa08918359",
+      "size": 132,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/3b219918d13bc8168ee83962829237aa08918359"
+    },
+    {
+      "path": "Bosch_Hackathon_Test.ipynb",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aefc4985e6cba50f2bc8e0499ae95b1e5e1e7ca5",
+      "size": 203395,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/aefc4985e6cba50f2bc8e0499ae95b1e5e1e7ca5"
+    },
+    {
+      "path": "LICENSE.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3a5ae6048c1cf7d265f2984015bcfe06093d236b",
+      "size": 1079,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/3a5ae6048c1cf7d265f2984015bcfe06093d236b"
+    },
+    {
+      "path": "Makefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d3f47f3d7aa5c244aada594e9eb94b2bc824fe41",
+      "size": 2113,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/d3f47f3d7aa5c244aada594e9eb94b2bc824fe41"
+    },
+    {
+      "path": "README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3bb07fcb3dd84ed994434424009968f5abe7664f",
+      "size": 5882,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/3bb07fcb3dd84ed994434424009968f5abe7664f"
+    },
+    {
+      "path": "Team Snapzo _ Pitch Deck.pdf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "55f210b42838af699c1f1dd45e7946cc621b3604",
+      "size": 2798268,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/55f210b42838af699c1f1dd45e7946cc621b3604"
+    },
+    {
+      "path": "backend",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "39bd0fcd0d48c6265d69b9482fd3ad0b06c78292",
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/trees/39bd0fcd0d48c6265d69b9482fd3ad0b06c78292"
+    },
+    {
+      "path": "backend/.env.example",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6d3042ef62086ddbdefdab1a4c5c9764f3fcaaa5",
+      "size": 30,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/6d3042ef62086ddbdefdab1a4c5c9764f3fcaaa5"
+    },
+    {
+      "path": "backend/.gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "74d8543b09a77cdb0e951aab6705725a061a43c2",
+      "size": 49,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/74d8543b09a77cdb0e951aab6705725a061a43c2"
+    },
+    {
+      "path": "backend/Dockerfile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ae3cf7f96b575645fcfda51cba5d4b0785d81bd1",
+      "size": 1296,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/ae3cf7f96b575645fcfda51cba5d4b0785d81bd1"
+    },
+    {
+      "path": "backend/app",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "18d103e87094dac47634be4b75c57d6ce83bac19",
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/trees/18d103e87094dac47634be4b75c57d6ce83bac19"
+    },
+    {
+      "path": "backend/app/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "backend/app/bom",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "07b2541ec7bbb789f95a03abd30940bdd3412025",
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/trees/07b2541ec7bbb789f95a03abd30940bdd3412025"
+    },
+    {
+      "path": "backend/app/bom/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "backend/app/bom/logic.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d655af6ea37410622f1a468e2b18b7d74eda5cdc",
+      "size": 15136,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/d655af6ea37410622f1a468e2b18b7d74eda5cdc"
+    },
+    {
+      "path": "backend/app/bom/octopart_client.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d033e7600d39614f7e2ebdcc6ef297f86d969151",
+      "size": 5216,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/d033e7600d39614f7e2ebdcc6ef297f86d969151"
+    },
+    {
+      "path": "backend/app/bom/router.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fd11623b22b45e7f30d141195a49e21d05d39d48",
+      "size": 2160,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/fd11623b22b45e7f30d141195a49e21d05d39d48"
+    },
+    {
+      "path": "backend/app/bom/schemas.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e43a12e1c1cecc5cdceccea899efed78f01cb6fb",
+      "size": 2934,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/e43a12e1c1cecc5cdceccea899efed78f01cb6fb"
+    },
+    {
+      "path": "backend/app/llm.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "95b3c20f331f5f9302a73577f78e30e508f33e01",
+      "size": 231,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/95b3c20f331f5f9302a73577f78e30e508f33e01"
+    },
+    {
+      "path": "backend/app/main.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9e9124e29347988825d6af370eed69526ce13dcf",
+      "size": 8936,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/9e9124e29347988825d6af370eed69526ce13dcf"
+    },
+    {
+      "path": "backend/app/utils",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c70b08c2a8efc25db3087f4924390954d6431832",
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/trees/c70b08c2a8efc25db3087f4924390954d6431832"
+    },
+    {
+      "path": "backend/app/utils/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "backend/app/utils/prompt.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d922718d146c50ea73b566f20a013e2697f3805c",
+      "size": 3801,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/d922718d146c50ea73b566f20a013e2697f3805c"
+    },
+    {
+      "path": "backend/dockerignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1124aaa82b431b4dcfe6dcff046522c2530b96d5",
+      "size": 76,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/1124aaa82b431b4dcfe6dcff046522c2530b96d5"
+    },
+    {
+      "path": "backend/pyproject.toml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "05d04a9494b104cf513d9a7cd58e1b0c19c53b8a",
+      "size": 323,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/05d04a9494b104cf513d9a7cd58e1b0c19c53b8a"
+    },
+    {
+      "path": "backend/uv.lock",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0b74a76c4c71b847cf065ef626aff81485319199",
+      "size": 204666,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/0b74a76c4c71b847cf065ef626aff81485319199"
+    },
+    {
+      "path": "data",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "12c8245674dfce7ecbbf7e97a070235b358f7263",
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/trees/12c8245674dfce7ecbbf7e97a070235b358f7263"
+    },
+    {
+      "path": "data/boms",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "2e555ed0958117d80e7d40a654d33466185c0d43",
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/trees/2e555ed0958117d80e7d40a654d33466185c0d43"
+    },
+    {
+      "path": "data/boms/bom1.xlsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3d1b2a1b5e20165758176596b840419bc850d1ad",
+      "size": 13658,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/3d1b2a1b5e20165758176596b840419bc850d1ad"
+    },
+    {
+      "path": "data/boms/bom2.xls",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6c11b60a496d85bd5adecace7de175bc5dcc8190",
+      "size": 38912,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/6c11b60a496d85bd5adecace7de175bc5dcc8190"
+    },
+    {
+      "path": "data/boms/bom3.xlsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f0ba0d46ff8c16f8bbc9326986a82c4e2acd9761",
+      "size": 27558,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/f0ba0d46ff8c16f8bbc9326986a82c4e2acd9761"
+    },
+    {
+      "path": "data/boms/bom4.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "926dc4786c174d9dab64f51e6356c2708c72f1b4",
+      "size": 227,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/926dc4786c174d9dab64f51e6356c2708c72f1b4"
+    },
+    {
+      "path": "data/boms/bom5.xlsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "973d8a7da9802ef79df180fcd632ee068475bfd7",
+      "size": 22115,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/973d8a7da9802ef79df180fcd632ee068475bfd7"
+    },
+    {
+      "path": "data/boms/bom6.xlsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e19be3a92a27b19186830dbf4789a6d6692dd4c3",
+      "size": 27052,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/e19be3a92a27b19186830dbf4789a6d6692dd4c3"
+    },
+    {
+      "path": "data/boms/bom7.xlsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "20e020dfac92bb727822ffec8475b7ca3a29fc45",
+      "size": 24231,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/20e020dfac92bb727822ffec8475b7ca3a29fc45"
+    },
+    {
+      "path": "data/boms/bom8.xlsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d4b4caab5c090f97293b78042d915e786523cc6d",
+      "size": 18313,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/d4b4caab5c090f97293b78042d915e786523cc6d"
+    },
+    {
+      "path": "docker-compose.override.yml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "da7760b1573ba378de00d6ff2152af5b2c293020",
+      "size": 385,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/da7760b1573ba378de00d6ff2152af5b2c293020"
+    },
+    {
+      "path": "docker-compose.yml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "52a0991c5a724dd318e664d2b4a81dc42cf9eeb4",
+      "size": 2169,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/52a0991c5a724dd318e664d2b4a81dc42cf9eeb4"
+    },
+    {
+      "path": "frontend",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f3543870d4d95e1fe24ce5f126dc764aaaf28bbd",
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/trees/f3543870d4d95e1fe24ce5f126dc764aaaf28bbd"
+    },
+    {
+      "path": "frontend/.dockerignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6e53abde510b8cfe51e907161f80db95467d79f0",
+      "size": 39,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/6e53abde510b8cfe51e907161f80db95467d79f0"
+    },
+    {
+      "path": "frontend/.gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5ef6a520780202a1d6addd833d800ccb1ecac0bb",
+      "size": 480,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/5ef6a520780202a1d6addd833d800ccb1ecac0bb"
+    },
+    {
+      "path": "frontend/Dockerfile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "97a327710b6c7881b0034f0892c3464f847e29d9",
+      "size": 974,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/97a327710b6c7881b0034f0892c3464f847e29d9"
+    },
+    {
+      "path": "frontend/components.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4f36604241c969e8b26ca1423decca2021afbba6",
+      "size": 427,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/4f36604241c969e8b26ca1423decca2021afbba6"
+    },
+    {
+      "path": "frontend/eslint.config.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c85fb67c463f20d1ee449b0ffee725a61dfb9259",
+      "size": 393,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/c85fb67c463f20d1ee449b0ffee725a61dfb9259"
+    },
+    {
+      "path": "frontend/next.config.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7ef532bde9d6906c7d106fb0d1982c38e6877ceb",
+      "size": 525,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/7ef532bde9d6906c7d106fb0d1982c38e6877ceb"
+    },
+    {
+      "path": "frontend/package.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7aee67e711fb0120f0aef9cabe8402f2a684465d",
+      "size": 1459,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/7aee67e711fb0120f0aef9cabe8402f2a684465d"
+    },
+    {
+      "path": "frontend/pnpm-lock.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "db625bf051e2948e902c19ac1392b23448949601",
+      "size": 195631,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/db625bf051e2948e902c19ac1392b23448949601"
+    },
+    {
+      "path": "frontend/postcss.config.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c7bcb4b1ee14cd5e25078c2c934529afdd2a7df9",
+      "size": 81,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/c7bcb4b1ee14cd5e25078c2c934529afdd2a7df9"
+    },
+    {
+      "path": "frontend/public",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c88f389de09f418da376598c42e8788d4fb6d172",
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/trees/c88f389de09f418da376598c42e8788d4fb6d172"
+    },
+    {
+      "path": "frontend/public/file.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "004145cddf3f9db91b57b9cb596683c8eb420862",
+      "size": 391,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/004145cddf3f9db91b57b9cb596683c8eb420862"
+    },
+    {
+      "path": "frontend/public/globe.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "567f17b0d7c7fb662c16d4357dd74830caf2dccb",
+      "size": 1035,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/567f17b0d7c7fb662c16d4357dd74830caf2dccb"
+    },
+    {
+      "path": "frontend/public/next.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5174b28c565c285e3e312ec5178be64fbeca8398",
+      "size": 1375,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/5174b28c565c285e3e312ec5178be64fbeca8398"
+    },
+    {
+      "path": "frontend/public/vercel.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "77053960334e2e34dc584dea8019925c3b4ccca9",
+      "size": 128,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/77053960334e2e34dc584dea8019925c3b4ccca9"
+    },
+    {
+      "path": "frontend/public/window.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b2b2a44f6ebc70c450043c05a002e7a93ba5d651",
+      "size": 385,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/b2b2a44f6ebc70c450043c05a002e7a93ba5d651"
+    },
+    {
+      "path": "frontend/src",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6f9b62d2706aa6939431d6033e2f957dde5883c1",
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/trees/6f9b62d2706aa6939431d6033e2f957dde5883c1"
+    },
+    {
+      "path": "frontend/src/app",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7c746ee2a5b63fc3ca16f304a001b03257316f63",
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/trees/7c746ee2a5b63fc3ca16f304a001b03257316f63"
+    },
+    {
+      "path": "frontend/src/app/(chat)",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1e84e2e5bc2cf06cf0ad9c7f59fddbca208bdcff",
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/trees/1e84e2e5bc2cf06cf0ad9c7f59fddbca208bdcff"
+    },
+    {
+      "path": "frontend/src/app/(chat)/page.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "744f13161362e3f31da5354d8abb5ddd9352042f",
+      "size": 97,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/744f13161362e3f31da5354d8abb5ddd9352042f"
+    },
+    {
+      "path": "frontend/src/app/favicon.ico",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "718d6fea4835ec2d246af9800eddb7ffb276240c",
+      "size": 25931,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/718d6fea4835ec2d246af9800eddb7ffb276240c"
+    },
+    {
+      "path": "frontend/src/app/globals.css",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "43d96b8fb593415f0c0536446aecb13a33a359d7",
+      "size": 4780,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/43d96b8fb593415f0c0536446aecb13a33a359d7"
+    },
+    {
+      "path": "frontend/src/app/icons.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ccfcdf68752cba9f0230c7ee2dd32a86e9285a12",
+      "size": 6611,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/ccfcdf68752cba9f0230c7ee2dd32a86e9285a12"
+    },
+    {
+      "path": "frontend/src/app/layout.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "36f9caa90a7fcdf9c36dd1fe71aaa2a2931e42bf",
+      "size": 1034,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/36f9caa90a7fcdf9c36dd1fe71aaa2a2931e42bf"
+    },
+    {
+      "path": "frontend/src/app/og",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ad8daeef36e88b339e461eeb5bfab5de90d8ebc9",
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/trees/ad8daeef36e88b339e461eeb5bfab5de90d8ebc9"
+    },
+    {
+      "path": "frontend/src/app/og/background.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3442c30afcfbd9ca88b0c4f8e1c4c296720714b0",
+      "size": 14390,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/3442c30afcfbd9ca88b0c4f8e1c4c296720714b0"
+    },
+    {
+      "path": "frontend/src/app/og/route.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "735ecf1c37224793ca4397761fc085529ae12072",
+      "size": 1740,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/735ecf1c37224793ca4397761fc085529ae12072"
+    },
+    {
+      "path": "frontend/src/assets",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d944a414e911b7acb86e88dbac42b2ab06264933",
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/trees/d944a414e911b7acb86e88dbac42b2ab06264933"
+    },
+    {
+      "path": "frontend/src/assets/geist-semibold.ttf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5732da7a6c05e2da6cb372a36835f9d28814c323",
+      "size": 105492,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/5732da7a6c05e2da6cb372a36835f9d28814c323"
+    },
+    {
+      "path": "frontend/src/assets/geist.ttf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a4fcf1daadaf40457a75b1742e1557fd44ca1d8c",
+      "size": 124544,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/a4fcf1daadaf40457a75b1742e1557fd44ca1d8c"
+    },
+    {
+      "path": "frontend/src/components",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "bca6cbb881f9c3ef6ec7ad49fe4a6cc0d262cb4c",
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/trees/bca6cbb881f9c3ef6ec7ad49fe4a6cc0d262cb4c"
+    },
+    {
+      "path": "frontend/src/components/bom-display.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4a732243a56f46b29f6ac948b1fbfb03c6496942",
+      "size": 863,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/4a732243a56f46b29f6ac948b1fbfb03c6496942"
+    },
+    {
+      "path": "frontend/src/components/bom-questionnaire.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "189ee4f05ca4c4ca60e47827fc99c64ee17ea77e",
+      "size": 2083,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/189ee4f05ca4c4ca60e47827fc99c64ee17ea77e"
+    },
+    {
+      "path": "frontend/src/components/bom-results-columns.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c8af8cb64c830dab4f762aa8cc7909a3fd14573a",
+      "size": 2450,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/c8af8cb64c830dab4f762aa8cc7909a3fd14573a"
+    },
+    {
+      "path": "frontend/src/components/chat.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e06420528d2372ea171b47d9054d2774f68db8cd",
+      "size": 6976,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/e06420528d2372ea171b47d9054d2774f68db8cd"
+    },
+    {
+      "path": "frontend/src/components/data-table.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4e777f284ce06807d3743134035a17872bd0706e",
+      "size": 3799,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/4e777f284ce06807d3743134035a17872bd0706e"
+    },
+    {
+      "path": "frontend/src/components/icons.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "691eb1cc6d83fa1f273d4cf43d7ca19303c81606",
+      "size": 38161,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/691eb1cc6d83fa1f273d4cf43d7ca19303c81606"
+    },
+    {
+      "path": "frontend/src/components/markdown.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cebceadc3568d3e4db57fc4c8f1777a8c5724a09",
+      "size": 4173,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/cebceadc3568d3e4db57fc4c8f1777a8c5724a09"
+    },
+    {
+      "path": "frontend/src/components/message.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fa4878299267f75447615c6bb530812e8cebe4a0",
+      "size": 3982,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/fa4878299267f75447615c6bb530812e8cebe4a0"
+    },
+    {
+      "path": "frontend/src/components/multimodal-input.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eab3728151f45c2cdd6a5143d1c17684d13b8f11",
+      "size": 8871,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/eab3728151f45c2cdd6a5143d1c17684d13b8f11"
+    },
+    {
+      "path": "frontend/src/components/navbar.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "555f8736b56c82e9a3662685cf8bc1147d8e6c8c",
+      "size": 122,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/555f8736b56c82e9a3662685cf8bc1147d8e6c8c"
+    },
+    {
+      "path": "frontend/src/components/overview.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "12cc9404ca011d1c991ec168077cea763fe8ab6b",
+      "size": 728,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/12cc9404ca011d1c991ec168077cea763fe8ab6b"
+    },
+    {
+      "path": "frontend/src/components/preview-attachment.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "26bca196bda3dfcdbcad41152f972921652e8f68",
+      "size": 1197,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/26bca196bda3dfcdbcad41152f972921652e8f68"
+    },
+    {
+      "path": "frontend/src/components/ui",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "56391862532a77f5b46101f0cb8d0ea72851c8dd",
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/trees/56391862532a77f5b46101f0cb8d0ea72851c8dd"
+    },
+    {
+      "path": "frontend/src/components/ui/badge.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "02054139a9a72f2ce2c4defd14861b4129312950",
+      "size": 1631,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/02054139a9a72f2ce2c4defd14861b4129312950"
+    },
+    {
+      "path": "frontend/src/components/ui/button.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a2df8dce675fed0712d021fa45245289ecd26c88",
+      "size": 2123,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/a2df8dce675fed0712d021fa45245289ecd26c88"
+    },
+    {
+      "path": "frontend/src/components/ui/card.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d05bbc6c74cd8dbc699562cef917bb4267865aed",
+      "size": 1989,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/d05bbc6c74cd8dbc699562cef917bb4267865aed"
+    },
+    {
+      "path": "frontend/src/components/ui/checkbox.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fa0e4b59fa859bf5bdf1f3f4d24f1e71926f481f",
+      "size": 1226,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/fa0e4b59fa859bf5bdf1f3f4d24f1e71926f481f"
+    },
+    {
+      "path": "frontend/src/components/ui/dropdown-menu.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ec51e9cc9f824a0b067d4a66a37caa63bbdce5f5",
+      "size": 8284,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/ec51e9cc9f824a0b067d4a66a37caa63bbdce5f5"
+    },
+    {
+      "path": "frontend/src/components/ui/input.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "03295ca6ac617de95b78b09e5e3a6de897a204f0",
+      "size": 967,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/03295ca6ac617de95b78b09e5e3a6de897a204f0"
+    },
+    {
+      "path": "frontend/src/components/ui/label.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fb5fbc3eee891a5c118bb00fd153273c16959c9e",
+      "size": 611,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/fb5fbc3eee891a5c118bb00fd153273c16959c9e"
+    },
+    {
+      "path": "frontend/src/components/ui/table.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "51b74dd52570a0268d78870be270dd460cef41db",
+      "size": 2448,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/51b74dd52570a0268d78870be270dd460cef41db"
+    },
+    {
+      "path": "frontend/src/components/ui/textarea.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7f21b5e78a4c1c23bf41b6be206f3f81dc84fe99",
+      "size": 759,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/7f21b5e78a4c1c23bf41b6be206f3f81dc84fe99"
+    },
+    {
+      "path": "frontend/src/components/weather.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3556d754df8cd339408255b75943ffbca783f98f",
+      "size": 8276,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/3556d754df8cd339408255b75943ffbca783f98f"
+    },
+    {
+      "path": "frontend/src/hooks",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "97f8299c788b4302198cff143d9e0fdbd5da35b1",
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/trees/97f8299c788b4302198cff143d9e0fdbd5da35b1"
+    },
+    {
+      "path": "frontend/src/hooks/use-scroll-to-bottom.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "14b7a91bdc5d131de613269305a7f1df40328306",
+      "size": 792,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/14b7a91bdc5d131de613269305a7f1df40328306"
+    },
+    {
+      "path": "frontend/src/lib",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "dfcf6ae745da84e5dc913a9a3d8bdf6b980e688c",
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/trees/dfcf6ae745da84e5dc913a9a3d8bdf6b980e688c"
+    },
+    {
+      "path": "frontend/src/lib/types.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9f54c2fae31044215dc1c7c61f1c38942f632c32",
+      "size": 2446,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/9f54c2fae31044215dc1c7c61f1c38942f632c32"
+    },
+    {
+      "path": "frontend/src/lib/utils.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff7c4c191aac2e54fe99f090be90281284627f04",
+      "size": 1295,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/ff7c4c191aac2e54fe99f090be90281284627f04"
+    },
+    {
+      "path": "frontend/tsconfig.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9768cf31c9af0591db2ded69037be281f41bec46",
+      "size": 648,
+      "url": "https://api.github.com/repos/pandysp/PCBS-BOM-AI-Agent/git/blobs/9768cf31c9af0591db2ded69037be281f41bec46"
+    }
+  ],
+  "truncated": false
+}

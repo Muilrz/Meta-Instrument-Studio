@@ -1,0 +1,130 @@
+[
+  {
+    "repo": "agentscope-ai/agentscope",
+    "branch": "main",
+    "archived": false,
+    "pushed_at_utc": "2026-11-02T06:57:25Z",
+    "license": "Apache-2.0",
+    "url": "https://github.com/agentscope-ai/agentscope"
+  },
+  {
+    "repo": "assafelovic/gpt-researcher",
+    "branch": "main",
+    "archived": false,
+    "pushed_at_utc": "2026-10-10T22:03:53Z",
+    "license": "Apache-2.0",
+    "url": "https://github.com/assafelovic/gpt-researcher"
+  },
+  {
+    "repo": "browser-use/browser-use",
+    "branch": "main",
+    "archived": false,
+    "pushed_at_utc": "2026-11-02T01:31:56Z",
+    "license": "MIT",
+    "url": "https://github.com/browser-use/browser-use"
+  },
+  {
+    "repo": "bytedance/deer-flow",
+    "branch": "main",
+    "archived": false,
+    "pushed_at_utc": "2026-11-02T03:39:46Z",
+    "license": "MIT",
+    "url": "https://github.com/bytedance/deer-flow"
+  },
+  {
+    "repo": "crewAIInc/crewAI",
+    "branch": "main",
+    "archived": false,
+    "pushed_at_utc": "2026-11-02T06:37:07Z",
+    "license": "MIT",
+    "url": "https://github.com/crewAIInc/crewAI"
+  },
+  {
+    "repo": "docling-project/docling",
+    "branch": "main",
+    "archived": false,
+    "pushed_at_utc": "2026-11-01T12:35:00Z",
+    "license": "MIT",
+    "url": "https://github.com/docling-project/docling"
+  },
+  {
+    "repo": "Future-House/paper-qa",
+    "branch": "main",
+    "archived": false,
+    "pushed_at_utc": "2026-10-26T17:35:47Z",
+    "license": "Apache-2.0",
+    "url": "https://github.com/Future-House/paper-qa"
+  },
+  {
+    "repo": "infiniflow/ragflow",
+    "branch": "main",
+    "archived": false,
+    "pushed_at_utc": "2026-11-02T06:42:11Z",
+    "license": "Apache-2.0",
+    "url": "https://github.com/infiniflow/ragflow"
+  },
+  {
+    "repo": "langchain-ai/deepagents",
+    "branch": "main",
+    "archived": false,
+    "pushed_at_utc": "2026-11-02T04:44:51Z",
+    "license": "MIT",
+    "url": "https://github.com/langchain-ai/deepagents"
+  },
+  {
+    "repo": "langchain-ai/langgraph",
+    "branch": "main",
+    "archived": false,
+    "pushed_at_utc": "2026-11-02T04:37:36Z",
+    "license": "MIT",
+    "url": "https://github.com/langchain-ai/langgraph"
+  },
+  {
+    "repo": "langchain-ai/langgraph-supervisor-py",
+    "branch": "main",
+    "archived": true,
+    "pushed_at_utc": "2026-07-15T06:32:54Z",
+    "license": "MIT",
+    "url": "https://github.com/langchain-ai/langgraph-supervisor-py"
+  },
+  {
+    "repo": "langchain-ai/open_deep_research",
+    "branch": "main",
+    "archived": true,
+    "pushed_at_utc": "2026-08-10T18:13:37Z",
+    "license": "MIT",
+    "url": "https://github.com/langchain-ai/open_deep_research"
+  },
+  {
+    "repo": "langgenius/dify",
+    "branch": "main",
+    "archived": false,
+    "pushed_at_utc": "2026-11-02T06:53:33Z",
+    "license": "NOASSERTION",
+    "url": "https://github.com/langgenius/dify"
+  },
+  {
+    "repo": "microsoft/agent-framework",
+    "branch": "main",
+    "archived": false,
+    "pushed_at_utc": "2026-11-02T05:12:39Z",
+    "license": "MIT",
+    "url": "https://github.com/microsoft/agent-framework"
+  },
+  {
+    "repo": "microsoft/autogen",
+    "branch": "main",
+    "archived": false,
+    "pushed_at_utc": "2026-10-28T14:45:27Z",
+    "license": "CC-BY-4.0",
+    "url": "https://github.com/microsoft/autogen"
+  },
+  {
+    "repo": "unclecode/crawl4ai",
+    "branch": "main",
+    "archived": false,
+    "pushed_at_utc": "2026-11-01T09:18:55Z",
+    "license": "Apache-2.0",
+    "url": "https://github.com/unclecode/crawl4ai"
+  }
+]
