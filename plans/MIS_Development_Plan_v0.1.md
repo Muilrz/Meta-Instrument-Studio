@@ -113,6 +113,8 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 
 ### P1 核心数据契约与 Project Service
 
+> 任务说明：[P1_data_contracts.md](P1_data_contracts.md)
+
 **目标**：把架构文档第 8 节的数据对象变成可校验、带版本的 schema 和服务。这一阶段完全不涉及 LLM。
 
 **范围内**

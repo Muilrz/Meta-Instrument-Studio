@@ -38,6 +38,6 @@
 
 1. ADR-0001 需要评审：技术栈、仓库关系、合成资料、协作方式。
 2. `MetaInstrumentStudioV4.0_README.md` 和 `MetaInstrumentStudio_ARCHITECTURE.md` 内容完全相同，建议只保留一份。
-3. 起草 P1 的任务说明 `plans/P1_*.md`（完成定义第 5 条）。
+3. P1 任务说明已起草：[`plans/P1_data_contracts.md`](../plans/P1_data_contracts.md)，待评审（完成定义第 5 条）。
 
 已解决：仓库已推送到 `https://github.com/Muilrz/Meta-Instrument-Studio`，主分支为 `main`，CI 为绿。
