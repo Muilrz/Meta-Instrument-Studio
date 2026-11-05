@@ -2,6 +2,7 @@
 
 - 状态：草案，待评审
 - 日期：2026-11-05
+- 修订：2026-11-05，数据库改为 PostgreSQL（见 ADR-0001），并相应地从 P1 起引入 Alembic
 - 上级计划：[开发计划 v0.1 · P1](MIS_Development_Plan_v0.1.md#p1-核心数据契约与-project-service)
 - 前置条件：P0 完成（[P0 报告](../reviews/P0_report.md)）
 - 分支：`p1-data-contracts`，按下文任务拆成多个提交或 PR
@@ -29,7 +30,8 @@ P1 结束时，平台应当能做到以下几件事。全程**不调用任何 LL
 - 单位换算，以及拉曼领域换算（波长 ↔ 拉曼位移、nm 分辨率 → cm⁻¹）
 - 需求比较规则引擎（min / max / range / covers / enum）
 - 版本管理和影响分析
-- 持久化层（SQLite）和服务层 API
+- 持久化层（PostgreSQL，`mis` schema）、数据库迁移（Alembic）和服务层 API
+- 本地数据库配置（`compose.yaml`，`pgvector/pgvector:pg17` 镜像），CI 中用同一镜像作为服务容器
 - 基准任务包的需求导入器
 - 数据导出 / 导入（备份与恢复）
 
@@ -38,7 +40,8 @@ P1 结束时，平台应当能做到以下几件事。全程**不调用任何 LL
 - 任何 LLM、Agent、检索功能
 - HTTP API（在 P3 确定交互入口时再加；P1 只提供 Python 服务层接口）
 - 用户认证和权限（只保留 `members` 字段）
-- PostgreSQL 部署（P1 的代码不使用 SQLite 专有特性，迁移留到需要时再做）
+- 正式环境的数据库部署和备份策略（P1 只做本地和 CI）
+- pgvector 的实际使用（P1 只确保镜像带有该扩展，向量检索在 P4 才用）
 
 ---
 
@@ -112,8 +115,9 @@ SpecValue = Annotated[Known | Unknown, Field(discriminator="kind")]
 
 ### 3.6 存储采用“文档 + 索引列”的方式
 
-- 用 SQLAlchemy 2.x 加 SQLite。每类对象一张表，包含少量索引列（`id`、`project_id`、`version`、`status`、`created_at`），完整内容以 JSON 存在 `body` 列中。
-- 模型的结构变化通过 Pydantic 处理，P1 暂不引入 Alembic。数据库结构第一次需要变更时，再引入。
+- 用 SQLAlchemy 2.x 加 PostgreSQL（驱动 psycopg 3），所有表放在 `mis` schema 中。每类对象一张表，包含少量索引列（`id`、`project_id`、`version`、`status`、`created_at`），完整内容以 `JSONB` 存在 `body` 列中。
+- 从第一张表起就用 Alembic 管理表结构变更。因为 PostgreSQL 从开发第一天就是正式数据库，里面的数据会一直保留，每次改表都应当有迁移脚本。对象内部字段的变化仍由 Pydantic 处理，不需要改表。
+- 测试连接独立的测试数据库，每个测试在事务中运行并回滚，互不影响。本地没有运行数据库时，数据库相关的测试应明确报错并提示启动方法，而不是静默跳过。
 - ID 格式为带类型前缀的 ULID，例如 `req_01J…`、`art_01J…`、`evd_01J…`，便于从日志中看出对象类型。
 
 ### 3.7 汇率是一条证据
@@ -168,6 +172,9 @@ src/mis/
 │  └─ dump.py              导出 / 导入
 └─ importers/
    └─ raman_baseline.py    requirements.csv + manifest → 项目、需求 v1、汇率证据
+
+migrations/                Alembic 迁移脚本（仓库根目录）
+compose.yaml               本地 PostgreSQL（pgvector/pgvector:pg17）
 ```
 
 ---
@@ -182,7 +189,7 @@ src/mis/
 | T2 | `schemas/values.py`：Known / Unknown / Quantity / QuantityRange | `Known` 缺证据会被拒绝；量纲不符（例如给功率字段填 nm）会被拒绝 |
 | T3 | 其余 7 类对象的 schema，以及 JSON Schema 导出 | 每类对象都有正例和反例测试；CI 检查导出的 JSON Schema 与代码一致 |
 | T4 | `rules/`：5 种比较方式加三值汇总 | 见第 7 节的“规则复现标准答案” |
-| T5 | `project_service`：表定义、仓储、版本、状态历史 | 增删查测试；修改需求生成新版本、旧版本可读；Artifact 内容无法被修改 |
+| T5 | `compose.yaml`、Alembic 初始迁移、CI 数据库服务；`project_service`：表定义、仓储、版本、状态历史 | 一条命令启动本地数据库；`alembic upgrade head` 能从空库建出全部表；增删查测试；修改需求生成新版本、旧版本可读；Artifact 内容无法被修改；CI 中数据库测试通过 |
 | T6 | `impact.py`：需求差异和影响分析 | 见第 7 节的“影响分析” |
 | T7 | 导入器，以及手写的 Raman 示例数据（`tests/data/`） | 需求 v1 导入后共 11 项，单位和比较方式都正确；示例 Artifact 和 Plan 能写入并读出 |
 | T8 | 导出 / 导入，以及 P1 阶段报告 | 见第 7 节的“备份恢复”；完成 `reviews/P1_report.md` |
@@ -234,7 +241,8 @@ T7 中的示例数据，是**假设一个完美的 Specialist 会产出什么**�
 ### 工程
 
 - [ ] `uv run pytest`、`ruff check`、`ruff format --check` 本地和 CI 都通过
-- [ ] 新增依赖（pydantic、pint、sqlalchemy、python-ulid）的许可证登记在 P1 报告中
+- [ ] 新增依赖（pydantic、pint、sqlalchemy、psycopg、alembic、python-ulid）的许可证登记在 P1 报告中
+- [ ] README 写明本地数据库的启动方法（需要 Docker Desktop）
 
 ---
 
@@ -255,5 +263,5 @@ T7 中的示例数据，是**假设一个完美的 Specialist 会产出什么**�
 |---|---|---|
 | Q1 | 是否同意用 pint 做单位换算 | 同意 |
 | Q2 | P1 是否做 HTTP API | 不做，留到 P3 |
-| Q3 | 存储采用“文档 + 索引列”，暂不引入 Alembic | 同意 |
+| Q3 | 存储采用“文档 + 索引列”，用 PostgreSQL，从 P1 起引入 Alembic | **已确定**使用 PostgreSQL；“文档 + 索引列”和 Alembic 待确认 |
 | Q4 | 示例的结构化器件数据放在 `tests/data/`，而不是基准任务包中 | 同意 |

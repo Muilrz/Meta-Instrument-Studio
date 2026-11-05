@@ -1,7 +1,10 @@
-# MetaInstrumentStudio 开发计划（初稿 v0.1）
+# MetaInstrumentStudio 开发计划（v0.2）
 
 - 状态：草案，待评审
 - 日期：2026-11-05
+- 修订记录：
+  - v0.1（2026-11-05）：初稿
+  - v0.2（2026-11-05）：数据库统一为 PostgreSQL，新增存储总览（0.4 节）；P2 增加 Agent 架构设计（context / memory / skills / 自进化）；P3 增加只读查看页面和最小 HTTP 接口；P5 改为正式产品界面
 - 依据：
   - [`MetaInstrumentStudio_ARCHITECTURE.md`](../MetaInstrumentStudio_ARCHITECTURE.md)：目标架构
   - [`research/MIS_Open_Source_Baseline_Research_2026-11-01.md`](../research/MIS_Open_Source_Baseline_Research_2026-11-01.md)：开源 baseline 选型调研
@@ -19,7 +22,7 @@
 Stage 1 内部的顺序是：
 
 ```text
-数据契约 → 运行底座选型 → 用模拟数据跑通闭环 → 接真实数据源 → 产品界面
+数据契约 → Agent 架构设计 + 运行底座选型 → 用模拟数据跑通闭环（附只读查看页面）→ 接真实数据源 → 正式产品界面
 ```
 
 理由：
@@ -50,6 +53,22 @@ P0 建立一个固定的 **Raman 仪器方案任务包**，作为后续所有阶
 - 模拟的厂商响应：价格阶梯、库存、交期，并刻意包含缺失字段和单位不一致的情况
 - 若干个“标准答案”检查点：哪些参数必须找到、哪些必须标为未知、哪些器件必须被规则排除
 
+### 0.4 存储（统一使用 PostgreSQL）
+
+从 P1 起，开发、测试、CI 和正式环境都使用 **PostgreSQL 17 + pgvector**，不使用 SQLite。本地通过 Docker Desktop 运行。平台所有需要存储的地方，原则上都放进同一个 PostgreSQL 实例：
+
+| 存什么 | 引入阶段 | 存在哪里 |
+|---|---|---|
+| 业务记录（项目、需求、任务、产物、证据、方案、测试结果） | P1 | PostgreSQL，`mis` schema |
+| Agent 运行状态（进度、断点、消息） | P2/P3 | PostgreSQL，独立 schema |
+| 调用日志与预算记录 | P3 | PostgreSQL 自建表 |
+| 知识库向量索引 | P4 | PostgreSQL + pgvector；若 D5 选 RAGFlow 则用它自带的存储 |
+| 外部调用缓存 | P4 | PostgreSQL 表 |
+| 原始文件（PDF、网页快照） | P4 | 本地文件夹，数据库存路径和哈希 |
+| 用户与登录 | P5 | PostgreSQL |
+
+详细说明见 [ADR-0001 存储总览](../docs/adr/0001-repo-structure-and-stack.md#存储总览)。
+
 ---
 
 ## 1. 阶段总览
@@ -57,10 +76,10 @@ P0 建立一个固定的 **Raman 仪器方案任务包**，作为后续所有阶
 ```text
 P0 工程基础与基准任务包
  └→ P1 核心数据契约与 Project Service
-      └→ P2 运行底座选型验证（Spike）
-           └→ P3 Stage 1 最小闭环（模拟数据）
+      └→ P2 Agent 架构设计与运行底座选型（Spike）
+           └→ P3 Stage 1 最小闭环（模拟数据）+ 只读查看页面
                 └→ P4 真实数据源接入
-                     ├→ P5 产品界面：Project / Conversation Workspace
+                     ├→ P5 正式产品界面：Project / Conversation Workspace
                      └→ P6 Stage 2 衔接：InstrumentPlan → 工程工具
                           └→ P7 测试验证与 Re-plan 闭环
                                └→ P8+ 扩展（UpperPC、更多工程工具、多用户与部署）
@@ -72,10 +91,10 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 |---|---|---|
 | P0 | 怎么协作、怎么验收？ | 仓库骨架、CI、基准任务包 |
 | P1 | 平台记录什么？ | 7 类核心对象的 schema、规则校验、Project Service |
-| P2 | 用哪个运行底座？ | 选型对比报告 + 决策记录（ADR） |
-| P3 | Stage 1 能不能端到端跑通？ | 从需求到 InstrumentPlan 的闭环（模拟数据） |
+| P2 | Agent 内部怎么组织？用哪个运行底座？ | Agent 架构设计文档 + 选型对比报告 + 决策记录（ADR） |
+| P3 | Stage 1 能不能端到端跑通？ | 从需求到 InstrumentPlan 的闭环（模拟数据），只读查看页面 |
 | P4 | 能不能用真实资料工作？ | 知识库、研究、采购三类真实连接器 |
-| P5 | 用户怎么用？ | Web 工作空间 |
+| P5 | 用户怎么用？ | 正式的 Web 工作空间 |
 | P6 | 方案怎么交给工程？ | Plan 导出 + 至少一个 Stage 2 工具读取它 |
 | P7 | 测试失败了怎么办？ | TestResult → 影响分析 → Re-plan |
 
@@ -133,7 +152,8 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 
 - 确定性规则校验：必填字段、证据引用存在、单位换算与量纲一致、数值是否落在需求范围内、`unknown` 不得被当成满足要求
 - 版本与影响分析：需求版本变化时，找出依赖旧版本的 Brief、Artifact 和 Plan，并标记为 `stale`
-- Project Service：持久化（建议 PostgreSQL，原型可以用 SQLite），以及 CRUD / 查询 API
+- Project Service：持久化到 PostgreSQL（`mis` schema），以及 Python 服务层的增删查接口（HTTP 接口在 P3 加）
+- 本地开发用的 PostgreSQL 配置（Docker），CI 中用同一镜像运行数据库测试
 
 **范围外**
 
@@ -150,9 +170,20 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 
 ---
 
-### P2 运行底座选型验证（Spike）
+### P2 Agent 架构设计与运行底座选型（Spike）
 
-**目标**：用同一套任务比较候选运行底座，产出有证据的选型决策。**本阶段的代码允许丢弃。**
+**目标**：先写出 Agent 内部架构的设计，再用同一套任务比较候选运行底座，产出有证据的选型决策。**Spike 代码允许丢弃。**
+
+**第一步：Agent 架构设计文档**（`docs/design/agent_architecture.md`，Spike 开始前起草，Spike 结束后定稿）
+
+至少回答以下四个问题。下面是初步方向，设计文档里要细化，并由 Spike 验证：
+
+| 方面 | 初步方向 |
+|---|---|
+| **Context（上下文）** | 每个 Specialist 只拿到自己的 Brief 和相关资料，上下文相互隔离；Copilot 只接收结构化的 Artifact，不接收 Specialist 的完整对话。Brief 就是上下文的边界 |
+| **Memory（记忆）** | 分三层：项目记忆 = Project Service 的业务记录（唯一可信来源）；实验室长期知识 = 知识库；Agent 工作记忆 = 运行状态，用完可丢。不另建一个与业务记录并行的“记忆库” |
+| **Skills（技能）** | 领域操作写成带版本号的技能文件，配合确定性工具（如拉曼分辨率换算、报价规范化）。技能告诉 Agent 怎么做，结果对不对由规则判定 |
+| **自进化** | 不允许 Agent 在运行中自动修改自己的提示词或技能。采用有人把关的循环：收集基准测试失败案例 → 提出修改建议 → 用基准任务包回归测试 → 人工批准后生效 |
 
 **候选**（来自调研报告第 2 节）
 
@@ -172,6 +203,9 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
   | 中断恢复 | 进程被杀后能否续跑，续跑时是否重复写入业务产物 |
   | 结构化产物 | 能否稳定输出符合 P1 schema 的 Artifact |
   | 预算控制 | 能否限制并记录每个子任务的时间、搜索次数和模型调用次数 |
+  | 上下文与记忆 | 能否按设计文档实现上下文隔离；底座自带的记忆机制能否关闭或改为读写 Project Service |
+  | 技能机制 | 能否加载带版本的技能文件，并限制每个 Specialist 可用的技能 |
+  | PostgreSQL 支持 | 运行状态（checkpoint）能否存进 PostgreSQL，并与业务记录分在不同 schema |
   | 改动面 | 接入 MIS 数据模型需要改多少上游代码 |
   | 许可与维护 | 许可证、上游活跃度、版本锁定方式 |
 
@@ -182,6 +216,7 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 
 **验收标准**
 
+- [ ] Agent 架构设计文档定稿，四个方面都有明确设计，并写明 Spike 中验证了哪些、哪些留到 P3
 - [ ] 至少 2 个候选完成上述最小场景，每个考察项都有可复现的运行记录（日志或脚本）
 - [ ] 输出对比报告 `docs/spike/P2_runtime_comparison.md`
 - [ ] 输出 ADR-0002，写明选定的底座、放弃其他候选的理由、上游版本锁定策略
@@ -189,9 +224,9 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 
 ---
 
-### P3 Stage 1 最小闭环（模拟数据）
+### P3 Stage 1 最小闭环（模拟数据）+ 只读查看页面
 
-**目标**：在选定的底座上实现“需求 → InstrumentPlan”的完整 Stage 1 流程。所有外部数据都来自基准任务包，结果可以重复。
+**目标**：在选定的底座上实现“需求 → InstrumentPlan”的完整 Stage 1 流程。所有外部数据都来自基准任务包，结果可以重复。同时提供一个只读页面，让人能直观检查结果。
 
 **范围内**
 
@@ -200,12 +235,14 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 - **Shared Agent Runtime** 与三个 Profile：Lab、Research、Procurement
 - **Tool Gateway**：统一的工具接口层。本阶段全部挂模拟实现，P4 替换为真实实现时不改上层
 - **Artifact 验收**：Specialist 返回后先过 P1 的规则校验，不通过就重试或标为缺口
-- 最小交互入口：CLI 或 API 即可
+- 最小交互入口：CLI
+- **HTTP 接口（最小集）**：供查看页面和以后的 Stage 2 工具读取项目、需求版本、Brief、Artifact、证据和 Plan；P3 只提供读取和“启动一次规划”两类接口
+- **只读查看页面**：项目概览、需求版本、任务与 Agent 进度、Artifact 列表、证据链（从 Plan 结论点到原文片段）、Plan 内容和规则检查结果。不做编辑，不追求美观。如果 P2 选定的底座自带网页工作区，优先在它上面扩展
 
 **范围外**
 
 - 真实检索、搜索和厂商 API
-- Web 界面
+- 可编辑的正式产品界面（P5）
 - Stage 2
 
 **验收标准**（对应调研报告第 7 节的 8 项验证）
@@ -218,6 +255,7 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 - [ ] **修改需求**：需求升级到 v2 后重新规划，受影响的产物被标为 stale 并重新生成，v1 的 Plan 保留
 - [ ] **预算**：每个子任务的耗时、搜索次数和模型调用次数都有记录，超出预算会被截停
 - [ ] **可重复性**：在模型和模拟数据固定的条件下连续运行 N 次（N 由团队定），基准检查点的通过率达到约定阈值，结果写进阶段报告
+- [ ] **查看页面**：在页面上能看到一次完整规划的结果，从 Plan 中任一结论最多点 2 次即可看到原始证据片段
 
 ---
 
@@ -248,9 +286,9 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 
 ---
 
-### P5 产品界面：Project Workspace 与 Conversation Workspace
+### P5 正式产品界面：Project Workspace 与 Conversation Workspace
 
-**目标**：让真实用户能使用 Stage 1。
+**目标**：在 P3 只读查看页面的基础上，做成真实用户可以使用的 Stage 1 产品界面。
 
 **范围内**
 
@@ -349,13 +387,14 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 
 以下问题会影响计划细节，需要在对应阶段开始前确定：
 
-| 编号 | 问题 | 最晚决策时间 |
-|---|---|---|
-| D1 | 主技术栈和数据库（建议 Python + PostgreSQL + TypeScript 前端） | P0 |
-| D2 | LLM 供应商与模型、是否需要私有化部署、调用预算上限 | P2 |
-| D3 | 基准任务包的真实资料来源：用哪些实验室文档、论文，哪些需要脱敏 | P0 |
-| D4 | P2 比较几个候选、Spike 的时间盒多长 | P2 |
-| D5 | Lab Knowledge 选 RAGFlow 还是 Docling + 自建 | P4 |
-| D6 | 第一个接入的光学器件厂商 | P4 |
-| D7 | 平台是否需要与现有 GitHub 子项目（SDK_Anlysis_Agent、Rapid_Optics_Studio）放在同一个仓库 | P0 |
-| D8 | 开发协作方式：人与 Agent、多个 Agent 之间如何分工，计划和审查记录放在哪里 | P0 |
+| 编号 | 问题 | 最晚决策时间 | 当前状态 |
+|---|---|---|---|
+| D1 | 主技术栈和数据库 | P0 | 数据库**已确定**为 PostgreSQL 17 + pgvector；Python + uv 见 ADR-0001，待评审 |
+| D2 | LLM 供应商与模型、是否需要私有化部署、调用预算上限 | P2 | 未定 |
+| D3 | 基准任务包的真实资料来源：用哪些实验室文档、论文，哪些需要脱敏 | P0 | P0 用合成资料（ADR-0001），真实资料推迟到 P4 |
+| D4 | P2 比较几个候选、Spike 的时间盒多长 | P2 | 未定 |
+| D5 | Lab Knowledge 选 RAGFlow 还是 Docling + 自建（后者可直接使用 PostgreSQL + pgvector） | P4 | 未定 |
+| D6 | 第一个接入的光学器件厂商 | P4 | 未定 |
+| D7 | 平台是否需要与现有 GitHub 子项目（SDK_Anlysis_Agent、Rapid_Optics_Studio）放在同一个仓库 | P0 | 建议分仓库（ADR-0001），待评审 |
+| D8 | 开发协作方式：人与 Agent、多个 Agent 之间如何分工，计划和审查记录放在哪里 | P0 | 建议见 ADR-0001，待评审 |
+| D9 | 前端框架选型 | P3 | 未定 |
