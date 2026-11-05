@@ -19,7 +19,7 @@
 | 验收项（开发计划 P0） | 结果 | 说明 |
 |---|---|---|
 | 一条命令装好依赖并跑通测试 | 通过 | 本地 Windows 上 `uv run pytest`：57 passed |
-| CI 运行 lint 和测试且主干为绿 | **未验证** | 仓库尚未推送到 GitHub，CI 没有实际运行过；本地 `ruff check`、`ruff format --check`、`pytest` 均通过 |
+| CI 运行 lint 和测试且主干为绿 | 通过 | 推送到 GitHub 后，CI #1（提交 `55e2312`）的 lint、格式检查、测试全部通过 |
 | 任务包包含 6 类材料，并有说明 | 通过 | 需求表、实验室文档 3 份、文献笔记 2 份、器件页面 8 份、模拟厂商响应 8 份、13 个检查点，见任务包 README |
 | 至少包含必须标未知、单位不一致、必须排除各 1 个 | 通过 | 必须标未知 3 个（CP07–CP09），单位陷阱 3 个（CP03、CP05、CP06），必须排除 4 个（CP03、CP04、CP05、CP10）；由测试自动检查 |
 | ADR-0001 评审通过 | **待评审** | 目前状态为“提议中” |
@@ -37,7 +37,7 @@
 ## 遗留问题
 
 1. ADR-0001 需要评审：技术栈、仓库关系、合成资料、协作方式。
-2. 推送到 GitHub 后确认 CI 为绿。
-3. 当前所有文件都未提交，`master` 分支还没有任何提交；计划中的主分支名为 `main`，需要确认用哪个。
-4. `MetaInstrumentStudioV4.0_README.md` 和 `MetaInstrumentStudio_ARCHITECTURE.md` 内容完全相同，建议只保留一份。
-5. 起草 P1 的任务说明 `plans/P1_*.md`（完成定义第 5 条）。
+2. `MetaInstrumentStudioV4.0_README.md` 和 `MetaInstrumentStudio_ARCHITECTURE.md` 内容完全相同，建议只保留一份。
+3. 起草 P1 的任务说明 `plans/P1_*.md`（完成定义第 5 条）。
+
+已解决：仓库已推送到 `https://github.com/Muilrz/Meta-Instrument-Studio`，主分支为 `main`，CI 为绿。
