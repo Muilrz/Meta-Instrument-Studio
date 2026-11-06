@@ -5,6 +5,7 @@
 - 修订：
   - 2026-11-05，数据库改为 PostgreSQL（见 ADR-0001），并相应地从 P1 起引入 Alembic
   - 2026-11-06，依据 [Agent 架构需求清单](../docs/design/agent_architecture_requirements.md)：新增出处字段 `RunRef`（3.8）、Brief 参数分类（3.9）、用户问答 `UserQuestion`（3.10）、用户纠正 `UserCorrection`（3.11）
+  - 2026-11-06，`InstrumentProject` 增加 `kind`（normal / benchmark），导入器把基准任务包导入为 benchmark 项目
 - 上级计划：[开发计划 v0.1 · P1](MIS_Development_Plan_v0.1.md#p1-核心数据契约与-project-service)
 - 前置条件：P0 完成（[P0 报告](../reviews/P0_report.md)）
 - 分支：`p1-data-contracts`，按下文任务拆成多个提交或 PR
@@ -187,7 +188,7 @@ trace 的详细程度和存储方式在 P2 才定（见 [Agent 架构需求清�
 
 | 对象 | 字段 |
 |---|---|
-| `InstrumentProject` | `id`、`name`、`members`、`knowledge_scope`（可用的资料范围）、`current_baseline_version`、`current_plan_version`、`created_at` |
+| `InstrumentProject` | `id`、`name`、`kind`（normal / benchmark，基准任务项目默认不参与“同类问题反复出现”的计数）、`members`、`knowledge_scope`（可用的资料范围）、`current_baseline_version`、`current_plan_version`、`created_at` |
 | `RequirementBaseline` | `id`、`project_id`、`version`、`items[]`、`budget`、`created_at`、`change_note` |
 | `RequirementItem` | `key`（如 R04）、`name`、`metric`（指标键）、`comparator`、`lower`、`upper`、`allowed`（枚举）、`unit`、`priority`、`verification` |
 | `AgentTaskBrief` | `id`、`project_id`、`baseline_version`、`requirement_refs`、`specialist`（lab / research / procurement）、`goal`、`specified_params`、`open_params`、`constraints`、`acceptance`、`budget`（时间、搜索次数、模型调用次数）、`usage`（实际消耗）、`status` |
@@ -250,7 +251,7 @@ compose.yaml               本地 PostgreSQL（pgvector/pgvector:pg17）
 | T4 | `rules/`：5 种比较方式加三值汇总 | 见第 7 节的“规则复现标准答案” |
 | T5 | `compose.yaml`、Alembic 初始迁移、CI 数据库服务；`project_service`：表定义、仓储、版本、状态历史 | 一条命令启动本地数据库；`alembic upgrade head` 能从空库建出全部表；增删查测试；修改需求生成新版本、旧版本可读；Artifact 内容无法被修改；CI 中数据库测试通过 |
 | T6 | `impact.py`：需求差异和影响分析 | 见第 7 节的“影响分析” |
-| T7 | 导入器，以及手写的 Raman 示例数据（`tests/data/`） | 需求 v1 导入后共 11 项，单位和比较方式都正确；示例 Artifact 和 Plan 能写入并读出 |
+| T7 | 导入器，以及手写的 Raman 示例数据（`tests/data/`） | 需求 v1 导入后共 11 项，单位和比较方式都正确；默认导入为 `kind = benchmark` 的项目，也可以指定导入为 normal 项目（供 P3 的触发测试使用）；示例 Artifact 和 Plan 能写入并读出 |
 | T8 | 导出 / 导入，以及 P1 阶段报告 | 见第 7 节的“备份恢复”；完成 `reviews/P1_report.md` |
 
 T7 中的示例数据，是**假设一个完美的 Specialist 会产出什么**：按器件页面和报价手工录入 8 个器件的结构化参数，录成 Claim 和 Evidence。它放在 `tests/data/`，不放进基准任务包，避免修改 v0.1.0 的标准答案。
