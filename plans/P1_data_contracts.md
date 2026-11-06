@@ -2,7 +2,9 @@
 
 - 状态：草案，待评审
 - 日期：2026-11-05
-- 修订：2026-11-05，数据库改为 PostgreSQL（见 ADR-0001），并相应地从 P1 起引入 Alembic
+- 修订：
+  - 2026-11-05，数据库改为 PostgreSQL（见 ADR-0001），并相应地从 P1 起引入 Alembic
+  - 2026-11-06，依据 [Agent 架构需求清单](../docs/design/agent_architecture_requirements.md)：新增出处字段 `RunRef`（3.8）、Brief 参数分类（3.9）、用户问答 `UserQuestion`（3.10）
 - 上级计划：[开发计划 v0.1 · P1](MIS_Development_Plan_v0.1.md#p1-核心数据契约与-project-service)
 - 前置条件：P0 完成（[P0 报告](../reviews/P0_report.md)）
 - 分支：`p1-data-contracts`，按下文任务拆成多个提交或 PR
@@ -25,7 +27,7 @@ P1 结束时，平台应当能做到以下几件事。全程**不调用任何 LL
 
 **范围内**
 
-- 7 类核心对象的 Pydantic 模型，以及导出的 JSON Schema
+- 7 类核心对象，加上 `UserQuestion` 和 `RunRef` 的 Pydantic 模型，以及导出的 JSON Schema
 - 带单位的数值类型，以及“未知”的显式表示
 - 单位换算，以及拉曼领域换算（波长 ↔ 拉曼位移、nm 分辨率 → cm⁻¹）
 - 需求比较规则引擎（min / max / range / covers / enum）
@@ -124,6 +126,49 @@ SpecValue = Annotated[Known | Unknown, Field(discriminator="kind")]
 
 预算计算中的外币换算，必须引用一条 `source_type = fx_rate` 的 Evidence，内容包括汇率、日期、来源。基准任务包使用 `manifest.yaml` 中的固定汇率，导入时生成这条 Evidence。
 
+### 3.8 出处字段：业务记录与 trace 的连接
+
+trace 的详细程度和存储方式在 P2 才定（见 [Agent 架构需求清单](../docs/design/agent_architecture_requirements.md) C1），但业务记录必须**现在**就预留连接字段，否则以后无法从结论追溯到产生它的那次运行。
+
+统一用一个 `RunRef` 结构，P1 只定义和存储，不负责生成：
+
+| 字段 | 含义 |
+|---|---|
+| `run_id` | 一次规划运行的 ID |
+| `trace_id` | trace 系统中的 ID（P2 确定格式之前可以为空） |
+| `actor` | 产生者：copilot / lab / research / procurement / rule_engine / user |
+| `model` | 使用的模型名称和版本，非模型产生时为空 |
+| `skill_versions` | 使用的技能及其版本，例如 `{"raman_resolution": "1.2.0"}` |
+| `prompt_version` | 提示词版本 |
+
+挂载位置：
+
+- `AgentArtifact.produced_by: RunRef`
+- `Evidence.retrieved_by: RunRef`，外加 `tool_call_id`（由哪次工具调用取得）
+- `AgentTaskBrief.usage`：实际消耗，包括耗时、输入和输出 token 数、搜索次数、费用
+- `InstrumentPlan.produced_by: RunRef`
+
+### 3.9 Brief 中区分指定参数与不定参数
+
+依据需求清单 A3：Copilot 下发任务前，必须把参数分为两类，Specialist 之间不直接沟通。
+
+- `specified_params`：需求明确要求的参数，每项都要关联需求项编号（如 R04），带目标值和单位。
+- `open_params`：需求没有要求的参数，Specialist 可以自由选择，但必须报告实际值；只列参数名称和期望的单位。
+
+校验规则：
+
+- `specified_params` 中引用的需求项必须存在于对应版本的需求基线里。
+- 同一个参数不能同时出现在两个列表中。
+
+相应地，Procurement 类的 Artifact 允许包含**多个候选**，每个候选都列出所有指定参数的已知值或未知值，由 Copilot 取舍。
+
+### 3.10 用户提问与回答
+
+依据需求清单 A4：Copilot 可以在规划中途向用户提问。问答属于项目记忆，存在业务数据库，新增对象 `UserQuestion`：
+
+- 用户的回答写成一条 `source_type = user_decision` 的 Evidence，后续结论可以引用它。
+- 运行的暂停和恢复由运行层负责（P2/P3），P1 只负责存储问题和回答。
+
 ---
 
 ## 4. 对象字段（初稿）
@@ -135,11 +180,12 @@ SpecValue = Annotated[Known | Unknown, Field(discriminator="kind")]
 | `InstrumentProject` | `id`、`name`、`members`、`knowledge_scope`（可用的资料范围）、`current_baseline_version`、`current_plan_version`、`created_at` |
 | `RequirementBaseline` | `id`、`project_id`、`version`、`items[]`、`budget`、`created_at`、`change_note` |
 | `RequirementItem` | `key`（如 R04）、`name`、`metric`（指标键）、`comparator`、`lower`、`upper`、`allowed`（枚举）、`unit`、`priority`、`verification` |
-| `AgentTaskBrief` | `id`、`project_id`、`baseline_version`、`requirement_refs`、`specialist`（lab / research / procurement）、`goal`、`constraints`、`acceptance`、`budget`（时间、搜索次数、模型调用次数）、`status` |
-| `AgentArtifact` | `id`、`project_id`、`brief_id`、`artifact_type`、`requirement_refs`、`claims[]`、`assumptions`、`open_questions`、`status`、`status_history` |
+| `AgentTaskBrief` | `id`、`project_id`、`baseline_version`、`requirement_refs`、`specialist`（lab / research / procurement）、`goal`、`specified_params`、`open_params`、`constraints`、`acceptance`、`budget`（时间、搜索次数、模型调用次数）、`usage`（实际消耗）、`status` |
+| `AgentArtifact` | `id`、`project_id`、`brief_id`、`artifact_type`、`requirement_refs`、`candidates[]`（可选，多候选时使用）、`claims[]`、`assumptions`、`open_questions`、`produced_by: RunRef`、`status`、`status_history` |
 | `Claim` | `statement`、`subject`（如器件 ID）、`metric`、`value: SpecValue`、`evidence_ids`（属于 Artifact 的一部分） |
-| `Evidence` | `id`、`source_type`（document / web / vendor_api / fx_rate / measurement）、`locator`（URL 或文档 ID）、`excerpt`（原文片段）、`page_or_anchor`、`retrieved_at`、`source_version`；报价类另加 `quote`：`currency`、`price_tiers`、`region`、`valid_until` |
-| `InstrumentPlan` | `id`、`project_id`、`version`、`baseline_version`、`artifact_ids`、`modules[]`、`bom[]`、`rationale`、`risks`、`stage2_tasks`、`check_summary`、`status` |
+| `Evidence` | `id`、`source_type`（document / web / vendor_api / fx_rate / measurement / user_decision）、`locator`（URL 或文档 ID）、`excerpt`（原文片段）、`page_or_anchor`、`retrieved_at`、`source_version`、`retrieved_by: RunRef`、`tool_call_id`；报价类另加 `quote`：`currency`、`price_tiers`、`region`、`valid_until` |
+| `InstrumentPlan` | `id`、`project_id`、`version`、`baseline_version`、`artifact_ids`、`modules[]`、`bom[]`、`rationale`、`risks`、`stage2_tasks`、`check_summary`、`produced_by: RunRef`、`status` |
+| `UserQuestion` | `id`、`project_id`、`run_id`、`brief_id`（可选）、`question`、`options`（可选）、`context`（为什么要问）、`answer`、`answered_at`、`answer_evidence_id`、`status`（open / answered / cancelled） |
 | `TestResult` | `id`、`project_id`、`requirement_key`、`plan_version`、`measured: SpecValue`、`verdict`、`evidence_ids`（P1 只定义，P7 才使用） |
 
 ---
@@ -160,6 +206,8 @@ src/mis/
 │  ├─ artifacts.py         AgentArtifact / Claim
 │  ├─ evidence.py          Evidence
 │  ├─ plan.py              InstrumentPlan
+│  ├─ questions.py         UserQuestion
+│  ├─ provenance.py        RunRef
 │  ├─ testing.py           TestResult
 │  └─ export.py            导出 JSON Schema 到 docs/schemas/
 ├─ rules/
@@ -187,7 +235,7 @@ compose.yaml               本地 PostgreSQL（pgvector/pgvector:pg17）
 |---|---|---|
 | T1 | `mis.units` 和 `mis.units.raman`，P0 测试改为调用它们 | 基准任务包涉及的单位（nm、µm、cm⁻¹、mW、W、ms、s、°C、CNY）都有换算测试；CP05、CP06 的数值由新模块复算通过 |
 | T2 | `schemas/values.py`：Known / Unknown / Quantity / QuantityRange | `Known` 缺证据会被拒绝；量纲不符（例如给功率字段填 nm）会被拒绝 |
-| T3 | 其余 7 类对象的 schema，以及 JSON Schema 导出 | 每类对象都有正例和反例测试；CI 检查导出的 JSON Schema 与代码一致 |
+| T3 | 其余 7 类对象、`UserQuestion`、`RunRef` 的 schema，以及 JSON Schema 导出 | 每类对象都有正例和反例测试；CI 检查导出的 JSON Schema 与代码一致 |
 | T4 | `rules/`：5 种比较方式加三值汇总 | 见第 7 节的“规则复现标准答案” |
 | T5 | `compose.yaml`、Alembic 初始迁移、CI 数据库服务；`project_service`：表定义、仓储、版本、状态历史 | 一条命令启动本地数据库；`alembic upgrade head` 能从空库建出全部表；增删查测试；修改需求生成新版本、旧版本可读；Artifact 内容无法被修改；CI 中数据库测试通过 |
 | T6 | `impact.py`：需求差异和影响分析 | 见第 7 节的“影响分析” |
@@ -221,6 +269,12 @@ T7 中的示例数据，是**假设一个完美的 Specialist 会产出什么**�
 - [ ] `Known` 值没有证据时，创建失败
 - [ ] 量纲错误时（例如功率字段的单位是 nm），创建失败
 - [ ] Claim 引用了不存在的 Evidence ID 时，写入失败
+- [ ] Brief 的 `specified_params` 引用了基线中不存在的需求项，或同一参数同时出现在指定和不定两个列表中时，创建失败
+
+### 出处与问答
+
+- [ ] 示例 Artifact、Evidence、Plan 都带 `RunRef`，能按 `run_id` 查出同一次运行产生的全部业务记录
+- [ ] 写入一个 `UserQuestion` 并回答后，生成 `user_decision` 类型的 Evidence，后续 Claim 可以引用它
 
 ### 版本与影响分析
 

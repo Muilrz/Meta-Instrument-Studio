@@ -5,6 +5,7 @@
 - 修订记录：
   - v0.1（2026-11-05）：初稿
   - v0.2（2026-11-05）：数据库统一为 PostgreSQL，新增存储总览（0.4 节）；P2 增加 Agent 架构设计（context / memory / skills / 自进化）；P3 增加只读查看页面和最小 HTTP 接口；P5 改为正式产品界面
+  - v0.2.1（2026-11-06）：P2 改为以《Agent 架构需求清单》为输入，选型考察项增加“暂停等待用户”和 trace；D2 注明无数据安全限制
 - 依据：
   - [`MetaInstrumentStudio_ARCHITECTURE.md`](../MetaInstrumentStudio_ARCHITECTURE.md)：目标架构
   - [`research/MIS_Open_Source_Baseline_Research_2026-11-01.md`](../research/MIS_Open_Source_Baseline_Research_2026-11-01.md)：开源 baseline 选型调研
@@ -176,14 +177,16 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 
 **第一步：Agent 架构设计文档**（`docs/design/agent_architecture.md`，Spike 开始前起草，Spike 结束后定稿）
 
-至少回答以下四个问题。下面是初步方向，设计文档里要细化，并由 Spike 验证：
+输入是 [Agent 架构需求清单](../docs/design/agent_architecture_requirements.md)，其中已确认的决定（A1–A7）必须遵守，待讨论的事项（如 C1 trace 详细程度）要在设计文档中给出结论。概要：
 
-| 方面 | 初步方向 |
+| 方面 | 方向 |
 |---|---|
-| **Context（上下文）** | 每个 Specialist 只拿到自己的 Brief 和相关资料，上下文相互隔离；Copilot 只接收结构化的 Artifact，不接收 Specialist 的完整对话。Brief 就是上下文的边界 |
-| **Memory（记忆）** | 分三层：项目记忆 = Project Service 的业务记录（唯一可信来源）；实验室长期知识 = 知识库；Agent 工作记忆 = 运行状态，用完可丢。不另建一个与业务记录并行的“记忆库” |
-| **Skills（技能）** | 领域操作写成带版本号的技能文件，配合确定性工具（如拉曼分辨率换算、报价规范化）。技能告诉 Agent 怎么做，结果对不对由规则判定 |
-| **自进化** | 不允许 Agent 在运行中自动修改自己的提示词或技能。采用有人把关的循环：收集基准测试失败案例 → 提出修改建议 → 用基准任务包回归测试 → 人工批准后生效 |
+| **Context（上下文）** | 每个 Specialist 只拿到自己的 Brief 和相关资料，上下文相互隔离；Copilot 只接收结构化的 Artifact。Brief 中明确区分指定参数和不定参数（A3） |
+| **Memory（记忆）** | 分三层：项目记忆在业务数据库；跨项目知识（实验室知识 + 经验记忆）在同一个知识库；工作记忆在运行状态。经验记忆经过晋升池（去重、冲突处理）才进入知识库，并定期遗忘（A1、A2） |
+| **协作** | Specialist 之间不直接沟通，全部经过 Copilot；Copilot 可以暂停并向用户提问（A3、A4） |
+| **Skills（技能）** | 技能 = 操作说明 + 确定性工具 + 测试用例，带版本号，按 Specialist 分配 |
+| **Trace（可观测）** | 详细程度待定（C1）；业务记录中的出处字段已在 P1 预留 |
+| **自进化** | 不允许运行中自我修改；离线循环：出错 → 按 trace 定位 → 修改 → 回归测试 → 人工批准（A6） |
 
 **候选**（来自调研报告第 2 节）
 
@@ -206,6 +209,8 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
   | 上下文与记忆 | 能否按设计文档实现上下文隔离；底座自带的记忆机制能否关闭或改为读写 Project Service |
   | 技能机制 | 能否加载带版本的技能文件，并限制每个 Specialist 可用的技能 |
   | PostgreSQL 支持 | 运行状态（checkpoint）能否存进 PostgreSQL，并与业务记录分在不同 schema |
+  | 暂停等待用户 | 运行能否在 Copilot 提问时暂停，用户回答后（包括进程重启后）从断点继续 |
+  | trace | 能否导出每次模型和工具调用的记录，并带上 MIS 的运行 ID |
   | 改动面 | 接入 MIS 数据模型需要改多少上游代码 |
   | 许可与维护 | 许可证、上游活跃度、版本锁定方式 |
 
@@ -390,7 +395,7 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 | 编号 | 问题 | 最晚决策时间 | 当前状态 |
 |---|---|---|---|
 | D1 | 主技术栈和数据库 | P0 | 数据库**已确定**为 PostgreSQL 17 + pgvector；Python + uv 见 ADR-0001，待评审 |
-| D2 | LLM 供应商与模型、是否需要私有化部署、调用预算上限 | P2 | 未定 |
+| D2 | LLM 供应商与模型、是否需要私有化部署、调用预算上限 | P2 | 无数据安全限制，可以使用外部模型 API、不需要私有化部署；供应商和预算未定 |
 | D3 | 基准任务包的真实资料来源：用哪些实验室文档、论文，哪些需要脱敏 | P0 | P0 用合成资料（ADR-0001），真实资料推迟到 P4 |
 | D4 | P2 比较几个候选、Spike 的时间盒多长 | P2 | 未定 |
 | D5 | Lab Knowledge 选 RAGFlow 还是 Docling + 自建（后者可直接使用 PostgreSQL + pgvector） | P4 | 未定 |
