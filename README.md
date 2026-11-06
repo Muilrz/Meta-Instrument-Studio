@@ -2,9 +2,10 @@
 
 面向科研仪器研发全流程的 AI 原生工程平台。
 
-- 目标架构：[MetaInstrumentStudio_ARCHITECTURE.md](MetaInstrumentStudio_ARCHITECTURE.md)
-- 开发计划：[plans/MIS_Development_Plan_v0.1.md](plans/MIS_Development_Plan_v0.1.md)
-- 当前阶段：**P0 工程基础与基准任务包**
+- 目标架构：[docs/architecture.md](docs/architecture.md)
+- 开发计划：[docs/plans/development_plan.md](docs/plans/development_plan.md)
+- 全部文档：[docs/README.md](docs/README.md)
+- 当前阶段：**P1 核心数据契约与 Project Service**（准备开工）
 
 ## 快速上手
 
@@ -24,6 +25,16 @@ uv run ruff check .
 uv run ruff format .
 ```
 
+## 数据库
+
+开发用 Neon 云数据库，不需要在本机安装 PostgreSQL，原因和细节见 [ADR-0001](docs/adr/0001-repo-structure-and-stack.md#部署)。
+
+1. 把 `.env.example` 复制为 `.env`。
+2. 在 Neon 控制台（组织 Muil，项目 `meta-instrument-studio`）点 **Connect**，复制直连地址（不要选 Pooled）。
+3. 填入 `.env` 的 `MIS_DATABASE_URL`，把开头的 `postgresql://` 改成 `postgresql+psycopg://`。
+
+`.env` 不会被提交。连接地址带密码，不要发到聊天或邮件里。能安装 Docker 的开发者也可以改用本地容器，见 `.env.example` 中的说明。
+
 ## 目录
 
 | 目录 | 内容 |
@@ -31,13 +42,6 @@ uv run ruff format .
 | `src/mis/` | 平台代码 |
 | `tests/` | 自动化测试 |
 | `fixtures/raman_baseline/` | Raman 基准任务包（合成资料），各阶段统一的验收输入 |
-| `plans/` | 开发计划、阶段任务说明 |
-| `reviews/` | 阶段报告、审查记录 |
-| `docs/adr/` | 架构决策记录 |
-| `research/` | 开源 baseline 选型调研（存档） |
+| `docs/` | 全部文档：架构、计划、设计、ADR、阶段报告、调研存档 |
 
-目录约定和技术栈选择见 [ADR-0001](docs/adr/0001-repo-structure-and-stack.md)。
-
-## 密钥
-
-把 `.env.example` 复制为 `.env` 后填写。`.env` 不会被提交。P0 阶段不需要任何密钥。
+AI 会话（Claude Code、Codex 等）从 [CLAUDE.md](CLAUDE.md) / [AGENTS.md](AGENTS.md) 开始。

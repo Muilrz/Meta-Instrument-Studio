@@ -4,9 +4,10 @@
 - 日期：2026-11-05
 - 修订：
   - 2026-11-05，数据库改为 PostgreSQL（见 ADR-0001），并相应地从 P1 起引入 Alembic
-  - 2026-11-06，依据 [Agent 架构需求清单](../docs/design/agent_architecture_requirements.md)：新增出处字段 `RunRef`（3.8）、Brief 参数分类（3.9）、用户问答 `UserQuestion`（3.10）、用户纠正 `UserCorrection`（3.11）
+  - 2026-11-06，依据 [Agent 架构需求清单](../design/agent_architecture_requirements.md)：新增出处字段 `RunRef`（3.8）、Brief 参数分类（3.9）、用户问答 `UserQuestion`（3.10）、用户纠正 `UserCorrection`（3.11）
   - 2026-11-06，`InstrumentProject` 增加 `kind`（normal / benchmark），导入器把基准任务包导入为 benchmark 项目
-- 上级计划：[开发计划 v0.1 · P1](MIS_Development_Plan_v0.1.md#p1-核心数据契约与-project-service)
+  - 2026-11-06，开发数据库改为 Neon：T5 改为普通 SQL 初始化脚本 `db/init.sql` + Neon `test` 分支，`compose.yaml` 变为可选；本文件移到 `docs/plans/`
+- 上级计划：[开发计划 · P1](development_plan.md#p1-核心数据契约与-project-service)
 - 前置条件：P0 完成（[P0 报告](../reviews/P0_report.md)）
 - 分支：`p1-data-contracts`，按下文任务拆成多个提交或 PR
 
@@ -34,7 +35,8 @@ P1 结束时，平台应当能做到以下几件事。全程**不调用任何 LL
 - 需求比较规则引擎（min / max / range / covers / enum）
 - 版本管理和影响分析
 - 持久化层（PostgreSQL，`mis` schema）、数据库迁移（Alembic）和服务层 API
-- 本地数据库配置（`compose.yaml`，`pgvector/pgvector:pg17` 镜像），CI 中用同一镜像作为服务容器
+- 数据库初始化脚本 `db/init.sql`（普通 SQL：建 schema、建账号、启用 pgvector），对 Neon 和 Docker 都能执行
+- 开发数据库用 Neon（ADR-0001“部署”）；CI 用 `pgvector/pgvector:pg17` 服务容器；另提供 `compose.yaml` 给能安装 Docker 的开发者
 - 基准任务包的需求导入器
 - 数据导出 / 导入（备份与恢复）
 
@@ -129,7 +131,7 @@ SpecValue = Annotated[Known | Unknown, Field(discriminator="kind")]
 
 ### 3.8 出处字段：业务记录与 trace 的连接
 
-trace 的详细程度和存储方式在 P2 才定（见 [Agent 架构需求清单](../docs/design/agent_architecture_requirements.md) C1），但业务记录必须**现在**就预留连接字段，否则以后无法从结论追溯到产生它的那次运行。
+trace 的详细程度和存储方式在 P2 才定（见 [Agent 架构需求清单](../design/agent_architecture_requirements.md) C1），但业务记录必须**现在**就预留连接字段，否则以后无法从结论追溯到产生它的那次运行。
 
 统一用一个 `RunRef` 结构，P1 只定义和存储，不负责生成：
 
@@ -234,7 +236,8 @@ src/mis/
    └─ raman_baseline.py    requirements.csv + manifest → 项目、需求 v1、汇率证据
 
 migrations/                Alembic 迁移脚本（仓库根目录）
-compose.yaml               本地 PostgreSQL（pgvector/pgvector:pg17）
+db/init.sql                数据库初始化脚本（schema、账号、pgvector）
+compose.yaml               可选：本地 Docker 运行 PostgreSQL（pgvector/pgvector:pg17）
 ```
 
 ---
@@ -249,10 +252,10 @@ compose.yaml               本地 PostgreSQL（pgvector/pgvector:pg17）
 | T2 | `schemas/values.py`：Known / Unknown / Quantity / QuantityRange | `Known` 缺证据会被拒绝；量纲不符（例如给功率字段填 nm）会被拒绝 |
 | T3 | 其余 7 类对象、`UserQuestion`、`UserCorrection`、`RunRef` 的 schema，以及 JSON Schema 导出 | 每类对象都有正例和反例测试；CI 检查导出的 JSON Schema 与代码一致 |
 | T4 | `rules/`：5 种比较方式加三值汇总 | 见第 7 节的“规则复现标准答案” |
-| T5 | `compose.yaml`、Alembic 初始迁移、CI 数据库服务；`project_service`：表定义、仓储、版本、状态历史 | 一条命令启动本地数据库；`alembic upgrade head` 能从空库建出全部表；增删查测试；修改需求生成新版本、旧版本可读；Artifact 内容无法被修改；CI 中数据库测试通过 |
+| T5 | `db/init.sql`、Neon `test` 分支、Alembic 初始迁移、CI 数据库服务、可选的 `compose.yaml`；`project_service`：表定义、仓储、版本、状态历史 | `db/init.sql` 能在 Neon 和 CI 容器上执行成功，并建出 ADR-0001“数据库布局”中的 schema 和三个账号；用 `mis_runtime` 修改 `mis` 中的数据会被拒绝；`alembic upgrade head` 能从空库建出全部表；增删查测试；修改需求生成新版本、旧版本可读；Artifact 内容无法被修改；CI 中数据库测试通过 |
 | T6 | `impact.py`：需求差异和影响分析 | 见第 7 节的“影响分析” |
 | T7 | 导入器，以及手写的 Raman 示例数据（`tests/data/`） | 需求 v1 导入后共 11 项，单位和比较方式都正确；默认导入为 `kind = benchmark` 的项目，也可以指定导入为 normal 项目（供 P3 的触发测试使用）；示例 Artifact 和 Plan 能写入并读出 |
-| T8 | 导出 / 导入，以及 P1 阶段报告 | 见第 7 节的“备份恢复”；完成 `reviews/P1_report.md` |
+| T8 | 导出 / 导入，以及 P1 阶段报告 | 见第 7 节的“备份恢复”；完成 `docs/reviews/P1_report.md` |
 
 T7 中的示例数据，是**假设一个完美的 Specialist 会产出什么**：按器件页面和报价手工录入 8 个器件的结构化参数，录成 Claim 和 Evidence。它放在 `tests/data/`，不放进基准任务包，避免修改 v0.1.0 的标准答案。
 
@@ -309,7 +312,7 @@ T7 中的示例数据，是**假设一个完美的 Specialist 会产出什么**�
 
 - [ ] `uv run pytest`、`ruff check`、`ruff format --check` 本地和 CI 都通过
 - [ ] 新增依赖（pydantic、pint、sqlalchemy、psycopg、alembic、python-ulid）的许可证登记在 P1 报告中
-- [ ] README 写明本地数据库的启动方法（需要 Docker Desktop）
+- [ ] README 写明开发数据库的连接方法（Neon，`.env`），以及可选的本地 Docker 方法
 
 ---
 

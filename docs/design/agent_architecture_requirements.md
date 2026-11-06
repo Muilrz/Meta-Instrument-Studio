@@ -7,7 +7,7 @@
   - 2026-11-06，明确“经验库”是知识库中的经验条目；触发事件标注依赖的业务记录和最早可用阶段
   - 2026-11-06，“同一类问题反复出现”改为按不同项目计数，基准任务项目默认不计数
 - 用途：P2《Agent 架构设计文档》的输入。这里只记录**要求和已做的决定**，具体实现方案在设计文档里写。
-- 相关：[开发计划 · P2](../../plans/MIS_Development_Plan_v0.1.md#p2-agent-架构设计与运行底座选型spike)、[P1 任务说明](../../plans/P1_data_contracts.md)
+- 相关：[开发计划 · P2](../plans/development_plan.md#p2-agent-架构设计与运行底座选型spike)、[P1 任务说明](../plans/P1_data_contracts.md)
 
 ---
 

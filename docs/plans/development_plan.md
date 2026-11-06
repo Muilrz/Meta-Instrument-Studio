@@ -1,4 +1,4 @@
-# MetaInstrumentStudio 开发计划（v0.2）
+# MetaInstrumentStudio 开发计划（v0.2.5）
 
 - 状态：草案，待评审
 - 日期：2026-11-05
@@ -9,11 +9,12 @@
   - v0.2.2（2026-11-06）：经验晋升池分阶段落地——P3 记录触发事件并在查看页面展示，P4 去重与冲突检测，P5 审核页面；自进化增加“失败案例转为考题”（A8）
   - v0.2.3（2026-11-06）：P3 只记录 4 类触发事件并新增命令行纠正入口；为 P3/P4/P5 的经验相关工作补充验收标准；存储总览加入 trace 和晋升池
   - v0.2.4（2026-11-06）：“同类问题反复出现”改为按不同项目计数，P3 的触发与不误触发验收相应调整
+  - v0.2.5（2026-11-06）：开发数据库改为 Neon 云数据库；文档统一移到 `docs/`，本文件由 `plans/MIS_Development_Plan_v0.1.md` 改名为 `docs/plans/development_plan.md`；新增 D10
 - 依据：
-  - [`MetaInstrumentStudio_ARCHITECTURE.md`](../MetaInstrumentStudio_ARCHITECTURE.md)：目标架构
-  - [`research/MIS_Open_Source_Baseline_Research_2026-11-01.md`](../research/MIS_Open_Source_Baseline_Research_2026-11-01.md)：开源 baseline 选型调研
+  - [`docs/architecture.md`](../architecture.md)：目标架构
+  - [`docs/research/MIS_Open_Source_Baseline_Research_2026-11-01.md`](../research/MIS_Open_Source_Baseline_Research_2026-11-01.md)：开源 baseline 选型调研
 
-本文只规定**阶段划分、每阶段做什么 / 不做什么、怎样算完成**。具体工期、人员、技术细节在各阶段启动时，另写阶段任务说明（`plans/Px_*.md`）。
+本文只规定**阶段划分、每阶段做什么 / 不做什么、怎样算完成**。具体工期、人员、技术细节在各阶段启动时，另写阶段任务说明（`docs/plans/Px_*.md`）。
 
 ---
 
@@ -59,7 +60,7 @@ P0 建立一个固定的 **Raman 仪器方案任务包**，作为后续所有阶
 
 ### 0.4 存储（统一使用 PostgreSQL）
 
-从 P1 起，开发、测试、CI 和正式环境都使用 **PostgreSQL 17 + pgvector**，不使用 SQLite。本地通过 Docker Desktop 运行。平台所有需要存储的地方，原则上都放进同一个 PostgreSQL 实例：
+从 P1 起，开发、测试、CI 和正式环境都使用 **PostgreSQL 17 + pgvector**，不使用 SQLite。开发环境使用 **Neon 云数据库**（新加坡；公司电脑不能安装 Docker），CI 使用 Docker 服务容器，以 CI 结果为准。平台所有需要存储的地方，原则上都放进同一个 PostgreSQL 实例：
 
 | 存什么 | 引入阶段 | 存在哪里 |
 |---|---|---|
@@ -72,7 +73,7 @@ P0 建立一个固定的 **Raman 仪器方案任务包**，作为后续所有阶
 | 原始文件（PDF、网页快照） | P4 | 本地文件夹，数据库存路径和哈希 |
 | 用户与登录 | P5 | PostgreSQL |
 
-详细说明见 [ADR-0001 存储总览](../docs/adr/0001-repo-structure-and-stack.md#存储总览)。
+详细说明见 [ADR-0001 存储总览](../adr/0001-repo-structure-and-stack.md#存储总览)。
 
 ---
 
@@ -113,7 +114,7 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 
 **范围内**
 
-- 仓库目录结构，例如 `services/`、`schemas/`、`adapters/`、`fixtures/`、`plans/`、`reviews/`、`docs/adr/`
+- 仓库目录结构，例如 `services/`、`schemas/`、`adapters/`、`fixtures/`、`docs/plans/`、`docs/reviews/`、`docs/adr/`
 - 主语言与工具链：Python 后端，TypeScript 前端，待 ADR 确认
 - 依赖管理、lint、格式化、单元测试框架、CI
 - ADR 模板，以及第一份 ADR：仓库结构与技术栈
@@ -158,7 +159,7 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 - 确定性规则校验：必填字段、证据引用存在、单位换算与量纲一致、数值是否落在需求范围内、`unknown` 不得被当成满足要求
 - 版本与影响分析：需求版本变化时，找出依赖旧版本的 Brief、Artifact 和 Plan，并标记为 `stale`
 - Project Service：持久化到 PostgreSQL（`mis` schema），以及 Python 服务层的增删查接口（HTTP 接口在 P3 加）
-- 本地开发用的 PostgreSQL 配置（Docker），CI 中用同一镜像运行数据库测试
+- 数据库初始化脚本（普通 SQL，对 Neon 和 Docker 都能执行）；开发用 Neon，CI 中用 `pgvector/pgvector:pg17` 镜像运行数据库测试
 
 **范围外**
 
@@ -181,7 +182,7 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 
 **第一步：Agent 架构设计文档**（`docs/design/agent_architecture.md`，Spike 开始前起草，Spike 结束后定稿）
 
-输入是 [Agent 架构需求清单](../docs/design/agent_architecture_requirements.md)，其中已确认的决定（A1–A8）必须遵守，待讨论的事项（如 C1 trace 详细程度）要在设计文档中给出结论。概要：
+输入是 [Agent 架构需求清单](../design/agent_architecture_requirements.md)，其中已确认的决定（A1–A8）必须遵守，待讨论的事项（如 C1 trace 详细程度）要在设计文档中给出结论。概要：
 
 | 方面 | 方向 |
 |---|---|
@@ -397,9 +398,9 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 
 1. 本阶段的验收清单全部勾选，或未完成项已由负责人书面确认为豁免并写明原因
 2. 验收以自动化测试或脚本为主，并在 CI 中可以复现
-3. 有一份阶段报告 `reviews/Px_report.md`，内容包括：完成了什么、验收结果、偏离计划之处、遗留问题
+3. 有一份阶段报告 `docs/reviews/Px_report.md`，内容包括：完成了什么、验收结果、偏离计划之处、遗留问题
 4. 涉及架构选择的决定已写成 ADR
-5. 下一阶段的任务说明 `plans/Px+1_*.md` 已起草
+5. 下一阶段的任务说明 `docs/plans/Px+1_*.md` 已起草
 
 ---
 
@@ -418,3 +419,4 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 | D7 | 平台是否需要与现有 GitHub 子项目（SDK_Anlysis_Agent、Rapid_Optics_Studio）放在同一个仓库 | P0 | 建议分仓库（ADR-0001），待评审 |
 | D8 | 开发协作方式：人与 Agent、多个 Agent 之间如何分工，计划和审查记录放在哪里 | P0 | 建议见 ADR-0001，待评审 |
 | D9 | 前端框架选型 | P3 | 未定 |
+| D10 | 多人使用时数据库部署在哪里：实验室或公司服务器、云服务器，还是托管 PostgreSQL | P5 | 未定；开发阶段已确定使用 Neon（ADR-0001“部署”） |

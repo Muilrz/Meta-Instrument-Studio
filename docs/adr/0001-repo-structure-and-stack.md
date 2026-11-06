@@ -5,6 +5,7 @@
 - 修订：
   - 2026-11-05，数据库由“SQLite 起步、正式换 PostgreSQL”改为“从 P1 起统一使用 PostgreSQL”，并新增存储总览一节
   - 2026-11-06，存储总览第 5 项改为 trace 存储方案，新增第 9 项经验晋升池
+  - 2026-11-06，开发数据库改为 Neon 云数据库（公司电脑不能安装 Docker）；新增“数据库布局”和“部署”两节；文档统一移到 `docs/` 下
 - 决策人：待定
 - 相关：开发计划 P0；待决策事项 D1、D3、D7、D8
 
@@ -31,7 +32,8 @@ P0 需要确定代码放在哪里、用什么语言和工具，后续阶段才�
 | 测试 | pytest | P0 |
 | CI | GitHub Actions | P0（推送到 GitHub 后生效） |
 | 数据库 | PostgreSQL 17（带 pgvector 扩展），开发、测试、CI、正式环境都用它，不使用 SQLite | P1 |
-| 本地数据库服务 | Docker Desktop 运行 `pgvector/pgvector:pg17` 镜像 | P1 |
+| 开发数据库 | **Neon 云数据库**（新加坡），见下文“部署” | P1 |
+| CI 数据库 | GitHub Actions 服务容器，`pgvector/pgvector:pg17` 镜像 | P1 |
 | 前端 | TypeScript | P3（只读查看页面）、P5（正式界面） |
 
 ### 存储总览
@@ -56,6 +58,49 @@ P0 需要确定代码放在哪里、用什么语言和工具，后续阶段才�
 - 只用 PostgreSQL 自身和 pgvector 的功能，不引入其他扩展，便于以后换到托管数据库。
 - 数据库软件本身免费。只有改用云厂商托管的数据库服务时才会产生费用，届时另行决策。
 
+### 数据库布局（提议，P1 的 T5 落实）
+
+```text
+PostgreSQL（开发环境是 Neon 项目，CI 是 Docker 容器）
+├─ 数据库 mis（正式数据）
+│   ├─ schema mis        业务记录                          P1
+│   ├─ schema runtime    Agent 运行状态                     P2/P3
+│   ├─ schema trace      全链路调用记录                      P3
+│   ├─ schema knowledge  向量索引、经验条目、晋升池            P3/P4
+│   └─ schema cache      外部调用缓存                       P4
+└─ 测试库（结构相同，测试专用）：Neon 上用 test 分支，CI 中用 mis_test 数据库
+```
+
+账号与权限：
+
+| 账号 | 权限 | 使用者 |
+|---|---|---|
+| `mis_admin` | 建 schema、启用扩展、执行迁移 | 初始化脚本、Alembic |
+| `mis_app` | 读写 `mis`、`knowledge`、`cache`；读 `trace` | Project Service、查看页面 |
+| `mis_runtime` | 读写 `runtime`、`trace`；`mis` 只读 | Agent 运行层 |
+
+- Agent 运行层不能直接改业务记录，写入必须经过 Project Service（数据库层面保证原则 G1）。
+- 初始化脚本是普通 SQL，可以对任何 PostgreSQL 执行（Neon、Docker、以后的服务器）：建 schema、建账号、启用 pgvector。
+- Alembic 只管理 `mis`、`trace`、`knowledge`、`cache`，不碰 `runtime`（运行底座自己建表）。
+- 备份：`mis`、`knowledge` 必须备份；`trace` 按保留策略；`runtime`、`cache` 不备份。
+
+### 部署
+
+| 环境 | 位置 | 状态 |
+|---|---|---|
+| 开发 | **Neon**：组织 Muil，项目 `meta-instrument-studio`，地区 AWS Asia Pacific (Singapore) | **已确定**，2026-11-06 起使用 |
+| CI | GitHub Actions 服务容器（`pgvector/pgvector:pg17`） | 已确定，P1 的 T5 配置 |
+| 多人使用（P5 起） | 实验室或公司服务器 / 云服务器 / 托管 PostgreSQL | 待定（开发计划 D10） |
+
+选择 Neon 的原因：公司电脑不允许安装 WSL2 和 Docker；公司网络可以连接外部 PostgreSQL（5432 端口）；没有数据安全限制；基准任务包是合成资料。2026-11-06 的连接测试结果：
+
+- PostgreSQL 17.11，pgvector 0.8.0 可用
+- 能启用扩展、建 schema、建 JSONB 和向量列、做向量检索；当前账号可以建账号和建库
+- 单次查询往返约 0.25 秒，开发够用；最终以 CI 的 Docker 环境为准
+- 免费版：1 GB 存储、空闲自动休眠、每个项目最多 10 个分支（以 Neon 官网为准）
+
+能安装 Docker 的开发者也可以在本地运行同一个镜像，只需修改 `.env` 中的连接地址，代码不变。连接地址带有密码，只放在 `.env` 中，不提交、不在聊天中传递。
+
 ### D7 仓库关系
 
 MetaInstrumentStudio 平台单独成一个仓库。SDK_Anlysis_Agent、Rapid_Optics_Studio 保持各自独立的仓库，P6 通过适配器和导出格式对接，不合并代码。
@@ -71,9 +116,12 @@ P0 的 Raman 基准任务包**全部使用合成资料**：器件、厂商、实
 
 ### D8 协作方式
 
-- 阶段计划和任务说明写在 `plans/`。
-- 阶段报告和审查意见写在 `reviews/`。
-- 架构决策写在 `docs/adr/`。
+- 所有文档都放在 `docs/` 下，文档地图见 `docs/README.md`。
+- 阶段计划和任务说明写在 `docs/plans/`。
+- 阶段报告和审查意见写在 `docs/reviews/`。
+- 架构决策写在 `docs/adr/`，设计文档写在 `docs/design/`。
+- AI 会话（Claude Code、Codex 等）从根目录的 `CLAUDE.md` / `AGENTS.md` 开始，按其中的顺序读文档。
+- 多个会话共用同一个文件夹时，提交只添加自己改过的文件，不用 `git add -A`。
 - 每个阶段在自己的分支上开发，验收通过后由负责人合并。
 
 ### 目录结构
@@ -81,19 +129,24 @@ P0 的 Raman 基准任务包**全部使用合成资料**：器件、厂商、实
 ```text
 MIS/
 ├─ README.md                  项目入口和快速上手
+├─ CLAUDE.md / AGENTS.md      AI 会话的入口：先读什么、要守哪些规则
 ├─ pyproject.toml / uv.lock   依赖
 ├─ src/mis/                   平台代码（P1 起加入 schemas、project_service、adapters 等子包）
 ├─ tests/                     自动化测试
 ├─ fixtures/                  基准任务包，每个包独立带版本号
 │  └─ raman_baseline/
-├─ plans/                     开发计划、阶段任务说明
-├─ reviews/                   阶段报告、审查记录
-├─ docs/adr/                  架构决策记录
-├─ research/                  选型调研资料（只读存档）
+├─ docs/
+│  ├─ README.md               文档地图
+│  ├─ architecture.md         目标架构
+│  ├─ plans/                  开发计划、阶段任务说明
+│  ├─ design/                 设计文档、需求清单
+│  ├─ adr/                    架构决策记录
+│  ├─ reviews/                阶段报告、审查记录
+│  └─ research/               选型调研资料（只读存档）
 └─ .github/workflows/         CI
 ```
 
-子包按需要创建，不预先建空目录。
+根目录只放入口文件和工程配置，不放其他文档。子包按需要创建，不预先建空目录。
 
 ## 理由
 
@@ -104,7 +157,8 @@ MIS/
 
 ## 后果
 
-- 每位开发者的电脑上需要安装 Docker Desktop，才能在本地运行 PostgreSQL 和数据库相关的测试；CI 用 GitHub Actions 的服务容器运行同一个镜像。
+- 开发依赖网络访问 Neon；断网时无法运行数据库相关的测试。Neon 免费版有容量和分支数量限制，空闲时休眠，首次连接会慢几秒。
+- 开发环境（Neon）和 CI（Docker）不是同一种部署，以 CI 结果为准；两边都只用 PostgreSQL 和 pgvector 的标准功能，避免差异。
 - 前端在 P3 引入只读查看页面，引入前需要另写 ADR，确定框架和是否采用 monorepo 工具。
 - 合成任务包只能检验流程和规则是否正确，不能检验真实资料下的效果，P4 必须补充真实任务包。
 - 仓库已推送到 `https://github.com/Muilrz/Meta-Instrument-Studio`，CI 在每次推送时运行。
