@@ -4,7 +4,7 @@
 - 日期：2026-11-05
 - 修订：
   - 2026-11-05，数据库改为 PostgreSQL（见 ADR-0001），并相应地从 P1 起引入 Alembic
-  - 2026-11-06，依据 [Agent 架构需求清单](../docs/design/agent_architecture_requirements.md)：新增出处字段 `RunRef`（3.8）、Brief 参数分类（3.9）、用户问答 `UserQuestion`（3.10）
+  - 2026-11-06，依据 [Agent 架构需求清单](../docs/design/agent_architecture_requirements.md)：新增出处字段 `RunRef`（3.8）、Brief 参数分类（3.9）、用户问答 `UserQuestion`（3.10）、用户纠正 `UserCorrection`（3.11）
 - 上级计划：[开发计划 v0.1 · P1](MIS_Development_Plan_v0.1.md#p1-核心数据契约与-project-service)
 - 前置条件：P0 完成（[P0 报告](../reviews/P0_report.md)）
 - 分支：`p1-data-contracts`，按下文任务拆成多个提交或 PR
@@ -27,7 +27,7 @@ P1 结束时，平台应当能做到以下几件事。全程**不调用任何 LL
 
 **范围内**
 
-- 7 类核心对象，加上 `UserQuestion` 和 `RunRef` 的 Pydantic 模型，以及导出的 JSON Schema
+- 7 类核心对象，加上 `UserQuestion`、`UserCorrection` 和 `RunRef` 的 Pydantic 模型，以及导出的 JSON Schema
 - 带单位的数值类型，以及“未知”的显式表示
 - 单位换算，以及拉曼领域换算（波长 ↔ 拉曼位移、nm 分辨率 → cm⁻¹）
 - 需求比较规则引擎（min / max / range / covers / enum）
@@ -169,6 +169,16 @@ trace 的详细程度和存储方式在 P2 才定（见 [Agent 架构需求清�
 - 用户的回答写成一条 `source_type = user_decision` 的 Evidence，后续结论可以引用它。
 - 运行的暂停和恢复由运行层负责（P2/P3），P1 只负责存储问题和回答。
 
+### 3.11 用户纠正结论
+
+依据需求清单 A2：“用户纠正了某个结论”是经验的触发事件之一，也是 A8 中“确认过的错误”的主要来源，因此纠正必须作为业务记录保存，新增对象 `UserCorrection`：
+
+- 纠正针对某个 Artifact 中的某条 Claim，所以 `Claim` 需要有稳定的 `claim_id`。
+- 纠正后的值仍然是 `SpecValue`，可以是新的已知值，也可以改为未知。
+- 纠正时生成一条 `source_type = user_decision` 的 Evidence，记录纠正内容和理由。
+- 原 Artifact 内容不变（3.4），但状态变为 `stale`，状态历史记录原因为“用户纠正”；包含它的 Plan 同样标记为 `stale`，复用 3.5 的影响传播。
+- P1 只负责存储纠正和标记 stale；纠正的入口（命令行、页面）和触发候选经验在 P3 及之后实现。
+
 ---
 
 ## 4. 对象字段（初稿）
@@ -182,10 +192,11 @@ trace 的详细程度和存储方式在 P2 才定（见 [Agent 架构需求清�
 | `RequirementItem` | `key`（如 R04）、`name`、`metric`（指标键）、`comparator`、`lower`、`upper`、`allowed`（枚举）、`unit`、`priority`、`verification` |
 | `AgentTaskBrief` | `id`、`project_id`、`baseline_version`、`requirement_refs`、`specialist`（lab / research / procurement）、`goal`、`specified_params`、`open_params`、`constraints`、`acceptance`、`budget`（时间、搜索次数、模型调用次数）、`usage`（实际消耗）、`status` |
 | `AgentArtifact` | `id`、`project_id`、`brief_id`、`artifact_type`、`requirement_refs`、`candidates[]`（可选，多候选时使用）、`claims[]`、`assumptions`、`open_questions`、`produced_by: RunRef`、`status`、`status_history` |
-| `Claim` | `statement`、`subject`（如器件 ID）、`metric`、`value: SpecValue`、`evidence_ids`（属于 Artifact 的一部分） |
+| `Claim` | `claim_id`、`statement`、`subject`（如器件 ID）、`metric`、`value: SpecValue`、`evidence_ids`（属于 Artifact 的一部分） |
 | `Evidence` | `id`、`source_type`（document / web / vendor_api / fx_rate / measurement / user_decision）、`locator`（URL 或文档 ID）、`excerpt`（原文片段）、`page_or_anchor`、`retrieved_at`、`source_version`、`retrieved_by: RunRef`、`tool_call_id`；报价类另加 `quote`：`currency`、`price_tiers`、`region`、`valid_until` |
 | `InstrumentPlan` | `id`、`project_id`、`version`、`baseline_version`、`artifact_ids`、`modules[]`、`bom[]`、`rationale`、`risks`、`stage2_tasks`、`check_summary`、`produced_by: RunRef`、`status` |
 | `UserQuestion` | `id`、`project_id`、`run_id`、`brief_id`（可选）、`question`、`options`（可选）、`context`（为什么要问）、`answer`、`answered_at`、`answer_evidence_id`、`status`（open / answered / cancelled） |
+| `UserCorrection` | `id`、`project_id`、`artifact_id`、`claim_id`、`original_value: SpecValue`、`corrected_value: SpecValue`、`reason`、`evidence_id`（user_decision）、`corrected_by`、`created_at` |
 | `TestResult` | `id`、`project_id`、`requirement_key`、`plan_version`、`measured: SpecValue`、`verdict`、`evidence_ids`（P1 只定义，P7 才使用） |
 
 ---
@@ -206,7 +217,7 @@ src/mis/
 │  ├─ artifacts.py         AgentArtifact / Claim
 │  ├─ evidence.py          Evidence
 │  ├─ plan.py              InstrumentPlan
-│  ├─ questions.py         UserQuestion
+│  ├─ questions.py         UserQuestion / UserCorrection
 │  ├─ provenance.py        RunRef
 │  ├─ testing.py           TestResult
 │  └─ export.py            导出 JSON Schema 到 docs/schemas/
@@ -235,7 +246,7 @@ compose.yaml               本地 PostgreSQL（pgvector/pgvector:pg17）
 |---|---|---|
 | T1 | `mis.units` 和 `mis.units.raman`，P0 测试改为调用它们 | 基准任务包涉及的单位（nm、µm、cm⁻¹、mW、W、ms、s、°C、CNY）都有换算测试；CP05、CP06 的数值由新模块复算通过 |
 | T2 | `schemas/values.py`：Known / Unknown / Quantity / QuantityRange | `Known` 缺证据会被拒绝；量纲不符（例如给功率字段填 nm）会被拒绝 |
-| T3 | 其余 7 类对象、`UserQuestion`、`RunRef` 的 schema，以及 JSON Schema 导出 | 每类对象都有正例和反例测试；CI 检查导出的 JSON Schema 与代码一致 |
+| T3 | 其余 7 类对象、`UserQuestion`、`UserCorrection`、`RunRef` 的 schema，以及 JSON Schema 导出 | 每类对象都有正例和反例测试；CI 检查导出的 JSON Schema 与代码一致 |
 | T4 | `rules/`：5 种比较方式加三值汇总 | 见第 7 节的“规则复现标准答案” |
 | T5 | `compose.yaml`、Alembic 初始迁移、CI 数据库服务；`project_service`：表定义、仓储、版本、状态历史 | 一条命令启动本地数据库；`alembic upgrade head` 能从空库建出全部表；增删查测试；修改需求生成新版本、旧版本可读；Artifact 内容无法被修改；CI 中数据库测试通过 |
 | T6 | `impact.py`：需求差异和影响分析 | 见第 7 节的“影响分析” |
@@ -275,6 +286,7 @@ T7 中的示例数据，是**假设一个完美的 Specialist 会产出什么**�
 
 - [ ] 示例 Artifact、Evidence、Plan 都带 `RunRef`，能按 `run_id` 查出同一次运行产生的全部业务记录
 - [ ] 写入一个 `UserQuestion` 并回答后，生成 `user_decision` 类型的 Evidence，后续 Claim 可以引用它
+- [ ] 对示例 Artifact 中 SPEC-C 的一条 Claim 写入 `UserCorrection` 后：生成 `user_decision` Evidence；原 Artifact 内容不变、状态变为 `stale`，包含它的 Plan 也变为 `stale`；纠正前后的值都能读出
 
 ### 版本与影响分析
 
