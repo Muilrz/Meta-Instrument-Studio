@@ -37,6 +37,36 @@ uv run ruff format .
 
 `.env` 不会被提交。连接地址带密码，不要发到聊天或邮件里。能安装 Docker 的开发者也可以改用本地容器，见 `.env.example` 中的说明。
 
+测试必须使用独立 Neon `test` 分支，将该分支直连地址填入 `.env` 的
+`MIS_TEST_DATABASE_URL`。测试会检查开发与测试端点不同；缺少测试库配置会报错，不会跳过。
+
+使用具备建角色和 schema 权限的数据库所有者初始化（先在测试分支验证）：
+
+```bash
+uv run python -m mis.project_service.setup --test
+uv run alembic -x test=true upgrade head
+uv run pytest
+```
+
+初始化器执行 `db/init.sql`，再用 Alembic 建立 `mis` 业务表。SQL 可在 Neon 和标准
+PostgreSQL + pgvector 上执行；不建立 Runtime、Trace 或知识库业务表。
+`mis_admin` 负责迁移，`mis_app` 负责业务写入，`mis_runtime` 对 `mis` 只有只读权限。
+SQL 不设置默认密码；部署时分别配置角色凭据，并让业务服务使用 `mis_app` 连接。
+测试使用数据库所有者，通过 `SET LOCAL ROLE` 验证权限；每个测试事务最终回滚。
+
+能安装 Docker 时，在 `.env` 设置 `MIS_POSTGRES_PASSWORD`，然后执行：
+
+```bash
+docker compose up -d
+docker compose exec postgres createdb -U postgres mis_test
+```
+
+分别将开发和测试连接指向本地的 `mis`、`mis_test` 数据库，再运行上述初始化命令。
+开发库初始化使用 `uv run python -m mis.project_service.setup`；应由开发者明确执行。
+
+Python 服务入口是 `ProjectService(session)`；所有写入在调用方的 SQLAlchemy 事务中执行，
+服务不自行 commit。Evidence 和已保存版本没有删除接口；只能删除空项目。
+
 ## 目录
 
 | 目录 | 内容 |

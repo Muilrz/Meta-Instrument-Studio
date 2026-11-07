@@ -1,5 +1,9 @@
 import pytest
+from alembic import command
+from alembic.config import Config
+from sqlalchemy.orm import Session
 
+from mis.project_service.db import ROOT, engine_for
 from mis.schemas.artifacts import AgentArtifact, Claim
 from mis.schemas.evidence import Evidence
 from mis.schemas.plan import BomEntry, ClaimRef, InstrumentPlan, PlanConclusion
@@ -10,6 +14,41 @@ from mis.schemas.requirements import RequirementBaseline, RequirementItem
 from mis.schemas.tasks import AgentTaskBrief
 from mis.schemas.testing import TestResult
 from mis.schemas.values import Known, Quantity, Unknown
+
+
+@pytest.fixture(scope="session")
+def db_engine():
+    failure = None
+    try:
+        engine = engine_for(test=True)
+        with engine.begin() as connection:
+            connection.exec_driver_sql((ROOT / "db/init.sql").read_text(encoding="utf-8"))
+            config = Config(str(ROOT / "alembic.ini"))
+            config.attributes["connection"] = connection
+            command.upgrade(config, "head")
+    except Exception as exc:
+        failure = type(exc).__name__
+    if failure:
+        pytest.fail(
+            f"Test database setup failed ({failure}); configure "
+            "MIS_TEST_DATABASE_URL for an independent Neon test branch or Docker. "
+            "Connection details suppressed.",
+            pytrace=False,
+        )
+    yield engine
+    engine.dispose()
+
+
+@pytest.fixture
+def db_session(db_engine):
+    with db_engine.connect() as connection:
+        transaction = connection.begin()
+        session = Session(bind=connection, join_transaction_mode="create_savepoint")
+        try:
+            yield session
+        finally:
+            session.close()
+            transaction.rollback()
 
 
 @pytest.fixture
