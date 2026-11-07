@@ -8,6 +8,7 @@ from mis.rules.compare import CheckResult, RamanContext
 from mis.rules.evaluate import Evaluation
 from mis.schemas.artifacts import AgentArtifact, Claim
 from mis.schemas.evidence import Evidence
+from mis.schemas.impact import ImpactReport
 from mis.schemas.plan import InstrumentPlan
 from mis.schemas.project import InstrumentProject
 from mis.schemas.provenance import RunRef
@@ -40,6 +41,7 @@ MODELS = (
     CheckResult,
     RamanContext,
     Evaluation,
+    ImpactReport,
 )
 
 
