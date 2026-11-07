@@ -48,7 +48,8 @@ Windows / Python 3.12.16，独立 Neon test 分支。开发数据库没有执行
 | 启动时 P0 | 57 passed |
 | T1 / T2 / T3 / T4 | 69 / 76 / 89 / 104 passed |
 | T5 / T6 / T7 | 111 / 113 / 115 passed |
-| T8 | 118 passed |
+| T8 首轮 | 118 passed |
+| 静态审查加固后 | 126 passed |
 
 `ruff check .`、`ruff format --check .`、`python -m mis.schemas.export --check` 均通过。
 测试先覆盖核心接口，再实现、修复失败并运行相关和完整回归；没有静默跳过数据库测试。
@@ -124,6 +125,8 @@ P0 原有 57 项测试继续通过，fixtures/raman_baseline/ v0.1.0 没有修�
 - 新迁移 0002 保护 questions：仅 open → answered / cancelled、禁止改写身份与上下文、终态不可改写、禁止删除与截断，回答关联本项目 user_decision Evidence。
 - 迁移角色使用 SET LOCAL，修复初始化提交后可能影响连接池复用的角色残留。
 
-已测试：新增 8 项边界测试及 2 项恢复回归共 10 passed；完整回归 **126 passed**，ruff、格式和 Schema 一致性检查通过；本轮 CI 待验证。
+已测试：新增 8 项边界测试及 2 项恢复回归共 10 passed；完整回归 **126 passed**，ruff、格式和 Schema 一致性检查通过；本轮 [CI 42420560664](https://github.com/Muilrz/Meta-Instrument-Studio/actions/runs/42420560664) **126 passed（1.11 s）**，全部检查成功。
 
 并发验证在默认 READ COMMITTED 下使用双连接和屏障，提交数据位于测试专用临时 schema，结束后删除该临时 schema；正式 mis 业务数据不参与。P2 运行流程的重放与幂等仍按后续计划单独验证。
+
+本轮修复提交：`dd304c0`。Neon 测试库从 0001 升级到 0002、CI 从空库迁移到 0002 均通过；测试结束后业务表记录总数与并发测试临时 schema 数量均为 0。

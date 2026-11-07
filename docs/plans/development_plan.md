@@ -147,7 +147,7 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 
 **目标**：把架构文档第 8 节的数据对象变成可校验、带版本的 schema 和服务。这一阶段完全不涉及 LLM。
 
-执行记录（2026-11-08）：T1–T8 已实现，本地及 PostgreSQL CI 118 passed；五项自动验收通过，待负责人评审。见 [P1 阶段报告](../reviews/P1_report.md)。
+执行记录（2026-11-08）：T1–T8 已实现，首轮 118 passed；静态审查加固后本地及 PostgreSQL CI 126 passed；五项自动验收通过，待负责人评审。见 [P1 阶段报告](../reviews/P1_report.md)。
 
 **范围内**
 

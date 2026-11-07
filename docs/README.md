@@ -37,6 +37,6 @@
 
 - [业务 JSON Schema](schemas/)：由 Pydantic 导出，CI 检查与代码一致。
 
-- [P1 阶段报告](reviews/P1_report.md)：区分实现、测试和整体验收；T1–T8 已实现，本地和 CI 均 118 passed，待负责人评审。
+- [P1 阶段报告](reviews/P1_report.md)：区分实现、测试和整体验收；T1–T8 已实现，本地和 CI 均 126 passed（含静态审查加固），待负责人评审。
 
 - [P2 集成验证任务草案](plans/P2_deerflow_integration.md)：下一阶段交接草稿，未开工。
