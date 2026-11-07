@@ -186,6 +186,8 @@ class ProjectService:
         if not isinstance(record, InstrumentProject):
             project = self._project_lock(record.project_id)
             self._validate_references(record)
+        elif record.current_baseline_version is not None or record.current_plan_version is not None:
+            raise ValueError("new project version pointers must be empty")
         pointer = None
         if isinstance(record, RequirementBaseline):
             pointer = "current_baseline_version"
@@ -251,6 +253,7 @@ class ProjectService:
     def set_status(self, model, identifier: str, status: Status, *, reason: str, trigger_id: str):
         if model not in (AgentTaskBrief, AgentArtifact, InstrumentPlan):
             raise ValueError("record does not support status changes")
+        self._project_lock(self.get(model, identifier).project_id)
         table = self.table(model)
         self.session.execute(select(table.c.id).where(table.c.id == identifier).with_for_update())
         record = self.get(model, identifier)

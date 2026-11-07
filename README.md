@@ -5,7 +5,7 @@
 - 目标架构：[docs/architecture.md](docs/architecture.md)
 - 开发计划：[docs/plans/development_plan.md](docs/plans/development_plan.md)
 - 全部文档：[docs/README.md](docs/README.md)
-- 当前阶段：**P1 核心数据契约与 Project Service**（T1–T4 已实现并本地测试；T5 等待独立测试库）
+- 当前阶段：**P1 核心数据契约与 Project Service**（T1–T8 已实现，本地回归通过；最终 CI 验证中）
 
 进度与验收边界见 [P1 阶段报告](docs/reviews/P1_report.md)。
 
@@ -66,6 +66,16 @@ docker compose exec postgres createdb -U postgres mis_test
 
 Python 服务入口是 `ProjectService(session)`；所有写入在调用方的 SQLAlchemy 事务中执行，
 服务不自行 commit。Evidence 和已保存版本没有删除接口；只能删除空项目。
+
+## 业务备份与恢复
+
+`mis.project_service.dump.dump_data(service)` 返回带格式版本的 `ProjectBackup`，使用
+`model_dump_json()` 导出。`restore_data(service, json_text)` 在空业务库恢复九类业务对象，
+保留 ID、需求与方案版本、状态历史、问答、纠正和证据；引用损坏或目标非空时拒绝导入。
+调用方必须用 SQLAlchemy 事务包住操作，并在完成后结束事务以释放导出锁。
+
+备份是业务模型的逻辑 JSON，索引由服务重建；不读取或写入 Agent Runtime、Trace 或知识库。
+Schema 位于 `docs/schemas/ProjectBackup.json`。恢复不需要先删除 Evidence；应使用新的空业务库。
 
 ## 目录
 

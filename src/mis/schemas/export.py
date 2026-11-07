@@ -7,6 +7,7 @@ from pathlib import Path
 from mis.rules.compare import CheckResult, RamanContext
 from mis.rules.evaluate import Evaluation
 from mis.schemas.artifacts import AgentArtifact, Claim
+from mis.schemas.backup import ProjectBackup
 from mis.schemas.evidence import Evidence
 from mis.schemas.impact import ImpactReport
 from mis.schemas.plan import InstrumentPlan
@@ -44,6 +45,7 @@ MODELS = (
     Evaluation,
     ImpactReport,
     ClaimTrace,
+    ProjectBackup,
 )
 
 

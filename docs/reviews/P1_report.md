@@ -1,97 +1,110 @@
 # P1 阶段报告：核心数据契约与 Project Service
 
 - 日期：2026-11-08
-- 状态：进行中；T1–T4 实现及本地测试通过，T5 已在独立测试数据库验证，继续 T6–T8
-- 本报告为阶段进度记录，**不是 P1 完成或验收通过声明**。
+- 状态：T1–T8 实现完成；本地完整回归通过，最终 CI 验证中；负责人评审尚未进行
 - 分支：`feat/p1-core-data-contracts`
+- 决策：[ADR-0003](../adr/0003-p1-units-and-storage.md)，项目负责人已确认 Q1–Q4
 
 ## 已实现
 
-| 任务 | 实现 | 独立提交 |
+| 任务 | 交付 | 独立提交 |
 |---|---|---|
-| T1 | pint 单位封装、Raman 换算，P0 改用正式模块 | `4fd8f20` |
-| T2 | Known / Unknown / Quantity / QuantityRange，显式未知和证据约束 | `a4b94d0` |
-| T3 | 9 类业务记录、RunRef、Claim 引用及 JSON Schema；CI 一致性检查 | `beafc06` |
-| T4 | min / max / range / covers / enum；三值汇总；Raman 上下文；预算与 FX 引用 | 随本报告提交 |
+| T1 | pint 封装、Raman 换算、P0 接入正式模块 | `4fd8f20` |
+| T2 | Known / Unknown / Quantity / QuantityRange | `a4b94d0` |
+| T3 | 9 类业务记录、RunRef、Claim 引用、JSON Schema 和一致性检查 | `beafc06` |
+| T4 | 五种比较方式、三值汇总、Raman 上下文、带 FX 引用的预算 | `9d28fcf` |
+| T5 | SQL 初始化、Alembic、SQLAlchemy 仓储、版本、引用校验、数据库不可变保护 | `81bca52` |
+| T6 | 需求差异、ImpactReport、精确 stale 传播、历史和报告复核 | `efd5943` |
+| T7 | Raman 导入、8 器件手工数据、Plan 原文追溯、问答和纠正 | `11b9229` |
+| T8 | 逻辑业务备份、空目标原子恢复、格式 Schema、阶段报告 | 随本报告提交 |
 
-Q1–Q4 已由负责人在本次启动会话明确确认，见 [ADR-0003](../adr/0003-p1-units-and-storage.md)。
-业务代码不依赖 DeerFlow，不调用 LLM，没有实现 HTTP API、Agent、RAG 或 Trace 基础设施。
+业务记录保存在 PostgreSQL `mis` schema，每类对象一表，完整 JSONB 加索引列。
+服务不依赖 DeerFlow，不调用 LLM，没有加入 HTTP API、Agent、RAG、向量检索或 Trace 基础设施。
+初始化只为 runtime / trace / knowledge / cache 建立 schema 和权限，不提前实现后续阶段业务表。
 
-### 已实现的接口边界
+### 接口与契约
 
-- `convert(value, source, target)`：兼容量纲转换；外币不能当作普通单位直接互转。
-- `compare(requirement, value, context=...)`：包含边界；缺资料返回 unknown，非法量纲抛 ValueError。
-- `evaluate(baseline, values, context=...)`：调用方按需求项提供所有适用器件的值；缺项仍为 unknown，should 不改变 must 汇总；光纤接口还需彼此一致。
-- `budget_total(prices, fx_evidence)`：单件价格求和，USD 需要结构化汇率 Evidence，结果保留价格及汇率证据 ID。
-- RamanContext 显式提供激发波长和评价范围；nm 分辨率取范围两端换算的最差值。
-- 模型与规则仅做结构和数值验证；Evidence 存在性、跨项目引用、Brief 与基线核对、不可变数据库记录须由 T5 实现。
+- `mis.units.convert` 封装通用单位；Raman 换算独立，外币需要带出处的汇率。
+- Pydantic 模型禁止额外字段，显式区分 Known / Unknown；业务集合使用 tuple，导出 JSON 为数组。
+- Claim 证据统一存于 `value.evidence_ids`。Evidence 增加 project_id 和结构化 FX 数据。
+- BOM 和方案结论使用 ClaimRef；`ProjectService.trace_plan()` 返回 Claim 和 Evidence 原文记录，属于业务出处链。
+- `compare` / `evaluate` 确定性执行；缺参数保持 unknown，must fail 优先于 unknown，should 单列。
+- `ProjectService(session)` 不自行 commit，调用方拥有事务。写入重新验证模型、引用、项目范围、版本及指定参数。
+- RequirementBaseline / InstrumentPlan 按项目顺序追加版本；Evidence 禁止修改、删除、截断；内容不可变记录由数据库触发器保护。
+- Brief / Artifact / Plan 状态更新追加原因、时间和触发记录；stale 内容不能直接重新激活。
+- 影响分析先返回报告，执行前重新核对。直接 Artifact 引用、Brief 依赖和跨版本复用均参与传播。
+- 回答和纠正生成 user_decision Evidence；纠正保留原 Claim，标记相关 Artifact 和 Plan stale。
+- `dump_data(service)` / `restore_data(service, json)` 仅处理九类业务对象，不访问运行状态。
+- 备份格式为 `ProjectBackup` v1；恢复要求空目标，引用或版本不一致时整体回滚，不做部分合并。
+- 导出持有业务写入屏障和表锁至调用方事务结束；恢复重新建立索引列，逐个业务对象比较相等。
 
 ## 已测试
 
-Windows / Python 3.12.16，使用 `py -m uv`（本机 uv 未加入 PATH）：
+Windows / Python 3.12.16，独立 Neon test 分支。开发数据库没有执行初始化、迁移或清库操作。
+本机 uv 未加入 PATH，使用等价的 `py -m uv`。
 
-| 检查 | 结果 |
+| 阶段 | 完整回归结果 |
 |---|---|
-| 启动时 P0 回归 | 57 passed |
-| T1 完整回归 | 69 passed |
-| T2 完整回归 | 76 passed |
-| T3 完整回归 | 89 passed |
-| T4 完整回归 | 104 passed |
-| `ruff check .` | 通过 |
-| `ruff format --check .` | 通过 |
-| `python -m mis.schemas.export --check` | 通过 |
+| 启动时 P0 | 57 passed |
+| T1 / T2 / T3 / T4 | 69 / 76 / 89 / 104 passed |
+| T5 / T6 / T7 | 111 / 113 / 115 passed |
+| T8 | 118 passed |
 
-新增任务先加入测试并观察缺失模块失败，再实现并运行相关测试与完整回归。
-测试覆盖模型正反例、JSON 序列化、Schema 导出、量纲错误、缺证据、五种比较方式、
-Raman 分辨率/覆盖、must 失败优先于未知、should 未知不影响 must、预算缺汇率不通过、接口不一致。
-规则测试包含 CP02–CP08、CP10–CP11 对应数值场景；11 项需求的手工事实可得推荐组合 pass、
-SPEC-C 组合 unknown。当前事实在规则测试内，T7 将建立完整的 8 器件 Claim / Evidence 示例。
+`ruff check .`、`ruff format --check .`、`python -m mis.schemas.export --check` 均通过。
+测试先覆盖核心接口，再实现、修复失败并运行相关和完整回归；没有静默跳过数据库测试。
 
-未推送或触发远程 CI；本地通过不等于 CI 已通过。
+T7 提交已在 GitHub Actions 的 pgvector/pgvector:pg17 容器通过：
+[CI 42416886952](https://github.com/Muilrz/Meta-Instrument-Studio/actions/runs/42416886952)。
+最终 T8 提交 CI 结果将在完成后补入。
+
+### 验证覆盖
+
+- 全部业务记录正反例、JSON 序列化及 Schema 一致性；量纲、有限值、缺证据拒绝。
+- 空业务库 Alembic upgrade head；Neon 与 CI 均执行 SQL 初始化；mis_runtime 读业务表成功、写业务表被拒绝。
+- Evidence、Baseline、Artifact、Plan 的直接非法 SQL 写入被拒绝；版本追加及旧版本读取。
+- 五种比较、Unknown、范围最差值、接口一致性、must/should 汇总、带汇率引用的预算。
+- 基准 v0.1.0 的 CP01–CP13：数值、Unknown、采购缺失、选择依据、库存复用与 SOP 引用。
+- 8 器件手工数据在 tests/data/；SPEC-B 的异条件 SNR 不冒充 SOP 指标，SPEC-C 缺失字段保持 Unknown。
+- 推荐组合 pass；SPEC-C 组合 unknown；所有示例 BOM / Claim 的来源片段确实存在于基准文件。
+- 用户回答可以被后续 Claim 引用；用户纠正保留原值、生成证据并传播 stale。
+- R04 与 R11 精确影响、直接引用、跨版本复用、报告复核、重复执行不增加重复历史。
+- 九类对象连同需求/方案版本、状态历史、问答、纠正和 TestResult 备份恢复后逐个相等。
+- 损坏引用导入整体回滚，非空目标拒绝恢复；过程不需要任何 Runtime 状态。
 
 ## 已验收
 
-- 本地自动化验证已确认 T1–T4 的上述单元行为；P0 原有 57 项测试保持通过。
-- **P1 五项整体验收均未完成**：尚无持久化的基线 v1 导入、完整 8 器件证据链、v2 影响传播、Plan 原文追溯和数据库导出恢复结果。
-- 人工验收尚未进行；P0 报告中的 ADR-0001 整体待评审状态保持不变。
+下列为自动化验收，不能替代负责人对 P1 的人工评审。
 
-## 尚存问题与下一步
+| 验收目标 | 自动验证依据 | 状态 |
+|---|---|---|
+| 1. 导入 Raman 得到基线 v1 | test_raman_import，11 项、单位、比较方式、FX、项目类型 | 本地通过 |
+| 2. 手工器件与证据复现标准答案 | test_p1_acceptance、test_rules、P0 完整性测试 | 本地及 T7 CI 通过 |
+| 3. v2 精确传播并保留 v1 | test_impact 的 R04/R11、复用与历史；完整 Raman v2 补充场景 | 本地通过（完整 Raman 补充回归单独通过） |
+| 4. Plan 追溯 Evidence 原文 | test_p1_acceptance，BOM / Claim / FX 原文与 RunRef | 本地及 T7 CI 通过 |
+| 5. 业务记录独立导出导入 | test_dump，九类记录、空目标恢复相等、原子回滚 | 本地通过，最终 CI 待完成 |
 
-1. `.env` 尚未配置独立 Neon test 分支的 `MIS_TEST_DATABASE_URL`。负责人已说明稍后自行配置，并要求必要时停下等待。
-2. 当前停在 T5 前：未连接或修改开发库，未执行迁移、角色授权或清库操作。后续数据库测试不能静默跳过。
-3. T5：SQL 初始化、schema / 三账号权限、Alembic、表与 Project Service、引用校验、不可变内容和版本历史。
-4. T6：需求差异、ImpactReport、R04 与 R11 影响传播及 stale 历史。
-5. T7：11 项需求导入 v1、FX Evidence、8 器件手写示例、问答和纠正、Plan 原文追溯与全部标准答案验收。
-6. T8：独立业务导出 / 导入、空测试库恢复相等、CI PostgreSQL 验证与本报告最终更新。
+P0 原有 57 项测试继续通过，fixtures/raman_baseline/ v0.1.0 没有修改。
 
-T5–T8 **未实现、未测试、未验收**。独立测试库配置后从 T5 接续，不重做已通过部分。
+## 尚存问题与交接
+
+- 最终 CI 验证中；未验证前不将该项标记完成。
+- 负责人对 P1 的人工评审、合并尚未进行；ADR-0001 整体待评审状态保持不变。
+- 可选 compose.yaml 在本机受 Docker 限制未运行；同镜像 PostgreSQL 容器已由 CI 验证。
+- 备份是业务对象的逻辑 JSON；正式环境部署、物理备份、用户认证与多租户仍在后续阶段。
+- [P2 任务草案](../plans/P2_deerflow_integration.md) 仅作阶段交接；未实现或启动 P2，时间盒、环境和上游版本等待该阶段登记。
 
 ## 依赖许可证登记
 
-核对依据：本地已安装 distribution 元数据；版本锁定在 `uv.lock`。
+依据本地 distribution 元数据核对，版本锁定于 uv.lock。
 
 | 依赖 | 锁定版本 | 许可证 |
 |---|---|---|
 | pint | 0.26.2 | BSD-3-Clause |
 | pydantic | 2.14.3 | MIT |
 | SQLAlchemy | 2.1.8 | MIT |
-| psycopg | 3.3.8 | LGPL-3.0-only |
-| psycopg-binary | 3.3.8 | LGPL-3.0-only |
+| psycopg / psycopg-binary | 3.3.8 | LGPL-3.0-only |
 | Alembic | 1.20.1 | MIT |
 | python-ulid | 4.1.0 | MIT |
 | python-dotenv | 1.2.4 | BSD-3-Clause |
 
-数据库相关依赖已锁定，为后续 T5 准备；依赖安装成功不代表数据库功能已实现。
-psycopg 及其二进制分发的 LGPL 声明需随未来分发保留；部署或重新分发时仍需核对所用平台二进制包内第三方声明。
-
-## T5 接续记录
-
-2026-11-08：负责人已配置独立 Neon test 分支。连接、pgvector、建 schema 和角色权限检查通过；从无业务表状态迁移至 head 成功。T5 完整回归 111 passed，ruff 和 Schema 检查通过。已实现仓储、引用/项目范围校验、版本追加、状态历史及数据库不可变触发器；mis_runtime 写入被数据库拒绝。初始化和测试只使用测试端点，开发库未修改。CI PostgreSQL 服务已配置，远程验证待执行。
-
-## T6 接续记录
-
-精确影响分析及显式执行已实现；R04/R11 用例、直接 Artifact 引用、跨版本复用依赖、报告篡改拒绝、幂等状态历史及旧版本保留测试通过。完整回归 113 passed；ruff、Schema 检查通过。
-
-## T7 接续记录
-
-需求导入生成 v1（11 项）及汇率 Evidence；benchmark/normal 均验证。8 器件手工样例位于 tests/data/，13 个基准检查点的数值、未知和原文引用均通过测试。推荐组合 pass，SPEC-C 组合 unknown；BOM 和 Claim 的出处片段与原文件相符。用户回答生成 Evidence 并可被 Claim 引用；纠正保留原 Claim，相关 Artifact 和 Plan 标记 stale。完整回归 115 passed；ruff、Schema 检查通过。
+未来重新分发时保留各依赖许可证及二进制包内的第三方声明。

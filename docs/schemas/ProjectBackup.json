@@ -1,0 +1,1614 @@
+{
+  "$defs": {
+    "AgentArtifact": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^art_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^prj_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "brief_id": {
+          "pattern": "^brf_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Brief Id",
+          "type": "string"
+        },
+        "artifact_type": {
+          "minLength": 1,
+          "title": "Artifact Type",
+          "type": "string"
+        },
+        "requirement_refs": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Requirement Refs",
+          "type": "array"
+        },
+        "candidates": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Candidate"
+          },
+          "title": "Candidates",
+          "type": "array"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Claim"
+          },
+          "minItems": 1,
+          "title": "Claims",
+          "type": "array"
+        },
+        "assumptions": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Assumptions",
+          "type": "array"
+        },
+        "open_questions": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Open Questions",
+          "type": "array"
+        },
+        "produced_by": {
+          "$ref": "#/$defs/RunRef"
+        },
+        "status": {
+          "default": "draft",
+          "enum": [
+            "draft",
+            "accepted",
+            "rejected",
+            "stale"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "status_history": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/StatusChange"
+          },
+          "title": "Status History",
+          "type": "array"
+        }
+      },
+      "required": [
+        "project_id",
+        "brief_id",
+        "artifact_type",
+        "requirement_refs",
+        "claims",
+        "produced_by"
+      ],
+      "title": "AgentArtifact",
+      "type": "object"
+    },
+    "AgentTaskBrief": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^brf_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^prj_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "baseline_version": {
+          "minimum": 1,
+          "title": "Baseline Version",
+          "type": "integer"
+        },
+        "requirement_refs": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Requirement Refs",
+          "type": "array"
+        },
+        "specialist": {
+          "enum": [
+            "lab",
+            "research",
+            "procurement"
+          ],
+          "title": "Specialist",
+          "type": "string"
+        },
+        "goal": {
+          "minLength": 1,
+          "title": "Goal",
+          "type": "string"
+        },
+        "specified_params": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/SpecifiedParam"
+          },
+          "title": "Specified Params",
+          "type": "array"
+        },
+        "open_params": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/OpenParam"
+          },
+          "title": "Open Params",
+          "type": "array"
+        },
+        "constraints": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Constraints",
+          "type": "array"
+        },
+        "acceptance": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Acceptance",
+          "type": "array"
+        },
+        "budget": {
+          "$ref": "#/$defs/TaskBudget"
+        },
+        "usage": {
+          "$ref": "#/$defs/Usage"
+        },
+        "status": {
+          "default": "draft",
+          "enum": [
+            "draft",
+            "accepted",
+            "rejected",
+            "stale"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "status_history": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/StatusChange"
+          },
+          "title": "Status History",
+          "type": "array"
+        }
+      },
+      "required": [
+        "project_id",
+        "baseline_version",
+        "requirement_refs",
+        "specialist",
+        "goal"
+      ],
+      "title": "AgentTaskBrief",
+      "type": "object"
+    },
+    "BomEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "subject": {
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "quantity": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Quantity",
+          "type": "integer"
+        },
+        "claim_refs": {
+          "items": {
+            "$ref": "#/$defs/ClaimRef"
+          },
+          "minItems": 1,
+          "title": "Claim Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "subject",
+        "claim_refs"
+      ],
+      "title": "BomEntry",
+      "type": "object"
+    },
+    "Candidate": {
+      "additionalProperties": false,
+      "properties": {
+        "subject": {
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "claim_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Claim Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "subject",
+        "claim_ids"
+      ],
+      "title": "Candidate",
+      "type": "object"
+    },
+    "Claim": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "minLength": 1,
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "statement": {
+          "minLength": 1,
+          "title": "Statement",
+          "type": "string"
+        },
+        "subject": {
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "metric": {
+          "minLength": 1,
+          "title": "Metric",
+          "type": "string"
+        },
+        "value": {
+          "discriminator": {
+            "mapping": {
+              "known": "#/$defs/Known",
+              "unknown": "#/$defs/Unknown"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Known"
+            },
+            {
+              "$ref": "#/$defs/Unknown"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "statement",
+        "subject",
+        "metric",
+        "value"
+      ],
+      "title": "Claim",
+      "type": "object"
+    },
+    "ClaimRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "pattern": "^art_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "claim_id": {
+          "minLength": 1,
+          "title": "Claim Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "claim_id"
+      ],
+      "title": "ClaimRef",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^evd_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^prj_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "source_type": {
+          "enum": [
+            "document",
+            "web",
+            "vendor_api",
+            "fx_rate",
+            "measurement",
+            "user_decision"
+          ],
+          "title": "Source Type",
+          "type": "string"
+        },
+        "locator": {
+          "minLength": 1,
+          "title": "Locator",
+          "type": "string"
+        },
+        "excerpt": {
+          "minLength": 1,
+          "title": "Excerpt",
+          "type": "string"
+        },
+        "page_or_anchor": {
+          "minLength": 1,
+          "title": "Page Or Anchor",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "source_version": {
+          "minLength": 1,
+          "title": "Source Version",
+          "type": "string"
+        },
+        "retrieved_by": {
+          "$ref": "#/$defs/RunRef"
+        },
+        "tool_call_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tool Call Id"
+        },
+        "quote": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quote"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "fx_rate": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FxRate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "project_id",
+        "source_type",
+        "locator",
+        "excerpt",
+        "page_or_anchor",
+        "source_version",
+        "retrieved_by"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "FxRate": {
+      "additionalProperties": false,
+      "properties": {
+        "source_currency": {
+          "const": "USD",
+          "title": "Source Currency",
+          "type": "string"
+        },
+        "target_currency": {
+          "const": "CNY",
+          "default": "CNY",
+          "title": "Target Currency",
+          "type": "string"
+        },
+        "rate": {
+          "exclusiveMinimum": 0,
+          "title": "Rate",
+          "type": "number"
+        },
+        "as_of": {
+          "format": "date",
+          "title": "As Of",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_currency",
+        "rate",
+        "as_of"
+      ],
+      "title": "FxRate",
+      "type": "object"
+    },
+    "InstrumentPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^pln_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^prj_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "baseline_version": {
+          "minimum": 1,
+          "title": "Baseline Version",
+          "type": "integer"
+        },
+        "artifact_ids": {
+          "items": {
+            "pattern": "^art_[0-9A-HJKMNP-TV-Z]{26}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Artifact Ids",
+          "type": "array"
+        },
+        "modules": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PlanConclusion"
+          },
+          "title": "Modules",
+          "type": "array"
+        },
+        "bom": {
+          "items": {
+            "$ref": "#/$defs/BomEntry"
+          },
+          "minItems": 1,
+          "title": "Bom",
+          "type": "array"
+        },
+        "rationale": {
+          "items": {
+            "$ref": "#/$defs/PlanConclusion"
+          },
+          "minItems": 1,
+          "title": "Rationale",
+          "type": "array"
+        },
+        "risks": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Risks",
+          "type": "array"
+        },
+        "stage2_tasks": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Stage2 Tasks",
+          "type": "array"
+        },
+        "check_summary": {
+          "additionalProperties": {
+            "enum": [
+              "pass",
+              "fail",
+              "unknown"
+            ],
+            "type": "string"
+          },
+          "title": "Check Summary",
+          "type": "object"
+        },
+        "produced_by": {
+          "$ref": "#/$defs/RunRef"
+        },
+        "status": {
+          "default": "draft",
+          "enum": [
+            "draft",
+            "accepted",
+            "rejected",
+            "stale"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "status_history": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/StatusChange"
+          },
+          "title": "Status History",
+          "type": "array"
+        }
+      },
+      "required": [
+        "project_id",
+        "version",
+        "baseline_version",
+        "artifact_ids",
+        "bom",
+        "rationale",
+        "check_summary",
+        "produced_by"
+      ],
+      "title": "InstrumentPlan",
+      "type": "object"
+    },
+    "InstrumentProject": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^prj_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "kind": {
+          "default": "normal",
+          "enum": [
+            "normal",
+            "benchmark"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "members": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Members",
+          "type": "array"
+        },
+        "knowledge_scope": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Knowledge Scope",
+          "type": "array"
+        },
+        "current_baseline_version": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Baseline Version"
+        },
+        "current_plan_version": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Plan Version"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "InstrumentProject",
+      "type": "object"
+    },
+    "Known": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "known",
+          "default": "known",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quantity"
+            },
+            {
+              "$ref": "#/$defs/QuantityRange"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "title": "Value"
+        },
+        "evidence_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "value",
+        "evidence_ids"
+      ],
+      "title": "Known",
+      "type": "object"
+    },
+    "OpenParam": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "unit"
+      ],
+      "title": "OpenParam",
+      "type": "object"
+    },
+    "PlanConclusion": {
+      "additionalProperties": false,
+      "properties": {
+        "statement": {
+          "minLength": 1,
+          "title": "Statement",
+          "type": "string"
+        },
+        "claim_refs": {
+          "items": {
+            "$ref": "#/$defs/ClaimRef"
+          },
+          "minItems": 1,
+          "title": "Claim Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "statement",
+        "claim_refs"
+      ],
+      "title": "PlanConclusion",
+      "type": "object"
+    },
+    "PriceTier": {
+      "additionalProperties": false,
+      "properties": {
+        "min_qty": {
+          "minimum": 1,
+          "title": "Min Qty",
+          "type": "integer"
+        },
+        "unit_price": {
+          "minimum": 0,
+          "title": "Unit Price",
+          "type": "number"
+        }
+      },
+      "required": [
+        "min_qty",
+        "unit_price"
+      ],
+      "title": "PriceTier",
+      "type": "object"
+    },
+    "Quantity": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Quantity",
+      "type": "object"
+    },
+    "QuantityRange": {
+      "additionalProperties": false,
+      "properties": {
+        "lower": {
+          "title": "Lower",
+          "type": "number"
+        },
+        "upper": {
+          "title": "Upper",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lower",
+        "upper",
+        "unit"
+      ],
+      "title": "QuantityRange",
+      "type": "object"
+    },
+    "Quote": {
+      "additionalProperties": false,
+      "properties": {
+        "currency": {
+          "enum": [
+            "CNY",
+            "USD"
+          ],
+          "title": "Currency",
+          "type": "string"
+        },
+        "price_tiers": {
+          "items": {
+            "$ref": "#/$defs/PriceTier"
+          },
+          "minItems": 1,
+          "title": "Price Tiers",
+          "type": "array"
+        },
+        "region": {
+          "minLength": 1,
+          "title": "Region",
+          "type": "string"
+        },
+        "valid_until": {
+          "format": "date",
+          "title": "Valid Until",
+          "type": "string"
+        },
+        "tax_included": {
+          "title": "Tax Included",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "currency",
+        "price_tiers",
+        "region",
+        "valid_until",
+        "tax_included"
+      ],
+      "title": "Quote",
+      "type": "object"
+    },
+    "RequirementBaseline": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^req_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^prj_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/RequirementItem"
+          },
+          "minItems": 1,
+          "title": "Items",
+          "type": "array"
+        },
+        "budget": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quantity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "change_note": {
+          "minLength": 1,
+          "title": "Change Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "version",
+        "items",
+        "change_note"
+      ],
+      "title": "RequirementBaseline",
+      "type": "object"
+    },
+    "RequirementItem": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "metric": {
+          "minLength": 1,
+          "title": "Metric",
+          "type": "string"
+        },
+        "comparator": {
+          "enum": [
+            "min",
+            "max",
+            "range",
+            "covers",
+            "enum"
+          ],
+          "title": "Comparator",
+          "type": "string"
+        },
+        "lower": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lower"
+        },
+        "upper": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Upper"
+        },
+        "allowed": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Allowed",
+          "type": "array"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "priority": {
+          "default": "must",
+          "enum": [
+            "must",
+            "should"
+          ],
+          "title": "Priority",
+          "type": "string"
+        },
+        "verification": {
+          "minLength": 1,
+          "title": "Verification",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "name",
+        "metric",
+        "comparator",
+        "verification"
+      ],
+      "title": "RequirementItem",
+      "type": "object"
+    },
+    "RunRef": {
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "trace_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{32}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trace Id"
+        },
+        "actor": {
+          "enum": [
+            "copilot",
+            "lab",
+            "research",
+            "procurement",
+            "rule_engine",
+            "user"
+          ],
+          "title": "Actor",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "skill_versions": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Skill Versions",
+          "type": "object"
+        },
+        "prompt_version": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prompt Version"
+        }
+      },
+      "required": [
+        "run_id",
+        "actor"
+      ],
+      "title": "RunRef",
+      "type": "object"
+    },
+    "SpecifiedParam": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "requirement_key": {
+          "minLength": 1,
+          "title": "Requirement Key",
+          "type": "string"
+        },
+        "target": {
+          "$ref": "#/$defs/RequirementItem"
+        }
+      },
+      "required": [
+        "name",
+        "requirement_key",
+        "target"
+      ],
+      "title": "SpecifiedParam",
+      "type": "object"
+    },
+    "StatusChange": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "draft",
+            "accepted",
+            "rejected",
+            "stale"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "trigger_id": {
+          "minLength": 1,
+          "title": "Trigger Id",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "reason",
+        "trigger_id"
+      ],
+      "title": "StatusChange",
+      "type": "object"
+    },
+    "TaskBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "seconds": {
+          "default": 300,
+          "exclusiveMinimum": 0,
+          "title": "Seconds",
+          "type": "number"
+        },
+        "searches": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Searches",
+          "type": "integer"
+        },
+        "model_calls": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Model Calls",
+          "type": "integer"
+        }
+      },
+      "title": "TaskBudget",
+      "type": "object"
+    },
+    "TestResult": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^prj_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "requirement_key": {
+          "minLength": 1,
+          "title": "Requirement Key",
+          "type": "string"
+        },
+        "plan_version": {
+          "minimum": 1,
+          "title": "Plan Version",
+          "type": "integer"
+        },
+        "measured": {
+          "discriminator": {
+            "mapping": {
+              "known": "#/$defs/Known",
+              "unknown": "#/$defs/Unknown"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Known"
+            },
+            {
+              "$ref": "#/$defs/Unknown"
+            }
+          ],
+          "title": "Measured"
+        },
+        "verdict": {
+          "enum": [
+            "pass",
+            "fail",
+            "unknown"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "pattern": "^evd_[0-9A-HJKMNP-TV-Z]{26}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "project_id",
+        "requirement_key",
+        "plan_version",
+        "measured",
+        "verdict",
+        "evidence_ids"
+      ],
+      "title": "TestResult",
+      "type": "object"
+    },
+    "Unknown": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "unknown",
+          "default": "unknown",
+          "title": "Kind",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "reason"
+      ],
+      "title": "Unknown",
+      "type": "object"
+    },
+    "Usage": {
+      "additionalProperties": false,
+      "properties": {
+        "seconds": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Seconds",
+          "type": "number"
+        },
+        "input_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Input Tokens",
+          "type": "integer"
+        },
+        "output_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Output Tokens",
+          "type": "integer"
+        },
+        "searches": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Searches",
+          "type": "integer"
+        },
+        "cost_cny": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Cost Cny",
+          "type": "number"
+        }
+      },
+      "title": "Usage",
+      "type": "object"
+    },
+    "UserCorrection": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^prj_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "artifact_id": {
+          "pattern": "^art_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "claim_id": {
+          "minLength": 1,
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "original_value": {
+          "discriminator": {
+            "mapping": {
+              "known": "#/$defs/Known",
+              "unknown": "#/$defs/Unknown"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Known"
+            },
+            {
+              "$ref": "#/$defs/Unknown"
+            }
+          ],
+          "title": "Original Value"
+        },
+        "corrected_value": {
+          "discriminator": {
+            "mapping": {
+              "known": "#/$defs/Known",
+              "unknown": "#/$defs/Unknown"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Known"
+            },
+            {
+              "$ref": "#/$defs/Unknown"
+            }
+          ],
+          "title": "Corrected Value"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "evidence_id": {
+          "pattern": "^evd_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "corrected_by": {
+          "minLength": 1,
+          "title": "Corrected By",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "artifact_id",
+        "claim_id",
+        "original_value",
+        "corrected_value",
+        "reason",
+        "evidence_id",
+        "corrected_by"
+      ],
+      "title": "UserCorrection",
+      "type": "object"
+    },
+    "UserQuestion": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^prj_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "run_id": {
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "brief_id": {
+          "anyOf": [
+            {
+              "pattern": "^brf_[0-9A-HJKMNP-TV-Z]{26}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Brief Id"
+        },
+        "question": {
+          "minLength": 1,
+          "title": "Question",
+          "type": "string"
+        },
+        "options": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Options",
+          "type": "array"
+        },
+        "context": {
+          "minLength": 1,
+          "title": "Context",
+          "type": "string"
+        },
+        "answer": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Answer"
+        },
+        "answered_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Answered At"
+        },
+        "answer_evidence_id": {
+          "anyOf": [
+            {
+              "pattern": "^evd_[0-9A-HJKMNP-TV-Z]{26}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Answer Evidence Id"
+        },
+        "status": {
+          "default": "open",
+          "enum": [
+            "open",
+            "answered",
+            "cancelled"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "run_id",
+        "question",
+        "context"
+      ],
+      "title": "UserQuestion",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Logical business backup. Contains no runtime or database credentials.",
+  "properties": {
+    "format_version": {
+      "const": "1",
+      "default": "1",
+      "title": "Format Version",
+      "type": "string"
+    },
+    "projects": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/InstrumentProject"
+      },
+      "title": "Projects",
+      "type": "array"
+    },
+    "baselines": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RequirementBaseline"
+      },
+      "title": "Baselines",
+      "type": "array"
+    },
+    "briefs": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/AgentTaskBrief"
+      },
+      "title": "Briefs",
+      "type": "array"
+    },
+    "evidence": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Evidence"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "artifacts": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/AgentArtifact"
+      },
+      "title": "Artifacts",
+      "type": "array"
+    },
+    "plans": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/InstrumentPlan"
+      },
+      "title": "Plans",
+      "type": "array"
+    },
+    "questions": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/UserQuestion"
+      },
+      "title": "Questions",
+      "type": "array"
+    },
+    "corrections": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/UserCorrection"
+      },
+      "title": "Corrections",
+      "type": "array"
+    },
+    "test_results": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/TestResult"
+      },
+      "title": "Test Results",
+      "type": "array"
+    }
+  },
+  "title": "ProjectBackup",
+  "type": "object"
+}

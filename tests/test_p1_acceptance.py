@@ -1,5 +1,6 @@
 from mis.fixtures import baseline_dir, load_checkpoints
 from mis.ids import new_id
+from mis.project_service.impact import analyze, apply_impact
 from mis.project_service.repository import ProjectService
 from mis.rules.compare import RamanContext, compare
 from mis.rules.evaluate import budget_total
@@ -59,10 +60,11 @@ def test_manual_raman_answers_traceability_and_user_decisions(db_session):
         (link.artifact_id, link.claim.claim_id) for link in trace
     }
     # Every hand-authored claim, including rejected candidates, points at a real source excerpt.
+    evidence_by_id = {e.id: e for e in service.list(Evidence, example.project_id)}
     for artifact in example.artifacts.values():
         for claim in artifact.claims:
             for eid in claim.evidence_ids:
-                evidence = service.get(Evidence, eid)
+                evidence = evidence_by_id[eid]
                 assert evidence.excerpt in (baseline_dir() / evidence.locator).read_text(
                     encoding="utf-8"
                 )
@@ -109,3 +111,27 @@ def test_manual_raman_answers_traceability_and_user_decisions(db_session):
     assert service.get(InstrumentPlan, plan.id).status == "draft"
     by_run = service.by_run(example.run.run_id)
     assert {plan.id, alternate.id, answer_ev.id, correction.evidence_id} <= {r.id for r in by_run}
+    # Acceptance 3 uses the imported eleven-item Raman baseline, not only a small rule fixture.
+    v2_items = tuple(
+        item.model_copy(update={"lower": 300}) if item.key == "R04" else item
+        for item in example.baseline.items
+    )
+    v2 = service.revise_baseline(
+        example.project_id, items=v2_items, change_note="R04: 450 mW to 300 mW"
+    )
+    impact = analyze(service, example.project_id, 1, 2)
+    lasers = tuple(example.artifacts[p] for p in ("LAS-A", "LAS-B", "LAS-C"))
+    assert set(impact.artifact_ids) == {a.id for a in lasers}
+    assert set(impact.brief_ids) == {a.brief_id for a in lasers}
+    assert set(impact.plan_ids) == {plan.id, alternate.id}
+    apply_impact(service, impact)
+    assert service.baseline(example.project_id, 1) == example.baseline
+    assert service.baseline(example.project_id, 2) == v2
+    retained = service.plan(example.project_id, 1)
+    assert retained.status == "stale"
+    assert retained.model_dump(exclude={"status", "status_history"}) == plan.model_dump(
+        exclude={"status", "status_history"}
+    )
+    assert compare(items["R04"], example.value("LAS-B", "laser.max_power")).verdict == "fail"
+    changed = next(item for item in v2.items if item.key == "R04")
+    assert compare(changed, example.value("LAS-B", "laser.max_power")).verdict == "pass"

@@ -1,10 +1,10 @@
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from mis.ids import EvidenceId, ProjectId, new_id
 from mis.schemas.base import Model, Text
-from mis.schemas.values import SpecValue
+from mis.schemas.values import SpecValue, Unknown
 
 
 class TestResult(Model):
@@ -16,3 +16,9 @@ class TestResult(Model):
     measured: SpecValue
     verdict: Literal["pass", "fail", "unknown"]
     evidence_ids: tuple[EvidenceId, ...] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def unknown_verdict(self):
+        if isinstance(self.measured, Unknown) and self.verdict != "unknown":
+            raise ValueError("unknown measurement requires unknown verdict")
+        return self

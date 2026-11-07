@@ -4,6 +4,7 @@ import pytest
 from pydantic import ValidationError
 
 from mis.schemas.export import MODELS, export_schemas
+from mis.schemas.values import Unknown
 
 
 def test_schemas_match_exports(tmp_path):
@@ -34,6 +35,7 @@ def test_every_record_roundtrips_and_rejects_extra_fields(records):
         (6, {"status": "answered"}),
         (7, {"reason": ""}),
         (8, {"verdict": "maybe"}),
+        (8, {"measured": Unknown(reason="not reported"), "verdict": "pass"}),
     ],
 )
 def test_business_record_invalid_examples(records, index, changes):
