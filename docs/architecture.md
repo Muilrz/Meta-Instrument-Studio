@@ -7,7 +7,10 @@ MetaInstrumentStudio 旨在把科研仪器研发过程中原本分散的工作�
 
 ---
 
-修订记录：2026-11-08，在第 5 节增加已确认的 C1 Trace 可观测性与 C2 经验评分、生命周期高层架构；不改变既有章节编号。
+修订记录：
+
+- 2026-11-08，依据 [ADR-0002](adr/0002-agent-runtime-and-integration.md) 确认 DeerFlow Backend + MIS 自研 React UI + MIS 自有业务后端，更新总体架构、执行边界和 V1 部署；具体兼容性待 P2 验证。
+- 2026-11-08，在第 5 节增加已确认的 C1 Trace 可观测性与 C2 经验评分、生命周期高层架构；不改变既有章节编号。
 
 ## 1. Core Idea
 
@@ -54,64 +57,55 @@ flowchart LR
 
 ```mermaid
 flowchart TB
-
-    U[User]
-
-    subgraph S1["Stage 1 — Design Intelligence"]
-        PC[Project Copilot]
-        TO[Task Orchestrator]
-        LAB[Lab Knowledge Specialist]
-        RES[Research Specialist]
-        PRO[Procurement Specialist]
-        RT[Shared Agent Runtime]
-        TOOLS[MCP / RAG / Search / APIs]
-        PLAN[(InstrumentPlan)]
-
-        PC --> TO
-        TO --> LAB
-        TO --> RES
-        TO --> PRO
-        LAB --> RT
-        RES --> RT
-        PRO --> RT
-        RT --> TOOLS
-        LAB --> PC
-        RES --> PC
-        PRO --> PC
-        PC --> PLAN
+    U[User] --> UI["MIS Frontend · React / TypeScript"]
+    UI --> BFF["MIS Backend / BFF · Business API / 权限"]
+    subgraph MIS["MIS 自有业务后端"]
+        BFF --> PS[Project Service]
+        BFF --> CB[Context Builder]
+        BFF --> MS[Memory Service]
+        BFF --> ES[Evolution Service]
+        BFF --> AD[DeerFlow Adapter]
+        PS --> PLAN[(InstrumentPlan)]
     end
-
-    subgraph S2["Stage 2 — Engineering Development"]
+    subgraph DF["独立 DeerFlow Backend"]
+        GW[Gateway] --> H[Harness / Middleware / Checkpoint]
+        H --> PC["Lead Agent · Project Copilot"]
+        PC --> LAB[Lab Specialist]
+        PC --> RES[Research Specialist]
+        PC --> PRO[Procurement Specialist]
+        H --> SB[Docker Sandbox]
+        H --> TOOLS[Tools / Skills / MCP]
+    end
+    AD --> GW
+    TOOLS --> TG[MIS Tool Gateway]
+    TG --> SOURCES[Knowledge / Research / Procurement]
+    PS --> DATA[("MIS Data · PostgreSQL / mis")]
+    MS --> KN[("knowledge / pgvector")]
+    ES --> KN
+    AD --> TR[(trace)]
+    H --> CP[("runtime · P2 验证")]
+    subgraph S2["Stage 2 · Engineering Development"]
         SDK[SDK Analysis Agent]
         CODE[Coding Agent]
         OPTICS[Rapid Optics Studio]
-        UPPER[UpperPC]
-        FUTURE[Future Engineering Tool]
+        UPPER[UpperPC / Future Tools]
     end
-
-    DEV[Instrument Development]
-    TEST[Testing & Verification]
-    Q{Meets Requirements?}
-    FINAL[Scientific Instrument]
-    REPLAN[Re-plan]
-
-    U --> PC
     PLAN --> SDK
     PLAN --> CODE
     PLAN --> OPTICS
     PLAN --> UPPER
-    PLAN --> FUTURE
-    SDK --> DEV
+    SDK --> DEV[Instrument Development]
     CODE --> DEV
     OPTICS --> DEV
     UPPER --> DEV
-    FUTURE --> DEV
-    DEV --> TEST
-    TEST --> Q
-    Q -->|Yes| FINAL
-    Q -->|No| REPLAN
-    REPLAN --> PC
+    DEV --> TEST[Testing / Verification]
+    TEST --> Q{Meets Requirements?}
+    Q -->|Yes| FINAL[Scientific Instrument]
+    Q -->|No · Re-plan| BFF
 ```
+
+MIS Frontend 只调用 MIS Backend / BFF，不直连 DeerFlow。DeerFlow 提供 Agent 执行能力，MIS 自主管理业务 API、Context、Memory、Evolution、权限及数据。Runtime 的结果必须经 MIS 校验和 Project Service 写入，图中关系不授予运行层直接修改业务库的权限。
+
 
 ---
 
@@ -163,26 +157,25 @@ Stage 1 采用：
 
 ## 5. Task Orchestrator & Shared Runtime
 
-Task Orchestrator 负责 Scheduling、Agent Selection、Parallel Execution、Retry、Timeout、Result Collection 和 Tracing。
+Task Orchestrator 是调度、并行、重试、超时、结果收集和 Tracing 的逻辑职责。MIS 定义 Brief、依赖、预算和验收条件，DeerFlow Lead Agent / SubAgents 提供执行机制，不另建一套通用执行引擎。
 
-多个 Specialist 在逻辑上独立，但 V1 可以共享统一 Agent Runtime。
+Project Copilot 的业务角色由 Lead Agent 承载；Lab、Research、Procurement Specialist 由独立配置的 SubAgent 承载。Specialist 之间不直接沟通，全部经 Copilot 汇总结构化 Artifact。MIS Context Builder 控制资料、角色和记忆选择，DeerFlow Middleware 执行上下文注入与通用处理；原生 Memory 关闭或替换，长期记忆由 MIS Memory Service 管理。
 
 ```mermaid
 flowchart LR
-    PC[Project Copilot]
-    TO[Task Orchestrator]
-    R1[Runtime A<br/>Lab Profile]
-    R2[Runtime B<br/>Research Profile]
-    R3[Runtime C<br/>Procurement Profile]
-
-    PC --> TO
-    TO --> R1
-    TO --> R2
-    TO --> R3
-    R1 --> PC
-    R2 --> PC
-    R3 --> PC
+    MIS["MIS Backend · Brief / Context / Budget"] --> AD[DeerFlow Adapter]
+    AD --> GW[DeerFlow Gateway]
+    GW --> LEAD["Harness / Lead Agent · Copilot"]
+    LEAD --> LAB[Lab SubAgent]
+    LEAD --> RES[Research SubAgent]
+    LEAD --> PRO[Procurement SubAgent]
+    LAB --> RESULT[结构化 Artifact 候选]
+    RES --> RESULT
+    PRO --> RESULT
+    RESULT --> CHECK["MIS 校验 / Project Service"]
 ```
+
+接口、权限和执行机制见 [Agent 内部架构设计](design/agent_architecture.md)；技术选择、版本锁定与重新评估条件见 [ADR-0002](adr/0002-agent-runtime-and-integration.md)。
 
 ### Memory Architecture
 
@@ -353,28 +346,39 @@ flowchart TD
 ## 11. V1 Recommended Deployment
 
 ```text
-One Agent Service
-│
-├── Conversation Controller
-├── Project Copilot
-├── Task Orchestrator
-├── Shared Agent Runtime
-│   ├── LabKnowledgeProfile
-│   ├── ResearchProfile
-│   └── ProcurementProfile
-│
-├── MCP / Tool Gateway
-│   ├── Internal Knowledge
-│   ├── Research / Search
-│   └── Procurement / Vendor
-│
-└── Project Service
-    ├── InstrumentProject
-    ├── RequirementBaseline
-    ├── AgentTaskBrief
-    ├── AgentArtifact
-    └── InstrumentPlan
+MIS Frontend（React + TypeScript；不使用 DeerFlow Next.js UI）
+       │ REST / SSE
+       ▼
+MIS Backend / BFF
+├── Business API / 权限 / Conversation Controller
+├── Project Service / Rule Engine
+├── Context Builder
+├── Memory Service
+├── Evolution Service
+├── MIS Tool Gateway
+└── DeerFlow Adapter
+       │ 内部服务调用
+       ▼
+DeerFlow Backend（独立部署）
+├── Gateway → Harness / Middleware
+├── Lead Agent（Project Copilot）
+├── SubAgents（Lab / Research / Procurement）
+├── Skills / Tools / MCP
+├── Docker Sandbox
+└── Checkpoint（优先 PostgreSQL runtime，P2 验证）
+
+MIS Data Layer · PostgreSQL + pgvector
+├── mis        项目、需求、问答、证据、产物、方案、测试结果
+├── runtime    Agent 执行状态，与业务记录隔离
+├── trace      Skeleton / Payload，遵循 C1
+├── knowledge  实验室知识、经验、晋升池、评分和使用历史，遵循 C2
+└── cache      外部调用缓存
 ```
+
+Gateway / Harness 表示 DeerFlow Backend 的逻辑边界，具体服务拓扑由锁定版本决定。DeerFlow 不直接写入 MIS 业务主数据；所有业务写入经 MIS 服务。原始文件按既有方案由 MIS 保存文件及数据库引用。
+
+P2 验证最小独立调用与集成，不部署正式产品；P3 建立自研 React 只读页与 Trace，P5 扩展正式工作空间。Docker Sandbox 在具备 Docker 的 CI / 远程环境验证，不要求在受限制的 Windows 开发机安装 Docker。具体环境、上游 commit 和隔离能力仍需验证，不把本部署图视为已上线事实。
+
 
 ---
 

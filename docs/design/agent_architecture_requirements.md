@@ -3,13 +3,14 @@
 - 状态：持续更新
 - 创建：2026-11-06
 - 更新：
+  - 2026-11-08：A9–A11 正式确认 DeerFlow Backend、MIS 自研 React UI / Backend、Context / Memory 接口边界；依据 ADR-0002 增加内部架构设计入口，保留 A1–A8、C1、C2。
   - 2026-11-08：C1 Trace 可观测性架构正式确认，确定三级数据内容、OpenTelemetry 标准、PostgreSQL 存储和数据保留策略。
   - 2026-11-08：C2 经验记忆评分与生命周期管理正式确认，确定综合评分、四个分项、状态转换、人工干预和有效性管理。
   - 2026-11-06，A2 晋升池流程确认（事件触发、可视化、人工审核）；新增 A8 失败案例转为考题；C1 trace 和 C2 遗忘给出提议方案
   - 2026-11-06，明确“经验库”是知识库中的经验条目；触发事件标注依赖的业务记录和最早可用阶段
   - 2026-11-06，“同一类问题反复出现”改为按不同项目计数，基准任务项目默认不计数
-- 用途：P2《Agent 架构设计文档》的输入。这里只记录**要求和已做的决定**，具体实现方案在设计文档里写。
-- 相关：[开发计划 · P2](../plans/development_plan.md#p2-agent-架构设计与运行底座选型spike)、[P1 任务说明](../plans/P1_data_contracts.md)
+- 用途：记录**要求和已做的决定**；具体模块、接口和执行机制见 [Agent 内部架构设计](agent_architecture.md)，运行底座技术选择见 [ADR-0002](../adr/0002-agent-runtime-and-integration.md)。设计基线已建立，具体接口绑定与兼容性在 P2 验证。
+- 相关：[开发计划 · P2](../plans/development_plan.md#p2-agent-架构设计与-deerflow-集成验证spike)、[P1 任务说明](../plans/P1_data_contracts.md)
 
 ---
 
@@ -136,6 +137,30 @@
 | 方案采纳 | 由人确认 |
 | 对外动作（询价、下单、发邮件） | 由人批准，Agent 只起草 |
 | 规划中的歧义 | Copilot 可以暂停提问（A4） |
+
+### A9 V1 运行底座与集成策略（2026-11-08 确认）
+
+- 采用 **DeerFlow Backend + MIS 自研 Web UI + MIS 自有业务后端**，技术选择以 [ADR-0002](../adr/0002-agent-runtime-and-integration.md) 为准。
+- DeerFlow 负责 Agent Runtime、Supervisor/SubAgent、通用 Context、Skills、Tools、MCP、Docker Sandbox 和 Checkpoint；MIS 业务 Agent 通过 Lead Agent / SubAgents 执行，Specialist 之间仍不直接通信。
+- P2 是 DeerFlow Integration Spike，不再要求两个框架完整对比；关键门槛失败才启动替代评估，替换前必须由负责人确认并修订 ADR-0002。
+- 不直接修改 DeerFlow 核心执行引擎，优先官方扩展接口和 Adapter；锁定 release / 完整 commit、依赖、镜像和配置，具体基线在 P2 开始前登记。
+- PostgreSQL 独立 runtime schema、人工暂停恢复、结构化产物、Sandbox 文件/网络/资源隔离均须 P2 验证，不能把选型已确认当作验收已通过。
+
+### A10 前后端解耦与业务所有权（2026-11-08 确认）
+
+- MIS Frontend 完全自研 React + TypeScript，不使用、不 Fork DeerFlow Next.js 前端。
+- 前端只通过 MIS Backend / BFF 的 REST / SSE 交互，不直连 DeerFlow，也不以其原生 Thread / Run / 事件格式作为产品契约。
+- MIS Backend 负责 Business API、Project Service、DeerFlow Adapter、Context Builder、Memory Service、Evolution Service 和权限；Adapter 封装上游调用、ID 映射、事件转换、错误与暂停恢复。
+- MIS 独立管理 PostgreSQL + pgvector 中的项目、记忆、证据、产物和 Trace；运行层不能直接修改业务主数据，必须经 MIS 服务校验写入，数据库权限沿用 ADR-0001。
+- Runtime 替换限于 Adapter 和相关执行接口的绑定；不能因此重写 MIS 产品契约或迁移业务事实到上游状态库。P2 最小接入、P3 只读页、P5 正式 UI 的阶段边界不变。
+
+### A11 Context、Memory 与 Evolution 接口边界（2026-11-08 确认）
+
+- MIS Context Builder 负责 Brief、指定/不定参数、知识范围、Token Budget、角色隔离和记忆选择；DeerFlow Middleware 负责注入与通用上下文管理，不得绕过 MIS 的授权和来源要求。
+- MIS Memory Service 管理三层记忆的服务边界：项目记忆通过 Project Service 读取，跨项目知识和经验按 A1/A2/C2 管理，工作记忆仍归 Runtime。关闭或替换 DeerFlow 原生持久 Memory 的读取、自动提取写入和隐藏上下文注入。
+- 记忆被召回、选中、注入、实际应用及结果通过 C2 结构化事件区分；经验只能作为待查证线索，未经 P5 人工审核不得对 Agent 可见。
+- MIS Evolution Service 负责 Trace / 错误整理、经验候选、考题与改进草案；按 A6/A8 离线回归、人工批准后发布，禁止运行中自行修改 Prompt、Skill、评分权重或阈值。
+- 以上是后续实现边界，不扩大 P1 核心数据契约范围；P2 先以固定样例/模拟服务验证接入，C1/C2 的正式落地仍按原阶段安排。
 
 ---
 
