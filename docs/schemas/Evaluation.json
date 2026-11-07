@@ -1,0 +1,89 @@
+{
+  "$defs": {
+    "CheckResult": {
+      "additionalProperties": false,
+      "properties": {
+        "requirement_key": {
+          "minLength": 1,
+          "title": "Requirement Key",
+          "type": "string"
+        },
+        "verdict": {
+          "enum": [
+            "pass",
+            "fail",
+            "unknown"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "rule_version": {
+          "const": "1",
+          "default": "1",
+          "title": "Rule Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "requirement_key",
+        "verdict",
+        "reason"
+      ],
+      "title": "CheckResult",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "verdict": {
+      "enum": [
+        "pass",
+        "fail",
+        "unknown"
+      ],
+      "title": "Verdict",
+      "type": "string"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/CheckResult"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "should_checks": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/CheckResult"
+      },
+      "title": "Should Checks",
+      "type": "array"
+    },
+    "rule_version": {
+      "default": "1",
+      "pattern": "^1$",
+      "title": "Rule Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "verdict",
+    "checks"
+  ],
+  "title": "Evaluation",
+  "type": "object"
+}

@@ -5,7 +5,9 @@
 - 目标架构：[docs/architecture.md](docs/architecture.md)
 - 开发计划：[docs/plans/development_plan.md](docs/plans/development_plan.md)
 - 全部文档：[docs/README.md](docs/README.md)
-- 当前阶段：**P1 核心数据契约与 Project Service**（准备开工）
+- 当前阶段：**P1 核心数据契约与 Project Service**（T1–T4 已实现并本地测试；T5 等待独立测试库）
+
+进度与验收边界见 [P1 阶段报告](docs/reviews/P1_report.md)。
 
 ## 快速上手
 

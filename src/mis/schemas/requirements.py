@@ -5,7 +5,7 @@ from pydantic import Field, field_validator, model_validator
 
 from mis.ids import BaselineId, ProjectId, new_id
 from mis.schemas.base import Model, Text, now
-from mis.schemas.metrics import ENUM_METRICS, check_dimension
+from mis.schemas.metrics import ENUM_METRICS, METRIC_UNITS, check_dimension
 from mis.schemas.values import Quantity
 from mis.units import validate_unit
 
@@ -25,6 +25,8 @@ class RequirementItem(Model):
     @model_validator(mode="after")
     def contract(self):
         if self.comparator == "enum":
+            if self.metric in METRIC_UNITS:
+                raise ValueError("numeric metric requires a numeric comparator")
             if not self.allowed or self.unit or self.lower is not None or self.upper is not None:
                 raise ValueError("enum needs allowed values only")
         else:

@@ -1,0 +1,46 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "requirement_key": {
+      "minLength": 1,
+      "title": "Requirement Key",
+      "type": "string"
+    },
+    "verdict": {
+      "enum": [
+        "pass",
+        "fail",
+        "unknown"
+      ],
+      "title": "Verdict",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "evidence_ids": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Evidence Ids",
+      "type": "array"
+    },
+    "rule_version": {
+      "const": "1",
+      "default": "1",
+      "title": "Rule Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "requirement_key",
+    "verdict",
+    "reason"
+  ],
+  "title": "CheckResult",
+  "type": "object"
+}

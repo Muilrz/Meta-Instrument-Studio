@@ -13,7 +13,7 @@
 | 技术栈、目录、数据库布局、部署 | [adr/0001-repo-structure-and-stack.md](adr/0001-repo-structure-and-stack.md) | 提议中，整体仍待评审；数据库与开发部署（Neon）、C1 Trace 存储与保留策略、C2 经验评分与生命周期存储规划已确认 |
 | Runtime 选什么、哪些复用和自研、何时重新评估 | [adr/0002-agent-runtime-and-integration.md](adr/0002-agent-runtime-and-integration.md) | 已接受：DeerFlow Backend + MIS 自研 React UI / Backend；P2 集成能力待验证 |
 | Agent 内部模块、接口、数据流和执行机制 | [design/agent_architecture.md](design/agent_architecture.md) | 八章 V1 设计基线；上游绑定待 P2 验证，经验治理对象/审计与使用事件幂等待 P4/P5 细化 |
-| 以前的阶段完成得怎样 | [reviews/](reviews/) | P0 已完成 |
+| 以前的阶段完成得怎样 | [reviews/](reviews/) | P0 实现完成；P1 T1–T4 本地验证通过，T5 等待测试库 |
 | 为什么选这些开源组件 | [research/MIS_Open_Source_Baseline_Research_2026-11-01.md](research/MIS_Open_Source_Baseline_Research_2026-11-01.md) | 2026-11-01 调研存档，只读；最终 Runtime 与集成决策以 ADR-0002 为准 |
 
 ## 目录约定
@@ -36,3 +36,5 @@
 - [ADR-0003 P1 单位与业务存储](adr/0003-p1-units-and-storage.md)：已接受。
 
 - [业务 JSON Schema](schemas/)：由 Pydantic 导出，CI 检查与代码一致。
+
+- [P1 阶段进度报告](reviews/P1_report.md)：区分实现、测试和整体验收；当前等待 T5 测试库。

@@ -4,6 +4,8 @@ import argparse
 import json
 from pathlib import Path
 
+from mis.rules.compare import CheckResult, RamanContext
+from mis.rules.evaluate import Evaluation
 from mis.schemas.artifacts import AgentArtifact, Claim
 from mis.schemas.evidence import Evidence
 from mis.schemas.plan import InstrumentPlan
@@ -26,7 +28,19 @@ RECORD_MODELS = (
     UserCorrection,
     TestResult,
 )
-MODELS = (*RECORD_MODELS, Claim, RunRef, RequirementItem, Known, Unknown, Quantity, QuantityRange)
+MODELS = (
+    *RECORD_MODELS,
+    Claim,
+    RunRef,
+    RequirementItem,
+    Known,
+    Unknown,
+    Quantity,
+    QuantityRange,
+    CheckResult,
+    RamanContext,
+    Evaluation,
+)
 
 
 def export_schemas(destination: Path = Path("docs/schemas"), *, check: bool = False):
