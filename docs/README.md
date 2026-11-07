@@ -8,7 +8,7 @@
 |---|---|---|
 | 平台最终要做成什么样 | [architecture.md](architecture.md) | 目标架构，V4.0；已同步 DeerFlow / MIS 职责与独立部署 |
 | 分几个阶段做、每阶段做什么、怎样算完成 | [plans/development_plan.md](plans/development_plan.md) | v0.2.8，待评审；已同步 C1/C2、DeerFlow 路线与经验事件幂等验收 |
-| 当前阶段（P1）具体怎么做 | [plans/P1_data_contracts.md](plans/P1_data_contracts.md) | 草案；Q1/Q2/Q4 及 Q3 的文档 + 索引列/Alembic 待确认，PostgreSQL 已确认 |
+| 当前阶段（P1）具体怎么做 | [plans/P1_data_contracts.md](plans/P1_data_contracts.md) | 已启动；Q1–Q4 已确认，见 ADR-0003 |
 | Agent 架构要满足哪些要求、已经做了哪些决定 | [design/agent_architecture_requirements.md](design/agent_architecture_requirements.md) | 持续更新；A1–A11、C1、C2 已确认；B1、B2 的实现绑定在 P2 验证定稿 |
 | 技术栈、目录、数据库布局、部署 | [adr/0001-repo-structure-and-stack.md](adr/0001-repo-structure-and-stack.md) | 提议中，整体仍待评审；数据库与开发部署（Neon）、C1 Trace 存储与保留策略、C2 经验评分与生命周期存储规划已确认 |
 | Runtime 选什么、哪些复用和自研、何时重新评估 | [adr/0002-agent-runtime-and-integration.md](adr/0002-agent-runtime-and-integration.md) | 已接受：DeerFlow Backend + MIS 自研 React UI / Backend；P2 集成能力待验证 |
@@ -32,3 +32,5 @@
 - 文件名不带版本号，版本和修订记录写在文件开头。
 - 新增或移动文档时，同步更新本页和文档之间的链接。
 - 已确认的决定写进需求清单或 ADR，不只留在聊天记录里。
+
+- [ADR-0003 P1 单位与业务存储](adr/0003-p1-units-and-storage.md)：已接受。
