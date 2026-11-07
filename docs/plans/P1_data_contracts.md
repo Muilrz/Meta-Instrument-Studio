@@ -346,4 +346,14 @@ T7 中的示例数据，是**假设一个完美的 Specialist 会产出什么**�
 
 - T1：已实现并通过本地回归：69 passed；ruff 检查及格式化通过。
 - T2：已实现并通过本地回归：76 passed；含缺证据、非法单位、量纲转换拒绝、序列化和 JSON Schema。
-- T3–T8：未实现、未验收。
+- T3：已实现；模型正反例、序列化与 Schema 导出一致性测试通过。跨记录引用待 T5 服务校验。
+- T4–T8：未实现、未验收。
+
+### 实现字段补充
+
+- Evidence 增加必填 project_id，以便 Project Service 校验项目范围；fx_rate 包含结构化币种、汇率、日期。
+- Claim 的证据 ID 统一存于 value.evidence_ids，Claim.evidence_ids 为只读访问属性，避免双份引用不一致。
+- InstrumentPlan 的 modules/rationale 使用带 ClaimRef 的 PlanConclusion；BOM 使用带 ClaimRef 的 BomEntry；每条引用包含 artifact_id、claim_id。
+- Brief 和 Plan 增加 status_history；SpecifiedParam.target 使用完整 RequirementItem，服务写入时与基线核对。
+- 所有模型禁止额外字段，冻结实例，列表型业务内容用 tuple；JSON 仍序列化为数组。
+- Schema 导出命令：`uv run python -m mis.schemas.export`；CI 用 `--check` 检查。

@@ -1,0 +1,275 @@
+{
+  "$defs": {
+    "FxRate": {
+      "additionalProperties": false,
+      "properties": {
+        "source_currency": {
+          "const": "USD",
+          "title": "Source Currency",
+          "type": "string"
+        },
+        "target_currency": {
+          "const": "CNY",
+          "default": "CNY",
+          "title": "Target Currency",
+          "type": "string"
+        },
+        "rate": {
+          "exclusiveMinimum": 0,
+          "title": "Rate",
+          "type": "number"
+        },
+        "as_of": {
+          "format": "date",
+          "title": "As Of",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_currency",
+        "rate",
+        "as_of"
+      ],
+      "title": "FxRate",
+      "type": "object"
+    },
+    "PriceTier": {
+      "additionalProperties": false,
+      "properties": {
+        "min_qty": {
+          "minimum": 1,
+          "title": "Min Qty",
+          "type": "integer"
+        },
+        "unit_price": {
+          "minimum": 0,
+          "title": "Unit Price",
+          "type": "number"
+        }
+      },
+      "required": [
+        "min_qty",
+        "unit_price"
+      ],
+      "title": "PriceTier",
+      "type": "object"
+    },
+    "Quote": {
+      "additionalProperties": false,
+      "properties": {
+        "currency": {
+          "enum": [
+            "CNY",
+            "USD"
+          ],
+          "title": "Currency",
+          "type": "string"
+        },
+        "price_tiers": {
+          "items": {
+            "$ref": "#/$defs/PriceTier"
+          },
+          "minItems": 1,
+          "title": "Price Tiers",
+          "type": "array"
+        },
+        "region": {
+          "minLength": 1,
+          "title": "Region",
+          "type": "string"
+        },
+        "valid_until": {
+          "format": "date",
+          "title": "Valid Until",
+          "type": "string"
+        },
+        "tax_included": {
+          "title": "Tax Included",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "currency",
+        "price_tiers",
+        "region",
+        "valid_until",
+        "tax_included"
+      ],
+      "title": "Quote",
+      "type": "object"
+    },
+    "RunRef": {
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "trace_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{32}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trace Id"
+        },
+        "actor": {
+          "enum": [
+            "copilot",
+            "lab",
+            "research",
+            "procurement",
+            "rule_engine",
+            "user"
+          ],
+          "title": "Actor",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "skill_versions": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Skill Versions",
+          "type": "object"
+        },
+        "prompt_version": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prompt Version"
+        }
+      },
+      "required": [
+        "run_id",
+        "actor"
+      ],
+      "title": "RunRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^evd_[0-9A-HJKMNP-TV-Z]{26}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "project_id": {
+      "pattern": "^prj_[0-9A-HJKMNP-TV-Z]{26}$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "source_type": {
+      "enum": [
+        "document",
+        "web",
+        "vendor_api",
+        "fx_rate",
+        "measurement",
+        "user_decision"
+      ],
+      "title": "Source Type",
+      "type": "string"
+    },
+    "locator": {
+      "minLength": 1,
+      "title": "Locator",
+      "type": "string"
+    },
+    "excerpt": {
+      "minLength": 1,
+      "title": "Excerpt",
+      "type": "string"
+    },
+    "page_or_anchor": {
+      "minLength": 1,
+      "title": "Page Or Anchor",
+      "type": "string"
+    },
+    "retrieved_at": {
+      "format": "date-time",
+      "title": "Retrieved At",
+      "type": "string"
+    },
+    "source_version": {
+      "minLength": 1,
+      "title": "Source Version",
+      "type": "string"
+    },
+    "retrieved_by": {
+      "$ref": "#/$defs/RunRef"
+    },
+    "tool_call_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tool Call Id"
+    },
+    "quote": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Quote"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "fx_rate": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FxRate"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "project_id",
+    "source_type",
+    "locator",
+    "excerpt",
+    "page_or_anchor",
+    "source_version",
+    "retrieved_by"
+  ],
+  "title": "Evidence",
+  "type": "object"
+}

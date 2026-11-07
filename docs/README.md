@@ -34,3 +34,5 @@
 - 已确认的决定写进需求清单或 ADR，不只留在聊天记录里。
 
 - [ADR-0003 P1 单位与业务存储](adr/0003-p1-units-and-storage.md)：已接受。
+
+- [业务 JSON Schema](schemas/)：由 Pydantic 导出，CI 检查与代码一致。

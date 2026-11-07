@@ -1,0 +1,88 @@
+{
+  "$defs": {
+    "Quantity": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Quantity",
+      "type": "object"
+    },
+    "QuantityRange": {
+      "additionalProperties": false,
+      "properties": {
+        "lower": {
+          "title": "Lower",
+          "type": "number"
+        },
+        "upper": {
+          "title": "Upper",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lower",
+        "upper",
+        "unit"
+      ],
+      "title": "QuantityRange",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "const": "known",
+      "default": "known",
+      "title": "Kind",
+      "type": "string"
+    },
+    "value": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Quantity"
+        },
+        {
+          "$ref": "#/$defs/QuantityRange"
+        },
+        {
+          "minLength": 1,
+          "type": "string"
+        }
+      ],
+      "title": "Value"
+    },
+    "evidence_ids": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Evidence Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "value",
+    "evidence_ids"
+  ],
+  "title": "Known",
+  "type": "object"
+}

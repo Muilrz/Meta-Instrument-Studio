@@ -1,0 +1,25 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "lower": {
+      "title": "Lower",
+      "type": "number"
+    },
+    "upper": {
+      "title": "Upper",
+      "type": "number"
+    },
+    "unit": {
+      "minLength": 1,
+      "title": "Unit",
+      "type": "string"
+    }
+  },
+  "required": [
+    "lower",
+    "upper",
+    "unit"
+  ],
+  "title": "QuantityRange",
+  "type": "object"
+}

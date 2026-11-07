@@ -1,0 +1,109 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "project_id": {
+      "pattern": "^prj_[0-9A-HJKMNP-TV-Z]{26}$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "run_id": {
+      "minLength": 1,
+      "title": "Run Id",
+      "type": "string"
+    },
+    "brief_id": {
+      "anyOf": [
+        {
+          "pattern": "^brf_[0-9A-HJKMNP-TV-Z]{26}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Brief Id"
+    },
+    "question": {
+      "minLength": 1,
+      "title": "Question",
+      "type": "string"
+    },
+    "options": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Options",
+      "type": "array"
+    },
+    "context": {
+      "minLength": 1,
+      "title": "Context",
+      "type": "string"
+    },
+    "answer": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Answer"
+    },
+    "answered_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Answered At"
+    },
+    "answer_evidence_id": {
+      "anyOf": [
+        {
+          "pattern": "^evd_[0-9A-HJKMNP-TV-Z]{26}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Answer Evidence Id"
+    },
+    "status": {
+      "default": "open",
+      "enum": [
+        "open",
+        "answered",
+        "cancelled"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "project_id",
+    "run_id",
+    "question",
+    "context"
+  ],
+  "title": "UserQuestion",
+  "type": "object"
+}

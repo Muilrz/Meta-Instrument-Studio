@@ -1,0 +1,74 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "run_id": {
+      "minLength": 1,
+      "title": "Run Id",
+      "type": "string"
+    },
+    "trace_id": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{32}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Trace Id"
+    },
+    "actor": {
+      "enum": [
+        "copilot",
+        "lab",
+        "research",
+        "procurement",
+        "rule_engine",
+        "user"
+      ],
+      "title": "Actor",
+      "type": "string"
+    },
+    "model": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Model"
+    },
+    "skill_versions": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Skill Versions",
+      "type": "object"
+    },
+    "prompt_version": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Prompt Version"
+    }
+  },
+  "required": [
+    "run_id",
+    "actor"
+  ],
+  "title": "RunRef",
+  "type": "object"
+}

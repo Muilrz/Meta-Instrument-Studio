@@ -1,0 +1,211 @@
+{
+  "$defs": {
+    "Known": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "known",
+          "default": "known",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quantity"
+            },
+            {
+              "$ref": "#/$defs/QuantityRange"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "title": "Value"
+        },
+        "evidence_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "value",
+        "evidence_ids"
+      ],
+      "title": "Known",
+      "type": "object"
+    },
+    "Quantity": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Quantity",
+      "type": "object"
+    },
+    "QuantityRange": {
+      "additionalProperties": false,
+      "properties": {
+        "lower": {
+          "title": "Lower",
+          "type": "number"
+        },
+        "upper": {
+          "title": "Upper",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lower",
+        "upper",
+        "unit"
+      ],
+      "title": "QuantityRange",
+      "type": "object"
+    },
+    "Unknown": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "unknown",
+          "default": "unknown",
+          "title": "Kind",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "reason"
+      ],
+      "title": "Unknown",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "project_id": {
+      "pattern": "^prj_[0-9A-HJKMNP-TV-Z]{26}$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "artifact_id": {
+      "pattern": "^art_[0-9A-HJKMNP-TV-Z]{26}$",
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "claim_id": {
+      "minLength": 1,
+      "title": "Claim Id",
+      "type": "string"
+    },
+    "original_value": {
+      "discriminator": {
+        "mapping": {
+          "known": "#/$defs/Known",
+          "unknown": "#/$defs/Unknown"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/Known"
+        },
+        {
+          "$ref": "#/$defs/Unknown"
+        }
+      ],
+      "title": "Original Value"
+    },
+    "corrected_value": {
+      "discriminator": {
+        "mapping": {
+          "known": "#/$defs/Known",
+          "unknown": "#/$defs/Unknown"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/Known"
+        },
+        {
+          "$ref": "#/$defs/Unknown"
+        }
+      ],
+      "title": "Corrected Value"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "evidence_id": {
+      "pattern": "^evd_[0-9A-HJKMNP-TV-Z]{26}$",
+      "title": "Evidence Id",
+      "type": "string"
+    },
+    "corrected_by": {
+      "minLength": 1,
+      "title": "Corrected By",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "project_id",
+    "artifact_id",
+    "claim_id",
+    "original_value",
+    "corrected_value",
+    "reason",
+    "evidence_id",
+    "corrected_by"
+  ],
+  "title": "UserCorrection",
+  "type": "object"
+}
