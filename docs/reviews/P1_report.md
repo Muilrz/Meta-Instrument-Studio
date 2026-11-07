@@ -1,7 +1,7 @@
 # P1 阶段报告：核心数据契约与 Project Service
 
 - 日期：2026-11-08
-- 状态：T1–T8 实现完成；本地完整回归通过，最终 CI 验证中；负责人评审尚未进行
+- 状态：T1–T8 实现及自动验收完成（本地 + CI）；待负责人评审
 - 分支：`feat/p1-core-data-contracts`
 - 决策：[ADR-0003](../adr/0003-p1-units-and-storage.md)，项目负责人已确认 Q1–Q4
 
@@ -16,7 +16,7 @@
 | T5 | SQL 初始化、Alembic、SQLAlchemy 仓储、版本、引用校验、数据库不可变保护 | `81bca52` |
 | T6 | 需求差异、ImpactReport、精确 stale 传播、历史和报告复核 | `efd5943` |
 | T7 | Raman 导入、8 器件手工数据、Plan 原文追溯、问答和纠正 | `11b9229` |
-| T8 | 逻辑业务备份、空目标原子恢复、格式 Schema、阶段报告 | 随本报告提交 |
+| T8 | 逻辑业务备份、空目标原子恢复、格式 Schema、阶段报告 | `9aa79e5` |
 
 业务记录保存在 PostgreSQL `mis` schema，每类对象一表，完整 JSONB 加索引列。
 服务不依赖 DeerFlow，不调用 LLM，没有加入 HTTP API、Agent、RAG、向量检索或 Trace 基础设施。
@@ -55,7 +55,10 @@ Windows / Python 3.12.16，独立 Neon test 分支。开发数据库没有执行
 
 T7 提交已在 GitHub Actions 的 pgvector/pgvector:pg17 容器通过：
 [CI 42416886952](https://github.com/Muilrz/Meta-Instrument-Studio/actions/runs/42416886952)。
-最终 T8 提交 CI 结果将在完成后补入。
+最终 T8 代码提交 `9aa79e5` 在 PostgreSQL 容器中 **118 passed（1.50 s）**，全部检查成功：
+[CI 42417562572](https://github.com/Muilrz/Meta-Instrument-Studio/actions/runs/42417562572)。
+完整 Raman v1→v2 的补充端到端回归在本地另行通过，并包含在此最终 CI 中。
+迁移模板渲染编译通过；本地测试结束后业务表记录总数为 0，回滚隔离生效。
 
 ### 验证覆盖
 
@@ -77,17 +80,17 @@ T7 提交已在 GitHub Actions 的 pgvector/pgvector:pg17 容器通过：
 
 | 验收目标 | 自动验证依据 | 状态 |
 |---|---|---|
-| 1. 导入 Raman 得到基线 v1 | test_raman_import，11 项、单位、比较方式、FX、项目类型 | 本地通过 |
-| 2. 手工器件与证据复现标准答案 | test_p1_acceptance、test_rules、P0 完整性测试 | 本地及 T7 CI 通过 |
-| 3. v2 精确传播并保留 v1 | test_impact 的 R04/R11、复用与历史；完整 Raman v2 补充场景 | 本地通过（完整 Raman 补充回归单独通过） |
-| 4. Plan 追溯 Evidence 原文 | test_p1_acceptance，BOM / Claim / FX 原文与 RunRef | 本地及 T7 CI 通过 |
-| 5. 业务记录独立导出导入 | test_dump，九类记录、空目标恢复相等、原子回滚 | 本地通过，最终 CI 待完成 |
+| 1. 导入 Raman 得到基线 v1 | test_raman_import，11 项、单位、比较方式、FX、项目类型 | 本地及最终 CI 通过 |
+| 2. 手工器件与证据复现标准答案 | test_p1_acceptance、test_rules、P0 完整性测试 | 本地及最终 CI 通过 |
+| 3. v2 精确传播并保留 v1 | test_impact 的 R04/R11、复用与历史；完整 Raman v2 补充场景 | 本地及最终 CI 通过 |
+| 4. Plan 追溯 Evidence 原文 | test_p1_acceptance，BOM / Claim / FX 原文与 RunRef | 本地及最终 CI 通过 |
+| 5. 业务记录独立导出导入 | test_dump，九类记录、空目标恢复相等、原子回滚 | 本地及最终 CI 通过 |
 
 P0 原有 57 项测试继续通过，fixtures/raman_baseline/ v0.1.0 没有修改。
 
 ## 尚存问题与交接
 
-- 最终 CI 验证中；未验证前不将该项标记完成。
+- 当前无实现或自动验收阻塞项。
 - 负责人对 P1 的人工评审、合并尚未进行；ADR-0001 整体待评审状态保持不变。
 - 可选 compose.yaml 在本机受 Docker 限制未运行；同镜像 PostgreSQL 容器已由 CI 验证。
 - 备份是业务对象的逻辑 JSON；正式环境部署、物理备份、用户认证与多租户仍在后续阶段。

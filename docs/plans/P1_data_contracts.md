@@ -1,8 +1,9 @@
 # P1 任务说明：核心数据契约与 Project Service
 
-- 状态：已启动；2026-11-08 项目负责人确认 Q1–Q4，见 ADR-0003
+- 状态：T1–T8 实现及自动验收通过，待负责人评审；Q1–Q4 已确认，见 ADR-0003
 - 日期：2026-11-05
 - 修订：
+  - 2026-11-08，完成 T1–T8；本地及 PostgreSQL CI 118 passed，五项自动验收通过，详见 P1_report.md
   - 2026-11-08，同步实际分支 feat/p1-core-data-contracts；明确 Q1–Q4 默认建议与确认状态，保留草案待评审状态
   - 2026-11-08，依据已确认的 C1 更新 RunRef 与 Trace 的连接边界；Trace 基础设施在 P3 实现，C2 对象不加入 P1 范围
   - 2026-11-05，数据库改为 PostgreSQL（见 ADR-0001），并相应地从 P1 起引入 Alembic
@@ -273,50 +274,50 @@ T7 中的示例数据，是**假设一个完美的 Specialist 会产出什么**�
 
 用 T7 的示例数据跑规则引擎，结果必须与 `checkpoints.yaml` 一致：
 
-- [ ] CP02：LAS-A 线宽 → `pass`
-- [ ] CP03：LAS-B 功率 0.35 W 对比 ≥ 450 mW → `fail`
-- [ ] CP04：LAS-C 线宽 2 nm → `fail`
-- [ ] CP05：SPEC-B 分辨率 0.6 nm 换算到 R02 全范围 → `fail`
-- [ ] CP06：SPEC-A 波长范围覆盖 200–2000 cm⁻¹ → `pass`
-- [ ] CP07、CP08：SPEC-C 的制冷温度、信噪比为 `Unknown` → `unknown`，**不是 `pass`**
-- [ ] CP10：SPEC-D 单件预算 → `fail`
-- [ ] CP11：LAS-A + SPEC-A + PRB-A 的组合，预算为 `pass`，且 must 级需求汇总结果为 `pass`
-- [ ] 包含 SPEC-C 的组合，must 级需求汇总结果为 `unknown`
+- [x] CP02：LAS-A 线宽 → `pass`
+- [x] CP03：LAS-B 功率 0.35 W 对比 ≥ 450 mW → `fail`
+- [x] CP04：LAS-C 线宽 2 nm → `fail`
+- [x] CP05：SPEC-B 分辨率 0.6 nm 换算到 R02 全范围 → `fail`
+- [x] CP06：SPEC-A 波长范围覆盖 200–2000 cm⁻¹ → `pass`
+- [x] CP07、CP08：SPEC-C 的制冷温度、信噪比为 `Unknown` → `unknown`，**不是 `pass`**
+- [x] CP10：SPEC-D 单件预算 → `fail`
+- [x] CP11：LAS-A + SPEC-A + PRB-A 的组合，预算为 `pass`，且 must 级需求汇总结果为 `pass`
+- [x] 包含 SPEC-C 的组合，must 级需求汇总结果为 `unknown`
 
 ### 拒绝非法数据
 
-- [ ] `Known` 值没有证据时，创建失败
-- [ ] 量纲错误时（例如功率字段的单位是 nm），创建失败
-- [ ] Claim 引用了不存在的 Evidence ID 时，写入失败
-- [ ] Brief 的 `specified_params` 引用了基线中不存在的需求项，或同一参数同时出现在指定和不定两个列表中时，创建失败
+- [x] `Known` 值没有证据时，创建失败
+- [x] 量纲错误时（例如功率字段的单位是 nm），创建失败
+- [x] Claim 引用了不存在的 Evidence ID 时，写入失败
+- [x] Brief 的 `specified_params` 引用了基线中不存在的需求项，或同一参数同时出现在指定和不定两个列表中时，创建失败
 
 ### 出处与问答
 
-- [ ] 示例 Artifact、Evidence、Plan 都带 `RunRef`，能按 `run_id` 查出同一次运行产生的全部业务记录
-- [ ] 写入一个 `UserQuestion` 并回答后，生成 `user_decision` 类型的 Evidence，后续 Claim 可以引用它
-- [ ] 对示例 Artifact 中 SPEC-C 的一条 Claim 写入 `UserCorrection` 后：生成 `user_decision` Evidence；原 Artifact 内容不变、状态变为 `stale`，包含它的 Plan 也变为 `stale`；纠正前后的值都能读出
+- [x] 示例 Artifact、Evidence、Plan 都带 `RunRef`，能按 `run_id` 查出同一次运行产生的全部业务记录
+- [x] 写入一个 `UserQuestion` 并回答后，生成 `user_decision` 类型的 Evidence，后续 Claim 可以引用它
+- [x] 对示例 Artifact 中 SPEC-C 的一条 Claim 写入 `UserCorrection` 后：生成 `user_decision` Evidence；原 Artifact 内容不变、状态变为 `stale`，包含它的 Plan 也变为 `stale`；纠正前后的值都能读出
 
 ### 版本与影响分析
 
-- [ ] 把 R04 从 ≥ 450 mW 改为 ≥ 300 mW 生成需求 v2 后，`ImpactReport` 只列出引用 R04 的 Brief、Artifact 及包含它们的 Plan，引用其他需求项的对象不受影响
-- [ ] 执行标记后，这些对象的状态变为 `stale`，状态历史记录了原因（“需求 v1 → v2，R04 变更”）
-- [ ] v1 的需求和 Plan 仍然可以完整读取，内容不变
+- [x] 把 R04 从 ≥ 450 mW 改为 ≥ 300 mW 生成需求 v2 后，`ImpactReport` 只列出引用 R04 的 Brief、Artifact 及包含它们的 Plan，引用其他需求项的对象不受影响
+- [x] 执行标记后，这些对象的状态变为 `stale`，状态历史记录了原因（“需求 v1 → v2，R04 变更”）
+- [x] v1 的需求和 Plan 仍然可以完整读取，内容不变
 
 ### 证据追溯
 
-- [ ] 对示例 Plan 中的每个 BOM 条目和每条 Claim，都能沿 `Plan → Artifact → Claim → Evidence` 找到原文片段，并且该片段确实出现在基准任务包对应的文件里
-- [ ] 预算计算引用了汇率 Evidence
+- [x] 对示例 Plan 中的每个 BOM 条目和每条 Claim，都能沿 `Plan → Artifact → Claim → Evidence` 找到原文片段，并且该片段确实出现在基准任务包对应的文件里
+- [x] 预算计算引用了汇率 Evidence
 
 ### 备份恢复（原则 G1）
 
-- [ ] 导出全部数据 → 清空数据库 → 导入，前后所有对象逐个相等
-- [ ] 这个过程不需要任何 Agent 运行状态参与
+- [x] 导出全部数据 → 清空数据库 → 导入，前后所有对象逐个相等
+- [x] 这个过程不需要任何 Agent 运行状态参与
 
 ### 工程
 
-- [ ] `uv run pytest`、`ruff check`、`ruff format --check` 本地和 CI 都通过
-- [ ] 新增依赖（pydantic、pint、sqlalchemy、psycopg、alembic、python-ulid）的许可证登记在 P1 报告中
-- [ ] README 写明开发数据库的连接方法（Neon，`.env`），以及可选的本地 Docker 方法
+- [x] `uv run pytest`、`ruff check`、`ruff format --check` 本地和 CI 都通过
+- [x] 新增依赖（pydantic、pint、sqlalchemy、psycopg、alembic、python-ulid）的许可证登记在 P1 报告中
+- [x] README 写明开发数据库的连接方法（Neon，`.env`），以及可选的本地 Docker 方法
 
 ---
 
@@ -351,7 +352,7 @@ T7 中的示例数据，是**假设一个完美的 Specialist 会产出什么**�
 - T5：已实现；独立 Neon test 分支初始化和迁移成功；完整回归 111 passed，含角色权限、不可变约束及版本测试。CI 数据库服务已配置，远程结果待运行。
 - T6：已实现；R04/R11 精确传播、直接 Artifact 依赖、跨版本复用、报告复核和重放测试通过；完整回归 113 passed。
 - T7：已实现；基准包导入、8 器件样例、13 个检查点、Plan 出处链、用户问答和纠正测试通过；完整回归 115 passed。
-- T8：逻辑导出/导入、空目标恢复与原子失败已实现；本地完整回归 118 passed。最终 CI 验证中。
+- T8：逻辑导出/导入、空目标恢复与原子失败已实现；本地及最终 PostgreSQL CI 均为 118 passed，五项自动验收通过；待负责人评审。
 
 ### 实现字段补充
 
@@ -361,3 +362,6 @@ T7 中的示例数据，是**假设一个完美的 Specialist 会产出什么**�
 - Brief 和 Plan 增加 status_history；SpecifiedParam.target 使用完整 RequirementItem，服务写入时与基线核对。
 - 所有模型禁止额外字段，冻结实例，列表型业务内容用 tuple；JSON 仍序列化为数组。
 - Schema 导出命令：`uv run python -m mis.schemas.export`；CI 用 `--check` 检查。
+
+- 最终代码 CI：[42417562572](https://github.com/Muilrz/Meta-Instrument-Studio/actions/runs/42417562572)。
+- ProjectBackup v1 为九类业务对象的逻辑备份；ClaimTrace 表达业务出处链，均导出 JSON Schema。

@@ -147,6 +147,8 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 
 **目标**：把架构文档第 8 节的数据对象变成可校验、带版本的 schema 和服务。这一阶段完全不涉及 LLM。
 
+执行记录（2026-11-08）：T1–T8 已实现，本地及 PostgreSQL CI 118 passed；五项自动验收通过，待负责人评审。见 [P1 阶段报告](../reviews/P1_report.md)。
+
 **范围内**
 
 - 以下对象的 schema 定义，用 Pydantic 或 JSON Schema，并导出供前端或其他语言使用：
@@ -174,11 +176,11 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 
 **验收标准**
 
-- [ ] 7 类对象都有 schema 和正反例单元测试；缺少证据的 Artifact、量纲错误的需求项都会被拒绝
-- [ ] 单位换算覆盖基准任务包中出现的全部单位，例如 nm / µm、cm⁻¹、mW / W、ms / s，并有测试
-- [ ] 把基准任务包的需求表导入为 `RequirementBaseline` v1；修改一项指标得到 v2 后，影响分析能准确列出受影响的对象，旧版本可以完整读取
-- [ ] 用手写的样例 Artifact 和 Evidence 生成一份 `InstrumentPlan`，从任一结论都能追溯到 Evidence 记录
-- [ ] Project Service 的数据库可以独立备份和恢复，不依赖任何 Agent 运行状态（原则 G1）
+- [x] 7 类对象都有 schema 和正反例单元测试；缺少证据的 Artifact、量纲错误的需求项都会被拒绝
+- [x] 单位换算覆盖基准任务包中出现的全部单位，例如 nm / µm、cm⁻¹、mW / W、ms / s，并有测试
+- [x] 把基准任务包的需求表导入为 `RequirementBaseline` v1；修改一项指标得到 v2 后，影响分析能准确列出受影响的对象，旧版本可以完整读取
+- [x] 用手写的样例 Artifact 和 Evidence 生成一份 `InstrumentPlan`，从任一结论都能追溯到 Evidence 记录
+- [x] Project Service 的数据库可以独立备份和恢复，不依赖任何 Agent 运行状态（原则 G1）
 
 ---
 
