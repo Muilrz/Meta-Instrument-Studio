@@ -3,6 +3,7 @@
 - 状态：草案，待评审
 - 日期：2026-11-05
 - 修订：
+  - 2026-11-08，同步实际分支 feat/p1-core-data-contracts；明确 Q1–Q4 默认建议与确认状态，保留草案待评审状态
   - 2026-11-08，依据已确认的 C1 更新 RunRef 与 Trace 的连接边界；Trace 基础设施在 P3 实现，C2 对象不加入 P1 范围
   - 2026-11-05，数据库改为 PostgreSQL（见 ADR-0001），并相应地从 P1 起引入 Alembic
   - 2026-11-06，依据 [Agent 架构需求清单](../design/agent_architecture_requirements.md)：新增出处字段 `RunRef`（3.8）、Brief 参数分类（3.9）、用户问答 `UserQuestion`（3.10）、用户纠正 `UserCorrection`（3.11）
@@ -10,7 +11,7 @@
   - 2026-11-06，开发数据库改为 Neon：T5 改为普通 SQL 初始化脚本 `db/init.sql` + Neon `test` 分支，`compose.yaml` 变为可选；本文件移到 `docs/plans/`
 - 上级计划：[开发计划 · P1](development_plan.md#p1-核心数据契约与-project-service)
 - 前置条件：P0 完成（[P0 报告](../reviews/P0_report.md)）
-- 分支：`p1-data-contracts`，按下文任务拆成多个提交或 PR
+- 分支：`feat/p1-core-data-contracts`，按下文任务拆成多个提交或 PR
 
 ---
 
@@ -332,9 +333,11 @@ T7 中的示例数据，是**假设一个完美的 Specialist 会产出什么**�
 
 ## 9. 需要你确认的事项
 
-| 编号 | 问题 | 默认选择 |
-|---|---|---|
-| Q1 | 是否同意用 pint 做单位换算 | 同意 |
-| Q2 | P1 是否做 HTTP API | 不做，留到 P3 |
-| Q3 | 存储采用“文档 + 索引列”，用 PostgreSQL，从 P1 起引入 Alembic | **已确定**使用 PostgreSQL；“文档 + 索引列”和 Alembic 待确认 |
-| Q4 | 示例的结构化器件数据放在 `tests/data/`，而不是基准任务包中 | 同意 |
+以下默认建议用于描述草案，不代表负责人已确认；本次文档修订不改变确认状态，也不启动实现。确认后须记录确认人、日期和结论，并同步相关设计或 ADR。
+
+| 编号 | 问题 | 默认建议 | 确认状态 |
+|---|---|---|---|
+| Q1 | 是否用 pint 做单位换算 | 使用 pint | 待确认 |
+| Q2 | P1 是否做 HTTP API | 不做，留到 P3 | 待确认；当前草案按不做安排 |
+| Q3 | 存储采用“文档 + 索引列”，用 PostgreSQL，从 P1 起引入 Alembic | 文档 + 索引列，使用 Alembic | PostgreSQL **已确定**；“文档 + 索引列”和 Alembic 待确认 |
+| Q4 | 示例结构化器件数据是否放在 `tests/data/` | 放在 `tests/data/`，不修改基准任务包 | 待确认 |

@@ -3,6 +3,7 @@
 - 状态：技术路线与模块边界已确认；V1 设计基线，具体上游接口和兼容性待 P2 Integration Spike 验证
 - 日期：2026-11-08
 - 修订：2026-11-08，基于已确认的 DeerFlow Backend + MIS 自研 UI / Backend 路线建立设计；本文件不表示实现完成
+- 补充记录：2026-11-08，增加 P4/P5 待细化的经验晋升持久化对象、审计关系和使用事件幂等要求；不改变 C2 公式、阈值或 P1 范围
 - 决策依据：[ADR-0002](../adr/0002-agent-runtime-and-integration.md)、[Agent 架构需求清单](agent_architecture_requirements.md) A1–A8、C1、C2
 - 相关：[总体架构](../architecture.md)、[开发计划](../plans/development_plan.md)、[数据库与权限](../adr/0001-repo-structure-and-stack.md)
 
@@ -128,6 +129,32 @@ A2 流程保持：触发事件 → 候选经验 → 晋升池去重与冲突处�
 C2 是唯一评分与生命周期规范，本设计不重新定义权重、窗口或阈值。Memory Service 执行四分项综合评分、评分成熟度、月度滞回、Pin 与有效性保护；MemoryUsageEvent、MemoryScoreHistory 保存结构化反馈与评分来源。contested 暂停默认检索，invalid 禁止 Agent 使用，Archived 需人工审核恢复；Pin 不绕过审核和有效性保护。
 
 实施顺序：P3 记录候选事件并建立契约；P4 实现存储、评分、历史和生命周期；P5 审核后才正式对 Agent 可见；P7 将 TestResult 纳入效果评价并离线校准。实验室原始文档不参与经验评分或自动遗忘。
+
+### 4.3 晋升持久化对象与审计关系（P4/P5 待细化）
+
+除 C2 的 ExperienceMemory、MemoryUsageEvent、MemoryScoreHistory 外，A2 的治理流程需要明确持久化记录。以下为逻辑对象草案，命名、字段、约束与物理表设计在 P4 定稿，P5 完成审核与管理交互；不新增到 P1 核心模型。
+
+| 逻辑对象草案 | 责任与审计关联 |
+|---|---|
+| ExperienceTriggerEvent | 保存候选生成的触发事实，关联项目、运行、UserQuestion / UserCorrection / TestResult 或复盘、原始 Evidence；与经验使用评分事件区分 |
+| ExperienceCandidate | 保存候选内容、类型、范围、版本及来源触发事件；支持多个来源，不在合并后丢失原始候选 |
+| PromotionEntry | 保存晋升池处理状态、候选关联、去重结果、待审版本与目标 memory_id；晋升操作幂等，重放不创建重复经验 |
+| ExperienceRelation | 保存相同、更具体、矛盾等关系，关联候选/经验的确切版本、判定依据和处理结果；合并保留来源，冲突不自动覆盖 |
+| ExperienceReview | 保存通过、驳回、修改后通过、冲突裁决，包含审核人、时间、理由、审核版本和 Evidence；通过后关联实际晋升的经验版本 |
+| MemoryManagementEvent | 保存评分以外的 Pin、降级、归档、恢复、失效与修订操作，关联操作人、时间、原因、变更前后分数/状态及版本 |
+
+审计链为：触发事实 → 候选版本 → 晋升池条目 / 关系 → 人工审核 → ExperienceMemory 版本；后续使用关联 MemoryUsageEvent → MemoryScoreHistory，人工管理另保留状态历史。修改待审内容须生成新版本，不能把旧版本审核结果默认为新版本获准；重放、合并和冲突裁决均不得抹去来源。
+
+治理主数据保存在 `knowledge` schema，跨 schema 通过稳定业务 ID / 引用关联；Trace 只补充执行详情。普通 Trace Payload 到期后，来源事件、审核记录和评分依据仍须可审计。具体审计保留与删除约束在 P4/P5 任务说明中明确，不能只依赖运行 checkpoint 或短期日志。
+
+### 4.4 MemoryUsageEvent 的过程关联与计分幂等（P4 定稿）
+
+- 同一次逻辑经验使用需有稳定的使用关联标识（暂称 usage_id），关联 memory_id、经验版本、project_id、run_id、task_id / task_type，以及 trace_id / span_id。retrieved、selected、injected、applied 是可关联的阶段事实，不是四次可累加的使用样本。
+- 每条事实有稳定 event_id 和生产者幂等键；同一事实因重试、Checkpoint 恢复、消息重放或 SSE 重连重复送达时，只持久化和处理一次。不同真实检索可保留各自事件，不能简单对 memory_id + stage 去重而丢失执行历史。关联标识、事件唯一约束和可靠投递策略在 P4 定稿。
+- T 只从满足 C2“选中且实际注入”的逻辑使用中提取触发，再按同 memory_id / project_id / task_type 30 天去重及最近 180 天窗口计数；retrieved 和 selected 本身不额外加分。阶段事件去重与 T 的统计窗口去重是两层不同约束。
+- U 只统计实际 applied 且有可追溯评价的结果；同一次应用的同一评价依据只能计一次，unknown 不进入 P/F。评价晚到或被纠正时，关联原应用与原评价并保留修订记录，按有效评价重算，不能把消息重放或修订追加当成独立成功/失败样本。多项评价如何归并须在 P4 明确。
+- 消费事件、更新评分及生成 MemoryScoreHistory 必须有可恢复的幂等边界；历史关联 source_event_ids 和 score_version，重复处理不新增相同计分影响。具体事务、重算和并发约束在 P4 设计，不在本次实现。
+- P4 验收覆盖乱序、重复、重启重放、部分阶段缺失、评价晚到和纠正；无法确认实际 injected / applied 的事件不得推断为触发或成功。P5 页面能沿使用、评价、评分及审核记录查看完整审计关系。
 
 ## 5. Tool & Sandbox
 

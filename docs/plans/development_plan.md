@@ -1,4 +1,4 @@
-# MetaInstrumentStudio 开发计划（v0.2.7）
+# MetaInstrumentStudio 开发计划（v0.2.8）
 
 - 状态：草案，待评审
 - 日期：2026-11-05
@@ -12,6 +12,7 @@
   - v0.2.5（2026-11-06）：开发数据库改为 Neon 云数据库；文档统一移到 `docs/`，本文件由 `plans/MIS_Development_Plan_v0.1.md` 改名为 `docs/plans/development_plan.md`；新增 D10
   - v0.2.6（2026-11-08）：落实已确认的 C1 Trace 与 C2 经验评分、生命周期管理，更新存储边界和 P2/P3/P4/P5/P7 范围与验收；P1 不提前承担相关基础设施
   - v0.2.7（2026-11-08）：依据 ADR-0002 采用 DeerFlow Backend + MIS 自研 React UI / Backend；P2 改为 DeerFlow 优先集成验证，失败才评估替代方案；同步 P3/P5 与运行接口边界
+  - v0.2.8（2026-11-08）：补充 P4/P5 经验治理持久化对象、审核审计关系及 MemoryUsageEvent 幂等验收；不扩大 P1 范围
 - 依据：
   - [`docs/architecture.md`](../architecture.md)：目标架构
   - [`docs/research/MIS_Open_Source_Baseline_Research_2026-11-01.md`](../research/MIS_Open_Source_Baseline_Research_2026-11-01.md)：开源 baseline 选型调研
@@ -297,6 +298,8 @@ DeerFlow Integration Spike（固定 Raman / 模拟工具）
 - 经验晋升池：去重与冲突检测；经验与实验室知识共享 `knowledge` schema 和检索基础设施（A2）。P4 建好存储和评分基础设施，P5 人工审核通过后经验才正式对 Agent 可见
 - **经验评分与生命周期（C2）**：实现 ExperienceMemory、MemoryUsageEvent、MemoryScoreHistory；结构化使用事件与 Trace 通过 trace_id / span_id 关联，详细执行数据仍在 `trace` schema。实现 E/T/U/H 分项及综合评分、版本化配置、评分历史、成熟度门槛、事件驱动评分和月度滞回转换、有效性保护、不同经验类型有效期及即时复核；严格遵循 C2，不使用 LLM-as-Judge 自动评分，不统一按时间衰减
 
+- **经验治理契约细化**：P4 明确候选触发、候选版本、晋升池条目、关系/冲突、审核和人工管理的持久化对象及审计关联；明确 MemoryUsageEvent 的逻辑使用关联、经验版本、稳定事件 ID、幂等键、计分消费与结果修订机制。具体方案以 [内部架构设计 4.3/4.4](../design/agent_architecture.md#43-晋升持久化对象与审计关系p4p5-待细化) 为待细化清单，不加入 P1
+
 **范围外**
 
 - 覆盖全部厂商
@@ -314,6 +317,8 @@ DeerFlow Integration Spike（固定 Raman / 模拟工具）
 - [ ] **未审核不可见**：未经审核的经验条目不会出现在 Agent 的检索结果中；P4 的评分验证使用固定事件，不绕过 P5 晋升审核
 - [ ] **评分与事件**：固定事件集复现 C2 的 E/T/U/H 与总分；验证 180 天窗口、同经验/项目/任务类型 30 天去重、未选中或未注入不计 T、未 Applied 或 unknown 不计 U、无反馈不算成功；评分变化可追溯来源事件与版本
 - [ ] **生命周期与有效性**：验证新晋升 Active / insufficient_data，成熟度须满足 3 个触发项目和 2 个可评价结果项目；成熟后按 C2 连续月度阈值转换，单次低分不降级，Archived 不自动恢复；contested 暂停默认检索，invalid 禁止使用，Pin 不绕过有效性保护；事实到期复核、方法无统一过期时间、偏好以最新确认为准
+
+- [ ] **事件幂等与治理审计**：重试、乱序、重复投递、重启重放、部分阶段缺失、评价晚到与纠正不造成重复 T/U 或重复晋升；能追溯候选、合并/冲突、待审版本、审核与经验版本。四个使用阶段保留事实关联，不分别累加计分；Trace Payload 到期后审计依据仍可读
 
 ---
 
@@ -343,6 +348,7 @@ DeerFlow Integration Spike（固定 Raman / 模拟工具）
 - [ ] **经验审核**：在页面上对候选经验执行通过、驳回、修改后通过、裁决冲突四种操作，每种操作都有记录（谁、何时、理由）；通过后处于 valid / Active 的经验在下一次运行中可以被 Agent 检索到，并标注为“线索”而非事实
 - [ ] **评分管理**：未审核经验不可被 Agent 检索；评分和状态变化均有审计记录，页面可查看四分项、成熟度及来源；Pin 经验不因低分自动降级，但不豁免有效性保护；contested / invalid 经验不能正常参与检索，invalid 禁止 Agent 使用；Archived 的人工恢复必须经过审核
 - [ ] **经验可追溯**：经验库中任一条目最多点 2 次即可看到产生它的触发事件和原始证据
+- [ ] **审核关系与使用审计**：页面可追溯候选版本、晋升池状态、合并/冲突与人工裁决到最终经验版本，并可从评分历史查看关联使用阶段及评价来源；待审内容修改后，旧审核不得直接授权新版本
 - [ ] 主要页面有端到端测试；前端不依赖 DeerFlow 路由或原生 SSE / ID，MIS BFF 权限过滤、等待用户和重连状态一致性可验证
 
 ---
