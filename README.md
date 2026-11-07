@@ -67,6 +67,10 @@ docker compose exec postgres createdb -U postgres mis_test
 Python 服务入口是 `ProjectService(session)`；所有写入在调用方的 SQLAlchemy 事务中执行，
 服务不自行 commit。Evidence 和已保存版本没有删除接口；只能删除空项目。
 
+`add()` 按类型、ID 和相同序列化内容处理重复写入；并发冲突内容报 `ValueError`。
+新 Artifact / Plan 拒绝 stale 上游，历史读取保持可用。Impact Analysis 只支持相邻基线。
+既有数据库需升级到 Alembic `0002`，以启用问答的受控状态转换和禁止删除保护。
+
 ## 业务备份与恢复
 
 `mis.project_service.dump.dump_data(service)` 返回带格式版本的 `ProjectBackup`，使用

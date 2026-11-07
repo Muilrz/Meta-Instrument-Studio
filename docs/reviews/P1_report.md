@@ -111,3 +111,19 @@ P0 原有 57 项测试继续通过，fixtures/raman_baseline/ v0.1.0 没有修�
 | python-dotenv | 1.2.4 | BSD-3-Clause |
 
 未来重新分发时保留各依赖许可证及二进制包内的第三方声明。
+
+## 静态审查加固记录（2026-11-08）
+
+本轮针对新增边界覆盖，不改变此前 118 项测试通过的事实。新增测试复现了并发重复插入的唯一约束冲突，以及 stale Brief 仍可生成 Artifact 的路径。
+
+已实现：
+
+- add() 项目锁后复查 ID，并用 PostgreSQL ON CONFLICT 处理冲突；相同内容返回已有对象，冲突内容返回 ValueError，调用方事务不被唯一约束错误中断。
+- 新 Artifact / Plan 拒绝 stale 上游。恢复使用独立私有历史重建路径；正常 add() 不提供 allow_stale 开关。
+- 按负责人确认，入口与 ImpactReport 仅允许相邻版本；保留跨版本复用的依赖传播。
+- 新迁移 0002 保护 questions：仅 open → answered / cancelled、禁止改写身份与上下文、终态不可改写、禁止删除与截断，回答关联本项目 user_decision Evidence。
+- 迁移角色使用 SET LOCAL，修复初始化提交后可能影响连接池复用的角色残留。
+
+已测试：新增 8 项边界测试及 2 项恢复回归共 10 passed；完整回归 **126 passed**，ruff、格式和 Schema 一致性检查通过；本轮 CI 待验证。
+
+并发验证在默认 READ COMMITTED 下使用双连接和屏障，提交数据位于测试专用临时 schema，结束后删除该临时 schema；正式 mis 业务数据不参与。P2 运行流程的重放与幂等仍按后续计划单独验证。

@@ -12,6 +12,7 @@
       "type": "integer"
     },
     "to_version": {
+      "description": "Must equal from_version + 1 (adjacent baselines).",
       "minimum": 1,
       "title": "To Version",
       "type": "integer"

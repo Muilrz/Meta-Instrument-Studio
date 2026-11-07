@@ -7,7 +7,7 @@ from mis.schemas.base import Model, Text
 class ImpactReport(Model):
     project_id: ProjectId
     from_version: int = Field(ge=1)
-    to_version: int = Field(ge=1)
+    to_version: int = Field(ge=1, description="Must equal from_version + 1 (adjacent baselines).")
     changed_keys: tuple[Text, ...]
     brief_ids: tuple[BriefId, ...]
     artifact_ids: tuple[ArtifactId, ...]
@@ -15,8 +15,8 @@ class ImpactReport(Model):
 
     @model_validator(mode="after")
     def version_order(self):
-        if self.to_version <= self.from_version:
-            raise ValueError("impact requires a newer baseline")
+        if self.to_version != self.from_version + 1:
+            raise ValueError("impact requires adjacent baseline versions")
         return self
 
     @property

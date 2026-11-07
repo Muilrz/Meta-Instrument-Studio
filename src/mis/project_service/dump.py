@@ -27,7 +27,7 @@ def restore_data(service: ProjectService, data: str | ProjectBackup) -> ProjectB
         if any(service.list(model) for model in TABLES):
             raise ValueError("restore requires an empty business database")
         for project in snapshot.projects:
-            service.add(
+            service._restore_record(
                 project.model_copy(
                     update={"current_baseline_version": None, "current_plan_version": None}
                 )
@@ -47,7 +47,7 @@ def restore_data(service: ProjectService, data: str | ProjectBackup) -> ProjectB
             if name in ("baselines", "plans"):
                 records = sorted(records, key=lambda r: (r.project_id, r.version))
             for record in records:
-                service.add(record)
+                service._restore_record(record)
         restored = dump_data(service)
         if restored != snapshot:
             raise ValueError("backup pointers, state history or records are inconsistent")

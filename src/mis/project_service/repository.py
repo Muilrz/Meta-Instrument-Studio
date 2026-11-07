@@ -6,6 +6,7 @@ from collections.abc import Sequence
 from typing import TypeVar
 
 from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from mis.ids import new_id
@@ -84,7 +85,7 @@ class ProjectService:
         for eid in value.evidence_ids:
             self._scoped(Evidence, eid, project_id)
 
-    def _validate_references(self, record):
+    def _validate_references(self, record, *, restoring=False):
         project_id = record.project_id
         if isinstance(record, AgentTaskBrief):
             baseline = self.baseline(project_id, record.baseline_version)
@@ -96,6 +97,8 @@ class ProjectService:
                     raise ValueError("specified parameter differs from baseline requirement")
         elif isinstance(record, AgentArtifact):
             brief = self._scoped(AgentTaskBrief, record.brief_id, project_id)
+            if not restoring and brief.status == "stale":
+                raise ValueError("new artifact cannot use a stale brief")
             baseline = self.baseline(project_id, brief.baseline_version)
             if not set(record.requirement_refs) <= {item.key for item in baseline.items}:
                 raise ValueError("artifact requirement does not exist")
@@ -116,6 +119,8 @@ class ProjectService:
             artifacts = {
                 aid: self._scoped(AgentArtifact, aid, project_id) for aid in record.artifact_ids
             }
+            if not restoring and any(a.status == "stale" for a in artifacts.values()):
+                raise ValueError("new plan cannot use a stale artifact")
             for entry in (*record.bom, *record.modules, *record.rationale):
                 for ref in entry.claim_refs:
                     if ref.artifact_id not in artifacts:
@@ -175,17 +180,35 @@ class ProjectService:
         return row
 
     def add(self, record: Record) -> Record:
+        return self._add(record)
+
+    def _restore_record(self, record: Record) -> Record:
+        """Reconstruct a historical record only inside the empty-target restore workflow."""
+        return self._add(record, restoring=True)
+
+    def _existing_record(self, record: Record) -> Record | None:
+        table = self.table(type(record))
+        body = self.session.scalar(select(table.c.body).where(table.c.id == record.id))
+        if body is None:
+            return None
+        if body != record.model_dump(mode="json"):
+            raise ValueError("record ID exists with different content")
+        return type(record).model_validate(body)
+
+    def _add(self, record: Record, *, restoring=False) -> Record:
         record = type(record).model_validate_json(record.model_dump_json())
         table = self.table(type(record))
-        existing = self.session.scalar(select(table.c.body).where(table.c.id == record.id))
+        existing = self._existing_record(record)
         if existing is not None:
-            if existing != record.model_dump(mode="json"):
-                raise ValueError("record ID exists with different content")
-            return type(record).model_validate(existing)
+            return existing
         project = None
         if not isinstance(record, InstrumentProject):
             project = self._project_lock(record.project_id)
-            self._validate_references(record)
+            # Another transaction may have inserted this ID while we waited for the project.
+            existing = self._existing_record(record)
+            if existing is not None:
+                return existing
+            self._validate_references(record, restoring=restoring)
         elif record.current_baseline_version is not None or record.current_plan_version is not None:
             raise ValueError("new project version pointers must be empty")
         pointer = None
@@ -195,7 +218,19 @@ class ProjectService:
             pointer = "current_plan_version"
         if pointer and record.version != (getattr(project, pointer) or 0) + 1:
             raise ValueError("versions must be appended consecutively")
-        self.session.execute(table.insert().values(**self._row(record)))
+        inserted = self.session.scalar(
+            insert(table)
+            .values(**self._row(record))
+            .on_conflict_do_nothing(index_elements=[table.c.id])
+            .returning(table.c.body)
+        )
+        if inserted is None:
+            # Also covers projects (which have no parent row to lock) and ID collisions
+            # across projects, without leaving the caller's transaction in an error state.
+            existing = self._existing_record(record)
+            if existing is None:
+                raise ValueError("concurrent record disappeared; retry the write")
+            return existing
         if pointer:
             updated = project.model_copy(update={pointer: record.version})
             self._replace_mutable(updated)

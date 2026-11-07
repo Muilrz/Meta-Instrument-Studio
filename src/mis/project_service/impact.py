@@ -8,8 +8,8 @@ from mis.schemas.tasks import AgentTaskBrief
 def analyze(
     service: ProjectService, project_id: str, from_version: int, to_version: int
 ) -> ImpactReport:
-    if to_version <= from_version:
-        raise ValueError("impact must compare a newer baseline")
+    if to_version != from_version + 1:
+        raise ValueError("impact requires adjacent baseline versions")
     old = service.baseline(project_id, from_version)
     new = service.baseline(project_id, to_version)
     before, after = ({item.key: item for item in baseline.items} for baseline in (old, new))

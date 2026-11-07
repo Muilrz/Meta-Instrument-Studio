@@ -5,7 +5,7 @@ from mis.project_service.db import engine_for, metadata
 
 
 def run(connection):
-    connection.execute(text("SET ROLE mis_admin"))
+    connection.execute(text("SET LOCAL ROLE mis_admin"))
     context.configure(
         connection=connection,
         target_metadata=metadata,

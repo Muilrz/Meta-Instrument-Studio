@@ -365,3 +365,13 @@ T7 中的示例数据，是**假设一个完美的 Specialist 会产出什么**�
 
 - 最终代码 CI：[42417562572](https://github.com/Muilrz/Meta-Instrument-Studio/actions/runs/42417562572)。
 - ProjectBackup v1 为九类业务对象的逻辑备份；ClaimTrace 表达业务出处链，均导出 JSON Schema。
+
+## 11. 静态审查边界加固（2026-11-08）
+
+负责人已确认 Impact Analysis 限定相邻版本；契约同步 [ADR-0003](../adr/0003-p1-units-and-storage.md)。
+
+- 并发同 ID 同内容写入：项目锁后复查，并使用 PostgreSQL ON CONFLICT；不同内容返回 ValueError，事务仍可使用。测试以两个独立连接、真实提交、同步屏障复现窗口，数据隔离在测试专用临时 schema。
+- 新 Artifact / Plan 拒绝 stale 上游；历史读取与空目标备份恢复保持可用，恢复入口不作为新业务写入的通用开关。
+- analyze() 和 ImpactReport 均拒绝跳级版本，继续检查更早版本复用对象。
+- Alembic 0002 为 questions 增加内容、状态和删除保护；0001 保持不变。迁移角色使用 SET LOCAL，避免提交后影响连接池的下一次使用。
+- 新增并发、stale、相邻版本和问答 SQL 保护测试；恢复兼容性与完整回归结果见阶段报告。
