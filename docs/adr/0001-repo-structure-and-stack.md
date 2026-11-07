@@ -1,8 +1,9 @@
 # ADR-0001 仓库结构与技术栈
 
-- 状态：提议中（待评审）；数据库部分已由负责人确认
+- 状态：提议中（待评审）；数据库部分及 C1 Trace 存储与保留策略、C2 经验评分与生命周期存储规划已由负责人确认
 - 日期：2026-11-05
 - 修订：
+  - 2026-11-08，落实已确认的 C1/C2：Trace 标准、采集与保留策略，以及 knowledge schema 的经验评分、使用事件、评分历史和生命周期存储；不改变本 ADR 整体待评审状态
   - 2026-11-05，数据库由“SQLite 起步、正式换 PostgreSQL”改为“从 P1 起统一使用 PostgreSQL”，并新增存储总览一节
   - 2026-11-06，存储总览第 5 项改为 trace 存储方案，新增第 9 项经验晋升池
   - 2026-11-06，开发数据库改为 Neon 云数据库（公司电脑不能安装 Docker）；新增“数据库布局”和“部署”两节；文档统一移到 `docs/` 下
@@ -44,13 +45,13 @@ P0 需要确定代码放在哪里、用什么语言和工具，后续阶段才�
 |---|---|---|---|---|
 | 1 | 业务记录：项目、需求、任务、产物、证据、方案、测试结果 | P1 | PostgreSQL，`mis` schema | **已确定** |
 | 2 | Agent 运行状态：执行进度、断点续跑、对话消息 | P2/P3 | PostgreSQL，与业务记录分开的独立 schema；P2 选型时要求底座支持 PostgreSQL | 方向确定，具体实现随 P2 选型 |
-| 3 | 知识库向量索引（实验室知识 + 经验条目） | P4 | 首选 PostgreSQL + pgvector；如果 P4 最终选择 RAGFlow，则使用它自带的存储。经验条目及其晋升池的主数据始终存在 PostgreSQL 中 | 待 D5 决定 |
+| 3 | 统一知识库：实验室知识、经验记忆及共同检索的向量索引 | P4 | PostgreSQL `knowledge` schema + pgvector；包含经验晋升池、评分数据、MemoryUsageEvent、MemoryScoreHistory、生命周期和人工审核记录（见第 9 项）。连接器选型仍待 D5，不改变统一知识库存储边界 | 存储边界已确认（C2），连接器待 D5 决定 |
 | 4 | 原始文件：PDF、网页快照、证据原文 | P4 | 本地文件夹，数据库中只存路径和哈希；需要多机共享时再换成 MinIO | 方向确定 |
-| 5 | trace（全链路调用记录）与预算记录 | P3 | PostgreSQL 自建表，采用 OpenTelemetry GenAI 格式；骨架（调用结构、token、耗时、费用）与内容（完整输入输出）分表存储，内容按哈希去重；以后需要更强的可视化时再评估 Langfuse | 方向确定，保留期限待确认（需求清单 C1） |
+| 5 | Trace（全链路调用记录）与预算记录 | P3 | PostgreSQL `trace` schema；OpenTelemetry Trace + GenAI Semantic Conventions；100% 采集关键业务 Span，不采样。Skeleton 与 Payload 分表，Hash 去重，以 content_ref 关联；骨架永久保留；完整内容：基准任务永久、人工确认的错误案例永久、普通运行 90 天。普通运行过期删除完整内容，保留骨架、Hash 和业务引用；后续可接 Langfuse | 存储与保留策略已确认（C1） |
 | 6 | 外部调用缓存：报价、搜索结果 | P4 | PostgreSQL 表 | 方向确定 |
 | 7 | 任务队列 | P3 | 优先用运行底座自带的机制；需要自建时用 PostgreSQL 实现 | 随 P2 选型 |
 | 8 | 用户与登录 | P5 | PostgreSQL，与业务记录同库 | 方向确定 |
-| 9 | 经验晋升池：触发事件、候选经验、合并与冲突记录、审核记录 | P3 起逐步引入 | PostgreSQL，与业务记录同库；经验条目的向量存在第 3 项中 | 方向确定（需求清单 A2） |
+| 9 | 经验晋升池与评分管理：触发事件、候选经验、合并与冲突、人工审核、评分、使用事件、评分历史和生命周期记录 | P3 起逐步引入（P4 评分基础设施，P5 审核与管理界面，P7 测试反馈） | PostgreSQL `knowledge` schema，与第 3 项共享知识库存储；ExperienceMemory、MemoryUsageEvent、MemoryScoreHistory 及管理审计记录在此保存；Trace 详细执行数据在 `trace` schema，通过 trace_id / span_id 关联 | 晋升审核原则已确认（A2），评分与生命周期已确认（C2） |
 
 约定：
 
@@ -58,16 +59,30 @@ P0 需要确定代码放在哪里、用什么语言和工具，后续阶段才�
 - 只用 PostgreSQL 自身和 pgvector 的功能，不引入其他扩展，便于以后换到托管数据库。
 - 数据库软件本身免费。只有改用云厂商托管的数据库服务时才会产生费用，届时另行决策。
 
-### 数据库布局（提议，P1 的 T5 落实）
+Trace 失败不会自动获得永久保留资格，须人工确认其为错误案例。Hash 去重清理不得删除仍被永久或未过期运行引用的 Payload；Trace 到期不删除业务 Evidence。完整内容写入前脱敏，详情见 [C1/C2 正式规范](../design/agent_architecture_requirements.md#4-已确认的补充架构决策)。
+
+### 数据库布局（总体提议；C1/C2 相关存储边界已确认）
+
+P1 的 T5 负责初始化 schema 与账号，不提前实现 Trace 或 C2 业务表；Trace 基础设施在 P3 实现，经验评分与生命周期基础设施在 P4 实现。
 
 ```text
 PostgreSQL（开发环境是 Neon 项目，CI 是 Docker 容器）
 ├─ 数据库 mis（正式数据）
-│   ├─ schema mis        业务记录                          P1
-│   ├─ schema runtime    Agent 运行状态                     P2/P3
-│   ├─ schema trace      全链路调用记录                      P3
-│   ├─ schema knowledge  向量索引、经验条目、晋升池            P3/P4
-│   └─ schema cache      外部调用缓存                       P4
+│   ├─ schema mis
+│   │   └─ 业务记录                                      P1
+│   ├─ schema runtime
+│   │   └─ Agent 运行状态                                 P2/P3
+│   ├─ schema trace
+│   │   ├─ Trace Skeleton                               P3
+│   │   └─ Trace Payload                                P3
+│   ├─ schema knowledge
+│   │   ├─ Lab Knowledge                                P4
+│   │   ├─ Experience Memory（评分、生命周期、有效性）       P4
+│   │   ├─ Promotion Pool（含人工审核与管理记录）            P3/P4/P5
+│   │   ├─ Memory Usage Events                          P4
+│   │   └─ Memory Score History                         P4
+│   └─ schema cache
+│       └─ 外部调用缓存                                   P4
 └─ 测试库（结构相同，测试专用）：Neon 上用 test 分支，CI 中用 mis_test 数据库
 ```
 

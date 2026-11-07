@@ -7,6 +7,8 @@ MetaInstrumentStudio 旨在把科研仪器研发过程中原本分散的工作�
 
 ---
 
+修订记录：2026-11-08，在第 5 节增加已确认的 C1 Trace 可观测性与 C2 经验评分、生命周期高层架构；不改变既有章节编号。
+
 ## 1. Core Idea
 
 MetaInstrumentStudio 的整体研发流程明确分为两个阶段：
@@ -181,6 +183,44 @@ flowchart LR
     R2 --> PC
     R3 --> PC
 ```
+
+### Memory Architecture
+
+```text
+Memory Architecture
+├── Project Memory
+│   └── PostgreSQL / mis
+├── Cross-project Knowledge（PostgreSQL / knowledge）
+│   ├── Lab Knowledge
+│   └── Experience Memory
+│       ├── Promotion Pool
+│       ├── Scoring
+│       └── Lifecycle Management
+└── Working Memory
+    └── Agent Runtime
+```
+
+项目记忆和跨项目知识严格分开；实验室知识与经验记忆共享知识库。经验必须经过晋升审核，P5 人工审核通过后才正式对 Agent 可见，使用前需要重新查证。只有经验记忆参与 C2 综合评分、成熟度、有效性和生命周期管理；实验室原始文档通过版本管理和人工复核维护。
+
+### Trace & Observability
+
+```text
+Run
+ └── Task
+      └── Span
+           ├── LLM
+           ├── Tool
+           ├── RAG
+           ├── Memory
+           ├── Rule
+           └── Human Interaction
+```
+
+遵循 C1 的 OpenTelemetry Trace + GenAI Semantic Conventions，对关键业务 Span 100% 采集。PostgreSQL `trace` schema 分离存储 Skeleton 与 Payload，内容按 Hash 去重；骨架永久保留，基准运行和人工确认的错误案例内容永久保留，普通运行内容保留 90 天。
+
+Trace 与业务记录通过 RunRef（run_id、trace_id）及业务 ID 关联，与 Agent Runtime 状态分离；Trace 记录过程，Evidence 负责事实溯源，Artifact 与 InstrumentPlan 保存业务结果。Trace 支持 Memory Scoring 的数据反馈：详细执行过程在 `trace`，供评分使用的结构化 MemoryUsageEvent 和 MemoryScoreHistory 在 `knowledge`，通过 trace_id / span_id 关联。
+
+详细规范以 [Agent 架构需求清单 C1/C2](design/agent_architecture_requirements.md#4-已确认的补充架构决策) 为准。
 
 ---
 

@@ -3,6 +3,7 @@
 - 状态：草案，待评审
 - 日期：2026-11-05
 - 修订：
+  - 2026-11-08，依据已确认的 C1 更新 RunRef 与 Trace 的连接边界；Trace 基础设施在 P3 实现，C2 对象不加入 P1 范围
   - 2026-11-05，数据库改为 PostgreSQL（见 ADR-0001），并相应地从 P1 起引入 Alembic
   - 2026-11-06，依据 [Agent 架构需求清单](../design/agent_architecture_requirements.md)：新增出处字段 `RunRef`（3.8）、Brief 参数分类（3.9）、用户问答 `UserQuestion`（3.10）、用户纠正 `UserCorrection`（3.11）
   - 2026-11-06，`InstrumentProject` 增加 `kind`（normal / benchmark），导入器把基准任务包导入为 benchmark 项目
@@ -131,14 +132,16 @@ SpecValue = Annotated[Known | Unknown, Field(discriminator="kind")]
 
 ### 3.8 出处字段：业务记录与 trace 的连接
 
-trace 的详细程度和存储方式在 P2 才定（见 [Agent 架构需求清单](../design/agent_architecture_requirements.md) C1），但业务记录必须**现在**就预留连接字段，否则以后无法从结论追溯到产生它的那次运行。
+[Agent 架构需求清单](../design/agent_architecture_requirements.md) C1 已确定 Trace 标准、数据粒度、存储方式和保留策略：采用 OpenTelemetry Trace + GenAI Semantic Conventions，关键业务 Span 100% 采集，PostgreSQL `trace` schema 分离骨架与 Payload，骨架永久保留，内容按运行类型保留。
 
-统一用一个 `RunRef` 结构，P1 只定义和存储，不负责生成：
+业务记录与 Trace 统一通过 `RunRef` 关联。P1 只定义和存储 RunRef，不负责生成 Trace，不实现 Trace Collector、Span 采集、Payload 存储和 Trace Viewer；实际 Trace 基础设施在 P3 实现。C2 的 ExperienceMemory、MemoryUsageEvent、MemoryScoreHistory 不加入 P1 核心数据模型范围，数据契约与实际实现安排在 P3～P5（P2 先做架构设计）。
+
+RunRef 字段：
 
 | 字段 | 含义 |
 |---|---|
 | `run_id` | 一次规划运行的 ID |
-| `trace_id` | trace 系统中的 ID（P2 确定格式之前可以为空） |
+| `trace_id` | OpenTelemetry Trace ID，P1 阶段允许为空 |
 | `actor` | 产生者：copilot / lab / research / procurement / rule_engine / user |
 | `model` | 使用的模型名称和版本，非模型产生时为空 |
 | `skill_versions` | 使用的技能及其版本，例如 `{"raman_resolution": "1.2.0"}` |

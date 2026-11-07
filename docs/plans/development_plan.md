@@ -1,4 +1,4 @@
-# MetaInstrumentStudio 开发计划（v0.2.5）
+# MetaInstrumentStudio 开发计划（v0.2.6）
 
 - 状态：草案，待评审
 - 日期：2026-11-05
@@ -10,6 +10,7 @@
   - v0.2.3（2026-11-06）：P3 只记录 4 类触发事件并新增命令行纠正入口；为 P3/P4/P5 的经验相关工作补充验收标准；存储总览加入 trace 和晋升池
   - v0.2.4（2026-11-06）：“同类问题反复出现”改为按不同项目计数，P3 的触发与不误触发验收相应调整
   - v0.2.5（2026-11-06）：开发数据库改为 Neon 云数据库；文档统一移到 `docs/`，本文件由 `plans/MIS_Development_Plan_v0.1.md` 改名为 `docs/plans/development_plan.md`；新增 D10
+  - v0.2.6（2026-11-08）：落实已确认的 C1 Trace 与 C2 经验评分、生命周期管理，更新存储边界和 P2/P3/P4/P5/P7 范围与验收；P1 不提前承担相关基础设施
 - 依据：
   - [`docs/architecture.md`](../architecture.md)：目标架构
   - [`docs/research/MIS_Open_Source_Baseline_Research_2026-11-01.md`](../research/MIS_Open_Source_Baseline_Research_2026-11-01.md)：开源 baseline 选型调研
@@ -66,9 +67,9 @@ P0 建立一个固定的 **Raman 仪器方案任务包**，作为后续所有阶
 |---|---|---|
 | 业务记录（项目、需求、任务、产物、证据、方案、测试结果） | P1 | PostgreSQL，`mis` schema |
 | Agent 运行状态（进度、断点、消息） | P2/P3 | PostgreSQL，独立 schema |
-| trace 与预算记录（骨架和内容分开存，内容按哈希去重） | P3 | PostgreSQL 自建表 |
-| 经验晋升池：触发事件、候选经验、审核记录 | P3 起 | PostgreSQL |
-| 知识库向量索引（实验室知识 + 经验条目） | P4 | PostgreSQL + pgvector；若 D5 选 RAGFlow 则用它自带的存储 |
+| Trace 与预算记录（Skeleton / Payload 分表，Hash 去重） | P3 | PostgreSQL `trace` schema；OpenTelemetry Trace + GenAI Semantic Conventions；关键业务 Span 100% 采集，保留策略遵循 C1 |
+| 经验晋升池、评分、使用事件、评分历史、生命周期和人工审核记录 | P3 契约与候选事件；P4 基础设施；P5 审核与管理；P7 测试反馈 | PostgreSQL `knowledge` schema，遵循 A2/C2 |
+| 知识库及向量索引（实验室知识 + 经验记忆共同检索） | P4 | PostgreSQL `knowledge` schema + pgvector；D5 仅决定连接器方案，不改变统一知识库存储边界 |
 | 外部调用缓存 | P4 | PostgreSQL 表 |
 | 原始文件（PDF、网页快照） | P4 | 本地文件夹，数据库存路径和哈希 |
 | 用户与登录 | P5 | PostgreSQL |
@@ -164,6 +165,7 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 **范围外**
 
 - Agent、编排、检索
+- Trace Collector、Span 采集、Payload 存储和 Trace Viewer（P3）；C2 的 ExperienceMemory、MemoryUsageEvent、MemoryScoreHistory（P3～P5）。P1 仅定义和存储 RunRef
 - 用户认证与多租户。P1 只保留成员字段，不做权限
 
 **验收标准**
@@ -182,15 +184,15 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 
 **第一步：Agent 架构设计文档**（`docs/design/agent_architecture.md`，Spike 开始前起草，Spike 结束后定稿）
 
-输入是 [Agent 架构需求清单](../design/agent_architecture_requirements.md)，其中已确认的决定（A1–A8）必须遵守，待讨论的事项（如 C1 trace 详细程度）要在设计文档中给出结论。概要：
+输入是 [Agent 架构需求清单](../design/agent_architecture_requirements.md)，其中已确认的决定（A1–A8、C1、C2）必须遵守；B1、B2 的具体方案仍待细化。P2 文档必须明确 Context、Memory、Trace、Skills、协作和人工交互机制，按 C2 细化评分公式的执行设计、生命周期规则和事件结构，不重新决定已确认的权重和阈值。概要：
 
 | 方面 | 方向 |
 |---|---|
 | **Context（上下文）** | 每个 Specialist 只拿到自己的 Brief 和相关资料，上下文相互隔离；Copilot 只接收结构化的 Artifact。Brief 中明确区分指定参数和不定参数（A3） |
-| **Memory（记忆）** | 分三层：项目记忆在业务数据库；跨项目知识（实验室知识 + 经验记忆）在同一个知识库；工作记忆在运行状态。经验记忆经过晋升池（去重、冲突处理）才进入知识库，并定期遗忘（A1、A2） |
+| **Memory（记忆）** | 分三层：项目记忆在业务数据库；跨项目知识（实验室知识 + 经验记忆）在同一个知识库；工作记忆在运行状态。经验记忆经过晋升池与人工审核后才对 Agent 可见，评分、成熟度、有效性和生命周期遵循 C2（A1、A2） |
 | **协作** | Specialist 之间不直接沟通，全部经过 Copilot；Copilot 可以暂停并向用户提问（A3、A4） |
 | **Skills（技能）** | 技能 = 操作说明 + 确定性工具 + 测试用例，带版本号，按 Specialist 分配 |
-| **Trace（可观测）** | 详细程度待定（C1）；业务记录中的出处字段已在 P1 预留 |
+| **Trace（可观测）** | 必须遵循 C1：OpenTelemetry Trace + GenAI Semantic Conventions，关键业务 Span 100% 采集，三级数据与保留策略；业务记录通过 P1 的 RunRef 关联 |
 | **自进化** | 不允许运行中自我修改；离线循环：出错 → 按 trace 定位 → 修改 → 回归测试 → 人工批准（A6）；确认过的错误转为基准任务包中的新考题（A8） |
 
 **候选**（来自调研报告第 2 节）
@@ -215,7 +217,7 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
   | 技能机制 | 能否加载带版本的技能文件，并限制每个 Specialist 可用的技能 |
   | PostgreSQL 支持 | 运行状态（checkpoint）能否存进 PostgreSQL，并与业务记录分在不同 schema |
   | 暂停等待用户 | 运行能否在 Copilot 提问时暂停，用户回答后（包括进程重启后）从断点继续 |
-  | trace | 能否导出每次模型和工具调用的记录，并带上 MIS 的运行 ID |
+  | Trace | 能否采集 LLM、Tool、Retrieval、Rule 等关键 Span，关联 MIS run_id 与 OpenTelemetry trace_id，导出完整层级和执行内容；即使无原生实现，也可通过适配器满足 C1；考察 PostgreSQL 持久化与骨架、内容分离能力 |
   | 改动面 | 接入 MIS 数据模型需要改多少上游代码 |
   | 许可与维护 | 许可证、上游活跃度、版本锁定方式 |
 
@@ -226,7 +228,7 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 
 **验收标准**
 
-- [ ] Agent 架构设计文档定稿，四个方面都有明确设计，并写明 Spike 中验证了哪些、哪些留到 P3
+- [ ] Agent 架构设计文档定稿，Context、Memory、Trace、Skills、协作和人工交互机制均有明确设计，遵循 C1/C2，并写明 Spike 中验证了哪些、哪些留到 P3
 - [ ] 至少 2 个候选完成上述最小场景，每个考察项都有可复现的运行记录（日志或脚本）
 - [ ] 输出对比报告 `docs/spike/P2_runtime_comparison.md`
 - [ ] 输出 ADR-0002，写明选定的底座、放弃其他候选的理由、上游版本锁定策略
@@ -242,19 +244,20 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 
 - **Project Copilot**：需求澄清（基于需求表和对话）、建立 RequirementBaseline、任务拆解、生成 Brief、跨领域汇总、生成 InstrumentPlan
 - **Task Orchestrator**：调度、并行、重试、超时、结果收集、tracing
+- **Trace 基础设施（C1）**：实现 OpenTelemetry Trace + GenAI Semantic Conventions，100% 采集关键业务 Span，不采样；PostgreSQL `trace` schema 中 Skeleton 与 Payload 分离存储，Hash 去重，content_ref 关联；通过 run_id / trace_id 串起完整执行链。骨架永久保留；完整内容：基准运行永久、人工确认的错误案例永久、普通运行 90 天；到期删除完整内容，保留骨架、Hash 和业务引用，保护仍有效的共享 Payload；写入前凭据脱敏
 - **Shared Agent Runtime** 与三个 Profile：Lab、Research、Procurement
 - **Tool Gateway**：统一的工具接口层。本阶段全部挂模拟实现，P4 替换为真实实现时不改上层
 - **Artifact 验收**：Specialist 返回后先过 P1 的规则校验，不通过就重试或标为缺口
 - 最小交互入口：CLI
 - **HTTP 接口（最小集）**：供查看页面和以后的 Stage 2 工具读取项目、需求版本、Brief、Artifact、证据和 Plan；P3 只提供读取和“启动一次规划”两类接口
-- **只读查看页面**：项目概览、需求版本、任务与 Agent 进度、Artifact 列表、证据链（从 Plan 结论点到原文片段）、Plan 内容和规则检查结果、trace 树、**经验事件流和候选经验**。不做编辑，不追求美观。如果 P2 选定的底座自带网页工作区，优先在它上面扩展
-- **经验触发事件的记录**：按需求清单 A2 记录其中 4 类触发事件（用户纠正、用户回答提问、同类问题反复出现、项目复盘）并生成候选经验；“测试失败”到 P7 才有。本阶段不做去重和晋升
+- **只读查看页面**：项目概览、需求版本、任务与 Agent 进度、Artifact 列表、证据链（从 Plan 结论点到原文片段）、Plan 内容和规则检查结果、Trace 树与 Span 详情（可定位到 Artifact、Evidence、InstrumentPlan）、**经验事件流和候选经验**。不做编辑，不追求美观。如果 P2 选定的底座自带网页工作区，优先在它上面扩展
+- **经验触发事件的记录**：按需求清单 A2 记录其中 4 类触发事件（用户纠正、用户回答提问、同类问题反复出现、项目复盘）并生成候选经验；“测试失败”到 P7 才有。本阶段不做去重和晋升；建立 C2 相关数据契约，区分候选经验触发事件与供评分使用的 MemoryUsageEvent，后者的持久化与评分在 P4 实现
 - **用户纠正的入口**：命令行提供纠正某条结论的命令，写入 P1 定义的 `UserCorrection`
 
 **范围外**
 
 - 真实检索、搜索和厂商 API
-- 可编辑的正式产品界面（P5）
+- 可编辑的正式产品界面和完整经验评分管理界面（P5）
 - Stage 2
 
 **验收标准**（对应调研报告第 7 节的 8 项验证）
@@ -268,6 +271,8 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 - [ ] **预算**：每个子任务的耗时、搜索次数和模型调用次数都有记录，超出预算会被截停
 - [ ] **可重复性**：在模型和模拟数据固定的条件下连续运行 N 次（N 由团队定），基准检查点的通过率达到约定阈值，结果写进阶段报告
 - [ ] **查看页面**：在页面上能看到一次完整规划的结果，从 Plan 中任一结论最多点 2 次即可看到原始证据片段
+- [ ] **Trace**：验证关键事件 100% 采集、层级和执行内容可还原（保留期内）、静态 Prompt / Skill 不可变引用、Hash 去重和凭据脱敏；只读页面可查看树与 Span 详情，并定位业务产物与证据
+- [ ] **Trace 保留**：以可控时间验证普通运行满 90 天清理 Payload，Skeleton / Hash / 业务引用保留；基准运行和人工确认的错误案例内容永久保留，普通失败不自动永久保留；共享内容不被误删
 - [ ] **经验触发事件**：在基准任务上分别制造 4 类事件——用命令行纠正 SPEC-C 的一条结论、回答 Copilot 的一个提问、把基准任务包导入为 3 个不同的普通项目（`kind = normal`）并各运行一次，使 SPEC-C 的同一参数在 3 个项目中都为未知、执行一次项目复盘。每类事件都生成带来源证据的候选经验，并能在查看页面的事件流中看到
 - [ ] **不误触发**：可重复性验收中对同一个基准任务项目连续运行 N 次，以及对同一个普通项目重跑 3 次，都不产生“同类问题反复出现”的候选经验；没有上述事件的正常运行不产生任何候选经验
 
@@ -279,12 +284,13 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 
 **范围内**（按调研报告第 3 节的建议，每类先接一个）
 
-- **Lab Knowledge**：RAGFlow，或 Docling + 自建索引，二选一，需另写 ADR。实现资料导入、按项目划分的知识范围、带片段定位的检索
+- **Lab Knowledge**：RAGFlow，或 Docling + 自建索引，二选一，需另写 ADR；统一知识库与向量索引在 PostgreSQL `knowledge` schema + pgvector，连接器需适配该存储边界。实现资料导入、按项目划分的知识范围、带片段定位的检索
 - **Research**：用 GPT Researcher 的库级入口封装研究子任务，PaperQA 作为文献工具按需接入。由外层统一控制研究的预算和来源范围
 - **Procurement**：BOMi 覆盖电子器件；至少 1 个光学器件厂商连接器，补充中心波长、NA、镀膜、口径、机械接口等领域字段，并做参数规范化
 - 所有真实结果都转成 P1 的 Evidence，记录获取时间
 - 外部调用的缓存、限流和失败重试
-- 经验晋升池：去重与冲突检测；审核通过的经验作为知识库中的“经验”条目，与实验室知识共用同一套检索（需求清单 A2）
+- 经验晋升池：去重与冲突检测；经验与实验室知识共享 `knowledge` schema 和检索基础设施（A2）。P4 建好存储和评分基础设施，P5 人工审核通过后经验才正式对 Agent 可见
+- **经验评分与生命周期（C2）**：实现 ExperienceMemory、MemoryUsageEvent、MemoryScoreHistory；结构化使用事件与 Trace 通过 trace_id / span_id 关联，详细执行数据仍在 `trace` schema。实现 E/T/U/H 分项及综合评分、版本化配置、评分历史、成熟度门槛、事件驱动评分和月度滞回转换、有效性保护、不同经验类型有效期及即时复核；严格遵循 C2，不使用 LLM-as-Judge 自动评分，不统一按时间衰减
 
 **范围外**
 
@@ -300,7 +306,9 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 - [ ] 新引入组件的许可证已登记，Crawl4AI 等带附加条款的组件逐条核对
 - [ ] **晋升池去重**：准备一组固定的候选经验测试集，包含意思相同但措辞不同、更具体、互相矛盾、无关四种情况；去重与冲突检测对每一对给出的关系与标准答案一致，结果可以复现（测试集与判定阈值写进阶段报告）
 - [ ] **冲突不覆盖**：与实验室文档矛盾的候选经验被标记为冲突，不会改动文档，也不会进入知识库
-- [ ] **未审核不可见**：未经审核的经验条目不会出现在 Agent 的检索结果中
+- [ ] **未审核不可见**：未经审核的经验条目不会出现在 Agent 的检索结果中；P4 的评分验证使用固定事件，不绕过 P5 晋升审核
+- [ ] **评分与事件**：固定事件集复现 C2 的 E/T/U/H 与总分；验证 180 天窗口、同经验/项目/任务类型 30 天去重、未选中或未注入不计 T、未 Applied 或 unknown 不计 U、无反馈不算成功；评分变化可追溯来源事件与版本
+- [ ] **生命周期与有效性**：验证新晋升 Active / insufficient_data，成熟度须满足 3 个触发项目和 2 个可评价结果项目；成熟后按 C2 连续月度阈值转换，单次低分不降级，Archived 不自动恢复；contested 暂停默认检索，invalid 禁止使用，Pin 不绕过有效性保护；事实到期复核、方法无统一过期时间、偏好以最新确认为准
 
 ---
 
@@ -313,7 +321,8 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 - **Instrument Project Workspace**：创建项目、编辑需求并查看版本、查看任务与 Agent 进度、查看 Artifact 和证据（可点击溯源）、查看并对比不同版本的 Plan
 - **Conversation Workspace**：轻量问答，提供 Auto / Lab / Research / Procurement 四种路由偏好；结果可以一键沉淀到某个项目
 - 基础的用户登录（单组织）
-- **经验审核页面**：晋升池中候选经验的通过 / 驳回 / 修改，冲突裁决；经验库浏览（支持次数、使用情况、活跃度）
+- **经验审核页面**：晋升池中候选经验的通过 / 驳回 / 修改，冲突裁决；经验库展示综合总分、E/T/U/H 四分项、score_maturity、lifecycle_state、validity_status、触发次数、使用成功/失败次数、评分历史和状态变化历史
+- **经验人工管理（C2）**：人工评分、Pin 置顶、强制降级、强制归档、审核后恢复 Archived、标记失效、修改并生成新版本；记录操作人、时间、原因、变更前后分数和状态。人工评分历史永久保留，评分与管理操作分开
 
 **范围外**
 
@@ -325,7 +334,8 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 - [ ] 非开发人员不看文档，仅凭界面就能完成基准任务：创建项目 → 得到 Plan → 修改一项需求 → 得到新版 Plan
 - [ ] 从 Plan 中任一结论最多点 2 次即可看到原始证据片段
 - [ ] 在 Conversation 中指定 Agent 时，系统按偏好路由，但复杂请求可以提示升级为项目流程（验证“路由偏好而非强制”）
-- [ ] **经验审核**：在页面上对候选经验执行通过、驳回、修改后通过、裁决冲突四种操作，每种操作都有记录（谁、何时、理由）；通过后的经验在下一次运行中可以被 Agent 检索到，并标注为“线索”而非事实
+- [ ] **经验审核**：在页面上对候选经验执行通过、驳回、修改后通过、裁决冲突四种操作，每种操作都有记录（谁、何时、理由）；通过后处于 valid / Active 的经验在下一次运行中可以被 Agent 检索到，并标注为“线索”而非事实
+- [ ] **评分管理**：未审核经验不可被 Agent 检索；评分和状态变化均有审计记录，页面可查看四分项、成熟度及来源；Pin 经验不因低分自动降级，但不豁免有效性保护；contested / invalid 经验不能正常参与检索，invalid 禁止 Agent 使用；Archived 的人工恢复必须经过审核
 - [ ] **经验可追溯**：经验库中任一条目最多点 2 次即可看到产生它的触发事件和原始证据
 - [ ] 主要页面有端到端测试
 
@@ -366,6 +376,8 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 - 把 TestResult 自动对照到 RequirementBaseline 的需求项，判定通过或失败
 - 失败后的处理：Copilot 根据失败证据确定受影响的方案范围，生成新的 Brief，只重跑受影响的部分，产出新版 Plan
 - 项目历史时间线：需求版本、方案版本、测试结果、每次 Re-plan 的原因
+- **经验效果反馈（C2）**：将 TestResult 与 MemoryUsageEvent 关联；仅对实际 Applied 的经验，将可追溯测试成功/失败作为 U 的正/负样本，unknown 不计入。用户纠正和测试失败触发经验复核，可查询评分变化的来源
+- **离线校准**：基于实际数据评估评分权重和生命周期阈值，版本化保存，经人工批准后发布；运行中的 Agent 不得自行修改
 
 **范围外**
 
@@ -377,6 +389,8 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 - [ ] Re-plan 只重新执行受影响的 Brief，未受影响的 Artifact 原样保留，并有日志证明
 - [ ] 新版 Plan 附有变更说明：改了什么、为什么改、依据哪次测试
 - [ ] 全部测试都通过时，项目可以标记为“满足需求”，并生成最终的方案与证据汇总
+- [ ] **经验反馈与复核**：测试成功、失败和 unknown 对 U 的影响符合 C2；用户纠正与测试失败触发复核，能从评分历史追溯到 MemoryUsageEvent、TestResult / UserCorrection 和 Evidence
+- [ ] **离线校准**：权重与阈值调整有评估依据、人工批准和新 score_version，历史版本可追溯，Agent 运行时不能自行修改
 
 ---
 
@@ -414,7 +428,7 @@ P1 与 P2 可以部分并行：P2 的 Spike 可以先用 P1 的草稿 schema。P
 | D2 | LLM 供应商与模型、是否需要私有化部署、调用预算上限 | P2 | 无数据安全限制，可以使用外部模型 API、不需要私有化部署；供应商和预算未定 |
 | D3 | 基准任务包的真实资料来源：用哪些实验室文档、论文，哪些需要脱敏 | P0 | P0 用合成资料（ADR-0001），真实资料推迟到 P4 |
 | D4 | P2 比较几个候选、Spike 的时间盒多长 | P2 | 未定 |
-| D5 | Lab Knowledge 选 RAGFlow 还是 Docling + 自建（后者可直接使用 PostgreSQL + pgvector） | P4 | 未定 |
+| D5 | Lab Knowledge 连接器选 RAGFlow 还是 Docling + 自建 | P4 | 连接器未定；统一知识库与向量索引采用 PostgreSQL knowledge schema + pgvector，遵循已确认的 C2 存储边界 |
 | D6 | 第一个接入的光学器件厂商 | P4 | 未定 |
 | D7 | 平台是否需要与现有 GitHub 子项目（SDK_Anlysis_Agent、Rapid_Optics_Studio）放在同一个仓库 | P0 | 建议分仓库（ADR-0001），待评审 |
 | D8 | 开发协作方式：人与 Agent、多个 Agent 之间如何分工，计划和审查记录放在哪里 | P0 | 建议见 ADR-0001，待评审 |
