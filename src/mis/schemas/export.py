@@ -16,6 +16,7 @@ from mis.schemas.questions import UserCorrection, UserQuestion
 from mis.schemas.requirements import RequirementBaseline, RequirementItem
 from mis.schemas.tasks import AgentTaskBrief
 from mis.schemas.testing import TestResult
+from mis.schemas.traceability import ClaimTrace
 from mis.schemas.values import Known, Quantity, QuantityRange, Unknown
 
 RECORD_MODELS = (
@@ -42,6 +43,7 @@ MODELS = (
     RamanContext,
     Evaluation,
     ImpactReport,
+    ClaimTrace,
 )
 
 

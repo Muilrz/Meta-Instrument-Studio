@@ -91,3 +91,7 @@ psycopg 及其二进制分发的 LGPL 声明需随未来分发保留；部署或
 ## T6 接续记录
 
 精确影响分析及显式执行已实现；R04/R11 用例、直接 Artifact 引用、跨版本复用依赖、报告篡改拒绝、幂等状态历史及旧版本保留测试通过。完整回归 113 passed；ruff、Schema 检查通过。
+
+## T7 接续记录
+
+需求导入生成 v1（11 项）及汇率 Evidence；benchmark/normal 均验证。8 器件手工样例位于 tests/data/，13 个基准检查点的数值、未知和原文引用均通过测试。推荐组合 pass，SPEC-C 组合 unknown；BOM 和 Claim 的出处片段与原文件相符。用户回答生成 Evidence 并可被 Claim 引用；纠正保留原 Claim，相关 Artifact 和 Plan 标记 stale。完整回归 115 passed；ruff、Schema 检查通过。

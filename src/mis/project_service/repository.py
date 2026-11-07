@@ -144,6 +144,7 @@ class ProjectService:
             claim = next((c for c in artifact.claims if c.claim_id == record.claim_id), None)
             if claim is None or claim.value != record.original_value:
                 raise ValueError("correction must identify the original claim value")
+            type(claim).model_validate({**claim.model_dump(), "value": record.corrected_value})
             ev = self._scoped(Evidence, record.evidence_id, project_id)
             if ev.source_type != "user_decision":
                 raise ValueError("correction requires user_decision Evidence")
@@ -196,6 +197,12 @@ class ProjectService:
         if pointer:
             updated = project.model_copy(update={pointer: record.version})
             self._replace_mutable(updated)
+        if isinstance(record, UserCorrection):
+            from mis.project_service.impact import invalidate_artifact
+
+            invalidate_artifact(
+                self, record.artifact_id, reason=f"用户纠正：{record.reason}", trigger_id=record.id
+            )
         return record
 
     def _replace_mutable(self, record):
@@ -276,3 +283,30 @@ class ProjectService:
                 )
             )
         return records
+
+    def answer_question(self, identifier: str, *, answer: str, run):
+        from mis.project_service.decisions import answer_question
+
+        return answer_question(self, identifier, answer=answer, run=run)
+
+    def correct_claim(self, artifact_id: str, claim_id: str, **kwargs):
+        from mis.project_service.decisions import correct_claim
+
+        return correct_claim(self, artifact_id, claim_id, **kwargs)
+
+    def trace_plan(self, plan_id: str):
+        from mis.schemas.traceability import ClaimTrace
+
+        plan = self.get(InstrumentPlan, plan_id)
+        return tuple(
+            ClaimTrace(
+                artifact_id=artifact.id,
+                claim=claim,
+                evidence=tuple(
+                    self._scoped(Evidence, eid, plan.project_id) for eid in claim.evidence_ids
+                ),
+            )
+            for aid in plan.artifact_ids
+            for artifact in (self._scoped(AgentArtifact, aid, plan.project_id),)
+            for claim in artifact.claims
+        )
