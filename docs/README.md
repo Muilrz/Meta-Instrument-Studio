@@ -22,7 +22,7 @@
 |---|---|---|
 | `plans/` | 开发计划、各阶段任务说明 | `development_plan.md`、`Px_<主题>.md` |
 | `design/` | 设计文档、需求清单 | 按主题命名 |
-| `spike/` | 集成验证报告，阶段执行后生成 | P2 计划产出 `P2_deerflow_integration.md`（尚未生成） |
+| `spike/` | 集成预检与验证报告 | [P2 DeerFlow 预检记录](spike/P2_deerflow_integration.md)：P2-0A 已登记；P2-0B 已核查前置条件，Backend Smoke / Sandbox 为 BLOCKED |
 | `adr/` | 架构决策记录 | `NNNN-<主题>.md`，模板见 `0000-template.md` |
 | `reviews/` | 阶段报告、审查记录 | `Px_report.md` |
 | `research/` | 调研资料和证据，只读存档 | 带日期 |
