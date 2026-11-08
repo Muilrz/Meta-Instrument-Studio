@@ -4,6 +4,7 @@
 
 - 目标架构：[docs/architecture.md](docs/architecture.md)
 - 开发计划：[docs/plans/development_plan.md](docs/plans/development_plan.md)
+- Agent Runtime / 记忆复用边界：[ADR-0002](docs/adr/0002-agent-runtime-and-integration.md)、[Agent 内部架构](docs/design/agent_architecture.md)（P2 待验证）
 - 全部文档：[docs/README.md](docs/README.md)
 - 当前阶段：**P1 核心数据契约与 Project Service**（T1–T8 实现及自动验收通过；待负责人评审）
 

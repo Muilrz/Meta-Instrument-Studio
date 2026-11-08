@@ -4,6 +4,7 @@
 - 日期：2026-11-08
 - 修订：2026-11-08，基于已确认的 DeerFlow Backend + MIS 自研 UI / Backend 路线建立设计；本文件不表示实现完成
 - 补充记录：2026-11-08，增加 P4/P5 待细化的经验晋升持久化对象、审计关系和使用事件幂等要求；不改变 C2 公式、阈值或 P1 范围
+- 补充记录：2026-11-08，Context 运行管理直接复用 DeerFlow；MIS Context Builder 最小化；DeerMem 候选抽取/去重/整合先验证后复用，正式经验仍遵守 A2/C2
 - 决策依据：[ADR-0002](../adr/0002-agent-runtime-and-integration.md)、[Agent 架构需求清单](agent_architecture_requirements.md) A1–A8、C1、C2
 - 相关：[总体架构](../architecture.md)、[开发计划](../plans/development_plan.md)、[数据库与权限](../adr/0001-repo-structure-and-stack.md)
 
@@ -44,7 +45,7 @@ DeerFlow Backend 独立部署；Gateway 与 Harness 是上游服务入口和内�
 | Specialist | 自己的 Brief、授权资料与技能 → 结构化候选、Claim、未知项和 Evidence 引用 | MIS Profile，由 DeerFlow SubAgent 执行 |
 | Task Orchestrator | 依赖、预算、接收条件 → 调度、并行、重试、超时和结果状态 | MIS 定义约束，DeerFlow 提供执行机制 |
 | Project Service | 业务对象、引用、版本、状态历史 → 可追溯业务记录 | MIS |
-| Context Builder | 角色、Brief、资料范围、预算、记忆候选 → 角色隔离的上下文包 | MIS |
+| Context Builder（轻量业务组装器） | 按角色/项目权限选择 Brief、需求、Evidence、已审核记忆引用与预算 → 业务上下文包；不做通用消息压缩 | MIS |
 | Memory Service | 授权范围、检索 Query、使用事件 → 线索、评分与治理记录 | MIS |
 | Evolution Service | 已确认错误、Trace、基准结果 → 候选改进与待审核发布 | MIS |
 | DeerFlow Adapter | MIS 执行命令 ↔ 上游调用；上游事件 → MIS 事件 | MIS |
@@ -91,7 +92,7 @@ PostgreSQL Checkpoint、暂停恢复及失败恢复是 P2 门槛，不因采用 
 
 ### 3.1 Context Builder 契约
 
-Context Builder 负责“允许看什么、实际送什么”，DeerFlow Middleware 负责“如何在执行时注入和管理”。输入包括角色、project_id、run_id、Brief、基线版本、knowledge_scope、授权主体、模型上下文上限和调用预算。
+Context Builder（Business Context Assembler）负责“允许看哪些业务事实、如何组成 Brief”；DeerFlow 原生 Middleware 负责“运行中如何隔离、摘要、压缩及按引用访问长资料”。V1 不建设第二套 Summarization 或运行时 Context Engine。输入包括角色、project_id、run_id、Brief、基线版本、knowledge_scope、授权主体、模型上下文上限和调用预算。
 
 输出 ContextPackage 包含：任务与版本引用、指定/不定参数、相关需求、摘要与 Evidence 引用、选中的 memory_id / 版本、允许的 Skill / Tool 清单、Token Budget、包版本与内容 Hash。包内资料必须通过项目范围和权限过滤；上下文快照通过 C1 Trace 记录，不把 ContextPackage 新增为 P1 核心对象。
 
@@ -102,11 +103,15 @@ Context Builder 负责“允许看什么、实际送什么”，DeerFlow Middlew
 
 ### 3.2 Token Budget 与运行期处理
 
-预算分配给固定指令、Brief/需求、检索/记忆片段、工作消息和输出预留，计量方法随锁定模型记录。Context Builder 先估算再裁剪可选内容；Middleware 压缩工作历史、按引用取回长文，保持指定参数、单位、硬约束、未知标记和 Evidence ID 不丢失。
+预算分配给固定指令、Brief/需求、检索/记忆片段、工作消息和输出预留，计量方法随锁定模型记录。Context Builder 估算预算、筛选可选业务资料；DeerFlow 原生 Middleware 压缩工作历史、卸载长文，必要时按引用取回。指定参数、单位、硬约束、未知标记和 Evidence ID 必须在关键 Brief 或结构化引用中保留，并于 P2 压缩恢复测试核实。
 
 无法在预算内保留必要任务信息时，返回明确缺口或由 Copilot 拆分任务，不静默删除约束。时间、搜索次数、模型调用次数、Token 与费用由执行层计量、限额，不能仅写在 Prompt 中。
 
 不得自动注入原生全局 Memory 或历史 Trace；RAG / Memory 来源内容视作资料，不赋予它修改任务和权限的权力。静态 Prompt / Skill 采用不可变版本与 Hash，动态输入在 Trace 保留期内可还原。P2 验证 Middleware 不会混入其他角色资料或隐藏原生记忆。
+
+### 3.3 最小实现边界
+
+V1 的 Context Builder 可以只是 `build_context(project_id, agent_profile, brief, token_budget)` 逻辑函数：读取已确认 RequirementBaseline、授权 Evidence 引用和已审核经验，生成 ContextPackage。暂不要求单独部署服务、二次摘要器或自建聊天历史存储；P2 验证上下文隔离、预算与硬约束保真。Middleware 扩展仅在默认能力不足时增加。
 
 ## 4. Memory Architecture
 
@@ -120,7 +125,29 @@ Context Builder 负责“允许看什么、实际送什么”，DeerFlow Middlew
 
 Memory Service 提供逻辑接口 retrieve、record_usage、propose_experience、review_experience、evaluate_scores、manage_lifecycle。Context Builder 调用 retrieve 后决定选中和注入；执行结果再产生 applied / outcome 事件，不能把召回自动算作使用成功。
 
-关闭或替换 DeerFlow 原生 Memory 的读取、自动提取写入和 Prompt 隐藏注入，避免两套长期记忆。P2 使用固定样例或模拟实现验证接口与禁用效果；不提前建设完整 C2 引擎。
+禁用/隔离原生 MemoryMiddleware 对 MIS 正式长期知识的自动提交、自动读回和隐藏注入，避免两套权威记忆库；**DeerMem 的事实抽取、近重复判定、可选整合并不因此废弃**。P2 在独立候选区验证能否以稳定公开接口/薄 Adapter 调用，无低侵入路径则使用轻量候选处理实现。P2 不实现完整 C2 引擎。
+
+### 4.1.1 DeerMem 能力复用与正式知识隔离
+
+| 能力 | DeerFlow / DeerMem 候选复用 | MIS 必须自建或保留 |
+|---|---|---|
+| 历史消息摘要、工作上下文和文件卸载 | 原生直接复用 | 仅业务 Brief 组装及硬约束保护 |
+| 事实/偏好提取 | 优先复用抽取逻辑，P2 测试是否可无写入调用 | A2 事件触发（非每轮自动提取）、项目与 Evidence 绑定 |
+| 近重复、候选整合 | 优先复用去重/整合建议，P4 验证；不等于自动批准 | same / more-specific / contradictory / unrelated，版本、支持来源、冲突人工裁决 |
+| 存储及检索 | 可复用接口；默认文件/SQLite 索引仅用于 Spike 对比 | `mis` Project Memory，`knowledge` + pgvector 统一知识库；审核/有效性过滤 |
+| 过期和遗忘 | 可参考 DeerMem staleness | 正式经验执行 C2 评分、生命周期、有效性和审计，不受原生自动过期覆盖 |
+
+```text
+A2 事件（UserCorrection / UserQuestion / 多项目未知 / 复盘；P7 TestResult）
+ → CandidateExtractionAdapter（先验证 DeerMem，再选轻量回退）
+ → ExperienceCandidate（保存原业务事件 / Evidence / 版本 / scope）
+ → CandidateRelationAdapter（优先复用去重和整合建议）
+ → MIS Promotion Pool（来源不丢，冲突不覆盖）
+ → 人工审核（P5）→ ExperienceMemory（knowledge 正式经验）
+ → 审核/范围/有效性过滤 → Context Builder → DeerFlow Agent
+```
+
+**安全边界**：自动候选提取仅在独立候选存储运行；不允许经默认 MemoryMiddleware 绕过审批直接写正式库。已审核经验变更须新版本且遵守审核规则；不同项目的局部事实不自动升级为全局记忆。P2 登记接口与依赖、版本、错误合并率、跨项目隔离、来源保留与回退实现，不能把“计划复用”写成“已完成接入”。
 
 ### 4.2 晋升、评分与可见性
 
@@ -179,7 +206,7 @@ Sandbox 临时文件不能替代 MIS 原始资料与业务存储；需要保留�
 
 ## 6. Evolution Pipeline
 
-Evolution Service 自研并由 MIS Backend 管理；不把 DeerFlow 原生 Memory 或运行中修改 Prompt 当作自进化。
+Evolution Service 自研并由 MIS Backend 管理；可使用经过验证的 DeerMem 候选提取/去重建议，但不把自动记忆等同于自进化，也不绕过 A2 人工审核、A6/A8 离线回归与批准。
 
 ```text
 Trace + UserCorrection / TestResult / 已确认错误
@@ -285,6 +312,6 @@ C1 三层分工不变：L1 执行骨架，L2 动态模型输入/输出与工具�
 
 ### 8.4 验证清单与阶段边界
 
-P2 在 `docs/spike/P2_deerflow_integration.md` 登记锁定 commit、依赖/镜像、配置、Adapter 版本、接口映射和复现命令，验证 Backend 独立调用、三个角色隔离、Memory 替换、结构化写入、SSE、人工暂停恢复、PostgreSQL Checkpoint、Sandbox、预算和部分失败。当前上述结果均待验证，不虚构已实现接口。
+P2 在 `docs/spike/P2_deerflow_integration.md` 登记锁定 commit、依赖/镜像、配置、Adapter 版本、接口映射和复现命令，验证 Backend 独立调用、三个角色隔离、原生 Context 压缩与约束保持、自动正式记忆隔离、DeerMem 候选提取/去重受控复用与回退、结构化写入、SSE、人工暂停恢复、PostgreSQL Checkpoint、Sandbox、预算和部分失败。当前上述结果均待验证，不虚构已实现接口。
 
 P3 实现生产化最小闭环及 C1 基础设施，P4 接真实源和 C2 引擎，P5 完整自研 UI 与人工治理，P7 测试反馈。关键门槛失败按 ADR-0002 重新评估；不以临时内存状态、共享上下文或侵入核心补丁替代通过记录。P1 不提前承担 Runtime、C2 引擎、BFF 或 Trace 基础设施。
