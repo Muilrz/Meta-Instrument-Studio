@@ -95,7 +95,7 @@ P2 改为 DeerFlow Integration Spike，不再要求至少两个框架完成全�
 
 采用独立运行服务会增加部署、版本协调、事件映射和故障恢复工作；MIS 同时承担自研产品 UI、业务后端、Context、Memory 和 Evolution 的维护成本。
 
-以下任一关键要求不能在约定时间盒内通过配置、官方扩展或 Adapter 满足，即触发 Runtime 重新评估：PostgreSQL 持久化、暂停恢复、结构化产物、Sandbox 隔离。上下文隔离、原生 Memory 替换或必要观测边界无法满足时，同样不得带缺陷进入 P3。
+以下任一关键要求不能在约定时间盒内通过配置、官方扩展或 Adapter 满足，即触发 Runtime 重新评估：PostgreSQL 持久化、暂停恢复、结构化产物、Sandbox 隔离。上下文隔离、阻断未经审核的自动长期记忆写入/隐藏注入或必要观测边界无法满足时，同样不得带缺陷进入 P3；DeerMem 候选抽取/去重无法安全复用时采用已记录的轻量回退方案，不单独触发 Runtime 重新选型。
 
 验证失败时记录证据和失败原因，再按相同业务契约评估 LangGraph + Deep Agents、AgentScope 等替代方案。替代 Runtime 的采纳须负责人确认并修订本 ADR，不静默切换。路线已确认与实现验收通过是两件事；进入 P3 必须有验证通过记录。
 
