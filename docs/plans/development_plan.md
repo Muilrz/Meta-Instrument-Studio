@@ -1,4 +1,4 @@
-# MetaInstrumentStudio 开发计划（v0.2.8）
+# MetaInstrumentStudio 开发计划（v0.2.9）
 
 - 状态：草案，待评审
 - 日期：2026-11-05
@@ -13,6 +13,7 @@
   - v0.2.6（2026-11-08）：落实已确认的 C1 Trace 与 C2 经验评分、生命周期管理，更新存储边界和 P2/P3/P4/P5/P7 范围与验收；P1 不提前承担相关基础设施
   - v0.2.7（2026-11-08）：依据 ADR-0002 采用 DeerFlow Backend + MIS 自研 React UI / Backend；P2 改为 DeerFlow 优先集成验证，失败才评估替代方案；同步 P3/P5 与运行接口边界
   - v0.2.8（2026-11-08）：补充 P4/P5 经验治理持久化对象、审核审计关系及 MemoryUsageEvent 幂等验收；不扩大 P1 范围
+  - v0.2.9（2026-11-08）：明确 Context 原生复用 + 轻量 MIS Brief、DeerMem 受控候选抽取/去重/整合复用与回退；不扩大 P1，不修改 A2/C2
 - 依据：
   - [`docs/architecture.md`](../architecture.md)：目标架构
   - [`docs/research/MIS_Open_Source_Baseline_Research_2026-11-01.md`](../research/MIS_Open_Source_Baseline_Research_2026-11-01.md)：开源 baseline 选型调研
@@ -213,8 +214,8 @@ DeerFlow Integration Spike（固定 Raman / 模拟工具）
 
 - 独立部署 DeerFlow Backend，锁定上游 release / 完整 commit、依赖、镜像 digest 和配置版本；通过官方扩展和 MIS Adapter 集成，不 Fork 前端，不直接修改核心执行引擎。
 - 配置 Project Copilot / Lead Agent 和 Lab、Research、Procurement 三个 SubAgent。Specialist 不直接通信，返回结构化产物；MIS 定义 Brief、依赖、预算和接收条件，DeerFlow 提供执行调度。
-- 最小 MIS Context Builder：按 Brief、指定/不定参数、资料范围和 Token Budget 构建隔离上下文，验证 Middleware 注入不混入其他角色消息或文件。
-- 关闭或替换 DeerFlow 原生 Memory 的读取、自动提取写入和隐藏注入，接入 MIS Memory Service 的模拟/固定样例接口；不提前实现 P4 的经验评分与生命周期引擎。
+- 最小 MIS Context Builder 仅作为业务 Brief 组装器；SubAgent 隔离、Summarization 和文件卸载使用 DeerFlow 原生机制，验证压缩后硬约束与 Evidence ID 保持。
+- 禁用/隔离默认 MemoryMiddleware 对正式长期记忆的自动写入/读回/隐藏注入；在临时候选区验证 DeerMem 抽取、去重、可选整合能否通过公开扩展/薄 Adapter 安全复用（无正式库写入），并记录样例、误合并、跨项目泄漏、来源保留和轻量回退方案；不提前实现 P4 评分与生命周期引擎。
 - AgentArtifact 输出经 schema、Evidence、单位、量纲和硬约束检查，通过 Project Service 幂等写入；注入部分失败、重复回调、预算超限和恢复场景。
 - 最小 MIS Backend / BFF + React 验证页：独立调用、REST / SSE 转换、MIS Thread / Run / Task 与上游 ID 映射、等待用户、回答与恢复；前端不使用上游接口或事件格式作为产品契约。
 - 以 A4 验证持久暂停、回答产生 user_decision Evidence、重启恢复及重复回答幂等；用 PostgreSQL 独立 `runtime` schema 验证 Checkpoint，不以 SQLite / 内存通过正式门槛。
@@ -231,7 +232,8 @@ DeerFlow Integration Spike（固定 Raman / 模拟工具）
 
 - [ ] DeerFlow Backend 不依赖上游 UI，可由 MIS 独立调用；版本、配置、镜像及许可证核查已登记。
 - [ ] Project Copilot 和三个 Specialist 完成固定最小场景，可并行任务确实并行；上下文、技能、工具和文件范围独立，Specialist 不直接通信。
-- [ ] Context Builder 与 Middleware 验证通过；必要约束不会被 Token Budget 裁剪掉；原生 Memory 的读写和隐藏注入已关闭或替换，MIS Memory Service 接入可复现。
+- [ ] 原生 Context 隔离/摘要/文件卸载与轻量 Brief 组装验证通过；硬约束、Evidence ID 不丢且不同项目/角色无串扰。
+- [ ] 默认记忆不能自动写正式经验库/隐藏注入；DeerMem 抽取、去重、可选整合已用隔离测试样本验证复用边界、准确性、来源保留与回退方案。可选算法复用失败不自动阻断 Agent Runtime P2 验收，但必须在 P3 候选生成前明确回退。
 - [ ] AgentArtifact 结构化输出与 Project Service 写入通过，未知不当作满足；部分失败保留结果，重复事件或进程恢复不重复写入。
 - [ ] MIS SSE 事件转换和 React 最小接入通过；ID 映射、状态查询、断线恢复/快照及错误归一化有记录，浏览器不直连 DeerFlow。
 - [ ] A4 提问、持久暂停、回答 Evidence、重启恢复和重复回答幂等通过。
@@ -253,13 +255,13 @@ DeerFlow Integration Spike（固定 Raman / 模拟工具）
 - **Project Copilot**：需求澄清（基于需求表和对话）、建立 RequirementBaseline、任务拆解、生成 Brief、跨领域汇总、生成 InstrumentPlan
 - **Task Orchestrator**：MIS 定义业务依赖、预算与接收条件；DeerFlow Lead / SubAgents 执行调度、并行、重试、超时和恢复，MIS Adapter 收集结果与归一化事件，不另建通用执行引擎
 - **Trace 基础设施（C1）**：实现 OpenTelemetry Trace + GenAI Semantic Conventions，100% 采集关键业务 Span，不采样；PostgreSQL `trace` schema 中 Skeleton 与 Payload 分离存储，Hash 去重，content_ref 关联；通过 run_id / trace_id 串起完整执行链。骨架永久保留；完整内容：基准运行永久、人工确认的错误案例永久、普通运行 90 天；到期删除完整内容，保留骨架、Hash 和业务引用，保护仍有效的共享 Payload；写入前凭据脱敏
-- **DeerFlow Runtime**：Project Copilot / Lead Agent 与三个 Profile（Lab、Research、Procurement），通过 MIS Context Builder、Middleware、Memory Service 接口集成；保持原生长期 Memory 关闭或替换
+- **DeerFlow Runtime**：Project Copilot / Lead Agent 与三个 Profile（Lab、Research、Procurement）；复用原生 Context，MIS 只组装 Brief；默认自动正式记忆隔离，候选提取选用 P2 通过的 DeerMem 适配器或轻量回退
 - **Tool Gateway**：统一的工具接口层。本阶段全部挂模拟实现，P4 替换为真实实现时不改上层
 - **Artifact 验收**：Specialist 返回后先过 P1 的规则校验，不通过就重试或标为缺口
 - 最小交互入口：CLI
 - **MIS Backend / BFF 最小 REST / SSE**：读取项目、需求版本、Brief、Artifact、证据和 Plan；启动、查询、取消运行及提交 A4 回答以恢复执行。Adapter 隔离上游 ID / 事件，前端不直连 DeerFlow；需求编辑、方案采纳等产品写接口留到 P5
 - **只读查看页面**：项目概览、需求版本、任务与 Agent 进度、Artifact 列表、证据链（从 Plan 结论点到原文片段）、Plan 内容和规则检查结果、Trace 树与 Span 详情（可定位到 Artifact、Evidence、InstrumentPlan）、**经验事件流和候选经验**。使用 MIS 自研 React + TypeScript，不使用或扩展 DeerFlow Next.js UI；只读展示业务资料，A4 提问回答通过 BFF 最小交互完成，正式编辑留到 P5
-- **经验触发事件的记录**：按需求清单 A2 记录其中 4 类触发事件（用户纠正、用户回答提问、同类问题反复出现、项目复盘）并生成候选经验；“测试失败”到 P7 才有。本阶段不做去重和晋升；建立 C2 相关数据契约，区分候选经验触发事件与供评分使用的 MemoryUsageEvent，后者的持久化与评分在 P4 实现
+- **经验触发事件的记录**：按需求清单 A2 记录其中 4 类触发事件（用户纠正、用户回答提问、同类问题反复出现、项目复盘）并利用 P2 验证通过的 DeerMem 提取适配器（不可安全复用时使用轻量回退）生成候选经验，只进候选区、不得自动晋升；“测试失败”到 P7 才有。本阶段不做去重和晋升；建立 C2 相关数据契约，区分候选经验触发事件与供评分使用的 MemoryUsageEvent，后者的持久化与评分在 P4 实现
 - **用户纠正的入口**：命令行提供纠正某条结论的命令，写入 P1 定义的 `UserCorrection`
 
 **范围外**
@@ -297,7 +299,7 @@ DeerFlow Integration Spike（固定 Raman / 模拟工具）
 - **Procurement**：BOMi 覆盖电子器件；至少 1 个光学器件厂商连接器，补充中心波长、NA、镀膜、口径、机械接口等领域字段，并做参数规范化
 - 所有真实结果都转成 P1 的 Evidence，记录获取时间
 - 外部调用的缓存、限流和失败重试
-- 经验晋升池：去重与冲突检测；经验与实验室知识共享 `knowledge` schema 和检索基础设施（A2）。P4 建好存储和评分基础设施，P5 人工审核通过后经验才正式对 Agent 可见
+- 经验晋升池：优先复用 P2 验证通过的 DeerMem 候选去重/整合建议，补齐同义/更具体/矛盾/无关关系及 Evidence/版本/审计；不能安全复用时以 pgvector 召回 + 轻量关系判定替代，不自动覆盖正式经验；经验与实验室知识共享 `knowledge` schema 和检索基础设施（A2）。P4 建好存储和评分基础设施，P5 人工审核通过后经验才正式对 Agent 可见
 - **经验评分与生命周期（C2）**：实现 ExperienceMemory、MemoryUsageEvent、MemoryScoreHistory；结构化使用事件与 Trace 通过 trace_id / span_id 关联，详细执行数据仍在 `trace` schema。实现 E/T/U/H 分项及综合评分、版本化配置、评分历史、成熟度门槛、事件驱动评分和月度滞回转换、有效性保护、不同经验类型有效期及即时复核；严格遵循 C2，不使用 LLM-as-Judge 自动评分，不统一按时间衰减
 
 - **经验治理契约细化**：P4 明确候选触发、候选版本、晋升池条目、关系/冲突、审核和人工管理的持久化对象及审计关联；明确 MemoryUsageEvent 的逻辑使用关联、经验版本、稳定事件 ID、幂等键、计分消费与结果修订机制。具体方案以 [内部架构设计 4.3/4.4](../design/agent_architecture.md#43-晋升持久化对象与审计关系p4p5-待细化) 为待细化清单，不加入 P1
