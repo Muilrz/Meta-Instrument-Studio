@@ -10,6 +10,7 @@ MetaInstrumentStudio 旨在把科研仪器研发过程中原本分散的工作�
 修订记录：
 
 - 2026-11-08，依据 [ADR-0002](adr/0002-agent-runtime-and-integration.md) 确认 DeerFlow Backend + MIS 自研 React UI + MIS 自有业务后端，更新总体架构、执行边界和 V1 部署；具体兼容性待 P2 验证。
+- 2026-11-08，Context 运行管理直接复用 DeerFlow，MIS Context Builder 收敛为业务组装；DeerMem 通用候选抽取/去重/整合优先验证后复用，正式经验仍由 A2/C2 管理。
 - 2026-11-08，在第 5 节增加已确认的 C1 Trace 可观测性与 C2 经验评分、生命周期高层架构；不改变既有章节编号。
 
 ## 1. Core Idea
@@ -159,7 +160,7 @@ Stage 1 采用：
 
 Task Orchestrator 是调度、并行、重试、超时、结果收集和 Tracing 的逻辑职责。MIS 定义 Brief、依赖、预算和验收条件，DeerFlow Lead Agent / SubAgents 提供执行机制，不另建一套通用执行引擎。
 
-Project Copilot 的业务角色由 Lead Agent 承载；Lab、Research、Procurement Specialist 由独立配置的 SubAgent 承载。Specialist 之间不直接沟通，全部经 Copilot 汇总结构化 Artifact。MIS Context Builder 控制资料、角色和记忆选择，DeerFlow Middleware 执行上下文注入与通用处理；原生 Memory 关闭或替换，长期记忆由 MIS Memory Service 管理。
+Project Copilot 的业务角色由 Lead Agent 承载；Lab、Research、Procurement Specialist 由独立配置的 SubAgent 承载。Specialist 之间不直接沟通，全部经 Copilot 汇总结构化 Artifact。MIS Context Builder 仅组装业务 Brief、Evidence、角色/项目范围和预算；DeerFlow 原生 Middleware 负责隔离、摘要、文件卸载等 Context 管理。DeerMem 的抽取、候选去重和可选整合在 P2 优先验证复用，默认自动正式记忆写入/隐藏注入则隔离；长期正式经验受 MIS A2/C2 规则管理。
 
 ```mermaid
 flowchart LR
@@ -193,7 +194,7 @@ Memory Architecture
     └── Agent Runtime
 ```
 
-项目记忆和跨项目知识严格分开；实验室知识与经验记忆共享知识库。经验必须经过晋升审核，P5 人工审核通过后才正式对 Agent 可见，使用前需要重新查证。只有经验记忆参与 C2 综合评分、成熟度、有效性和生命周期管理；实验室原始文档通过版本管理和人工复核维护。
+项目记忆和跨项目知识严格分开；实验室知识与经验记忆共享知识库。DeerMem 的通用抽取/候选去重/整合能力可先在 P2 隔离验证后复用，不得绕过 MIS 经验晋升审核，也不能取代 C2 评分与生命周期。经验必须经过晋升审核，P5 人工审核通过后才正式对 Agent 可见，使用前需要重新查证。只有经验记忆参与 C2 综合评分、成熟度、有效性和生命周期管理；实验室原始文档通过版本管理和人工复核维护。
 
 ### Trace & Observability
 
