@@ -4,6 +4,7 @@
 - 日期：2026-11-08
 - 决策人：项目负责人
 - 修订：2026-11-08，正式采用 DeerFlow Backend + MIS 自研 Web UI + MIS 自有业务后端，替代原 P2 多框架完整对比策略
+- 修订：2026-11-08，明确原生 Context 复用及 DeerMem 候选抽取/去重/整合的受控复用路线；保留 MIS 权威数据、A2 人工晋升和 C2 经验治理
 - 相关：[总体架构](../architecture.md)、[Agent 内部架构设计](../design/agent_architecture.md)、[需求清单](../design/agent_architecture_requirements.md)、[开发计划](../plans/development_plan.md)、[ADR-0001](0001-repo-structure-and-stack.md)
 
 ## 背景
@@ -33,8 +34,8 @@ A1–A8、C1、C2 和 G1–G6 继续生效。运行底座的默认行为必须�
 | MIS Frontend | 完全自研 React + TypeScript |
 | MIS Backend | 自建 BFF / Business API，负责权限和业务边界 |
 | Agent 调度 | DeerFlow Lead Agent + SubAgents；分别承载 Project Copilot 与三个 Specialist |
-| Context | MIS Context Builder + DeerFlow Middleware |
-| Memory | MIS Memory Service；关闭或替换 DeerFlow 原生持久记忆读写与自动注入 |
+| Context | DeerFlow 原生 SubAgent 隔离、Summarization、文件卸载和 Middleware；MIS Context Builder 仅轻量组装业务 Brief、权限、Evidence 和预算 |
+| Memory | DeerFlow Checkpoint 负责工作记忆；DeerMem 抽取、去重、整合、检索作为**优先复用候选**，P2 验证能否独立、无正式库写入地使用；MIS 负责 Project Memory、跨项目知识、人工晋升及 C2 治理 |
 | 自进化 | MIS Evolution Service，离线回归和人工批准后发布 |
 | Tools | DeerFlow Tools / MCP + MIS Tool Gateway |
 | Sandbox | DeerFlow Docker Sandbox，P2 验证文件、网络、资源隔离 |
@@ -52,11 +53,20 @@ Project Copilot 拥有需求拆解和方案汇总的业务责任，DeerFlow Lead
 
 Specialist 不直接通信，返回结构化结果给 Copilot。运行层不能直接改写 `mis` / `knowledge` 业务主数据；调用 MIS 授权服务写入，数据库权限遵循 ADR-0001。
 
+### Context 和 DeerMem 复用决策（2026-11-08）
+
+- **Context 不重造通用引擎**：DeerFlow 负责子 Agent 隔离、运行历史摘要/压缩、文件卸载和 Checkpoint；MIS Context Builder 收敛为 Business Context Assembler，按 `project_id`、Agent 角色、已确认基线、Evidence、Brief 与预算选择业务片段。P2 验证摘要不丢硬约束和 Evidence ID。
+- **三层 Memory 边界不变**：Working Memory 属于 Runtime；Project Memory 以 Project Service/`mis` 为事实权威；Lab Knowledge 和 Experience Memory 共同落在 MIS `knowledge`，经作用域和审核状态过滤。DeerMem 的默认文件/SQLite 索引不成为正式项目事实或经验的第二份权威数据。
+- **复用算法、控制写入**：优先研究 DeerMem 已有事实提取、摘要、候选近重复检测、可选整合及相关检索能力，通过公开接口或薄 Adapter 输出 **ExperienceCandidate**；P2 必须核实具体版本中是否可脱离其自动持久化独立调用，不能假定组件直接提供稳定公共 API。无法低侵入复用时使用轻量候选提取/关系判定实现，不为追求复用侵入核心 Runtime。
+- **阻断未经审核的自动长期记忆**：DeerFlow 原生 MemoryMiddleware 对正式长期知识的自动写入、默认读回和隐藏上下文注入必须禁用/隔离；这不等于弃用其提取/去重算法。MIS 只允许 A2 业务事件产生候选，候选进入 Promotion Pool；去重/整合均保留来源、证据、项目作用域和候选版本，冲突不自动覆盖；人工审核通过后才能成为正式 ExperienceMemory。
+- **不替换 C2**：DeerMem 内置的 staleness、自动合并、事实删除不能覆盖 MIS 已确认的评分、有效性、生命周期和人工管理；正式经验变更仍需版本化和必要的重新审核。
+- **验证与分阶段实施**：P2 在临时存储中用固定样本做抽取/去重/可选整合 Spike（含误合并、跨项目泄漏、来源丢失与回退成本）；P3 用 A2 前四类事件触发候选提取，P4 落地关系判断和持久化，P5 人工审核并开放经验检索。DeerMem 的可选功能复用不成功需记载回退，并不自动意味着 DeerFlow Agent Runtime 验收失败。
+
 ### 集成与版本策略
 
 1. 前端只调用 MIS Backend / BFF，不能直连 DeerFlow Gateway 或使用上游 Thread / Run / SSE 格式作为产品契约。
 2. DeerFlow Adapter 封装 Gateway 调用、ID 映射、事件转换、暂停恢复、错误归一化与结构化产物接收；Gateway 到 Harness 是 DeerFlow Backend 内部逻辑，不要求拆成两个独立部署服务。
-3. MIS Context Builder 决定资料范围、Brief、记忆选择和 Token Budget；DeerFlow Middleware 实施注入与运行期通用上下文处理，不能绕过 MIS 的隔离与来源规则。
+3. MIS Context Builder 仅选择授权业务片段、Brief、审核后记忆引用和预算约束；DeerFlow Middleware 处理运行期隔离、摘要和文件卸载。不另建通用 Context Engine，不得绕过 MIS 的隔离与来源规则。
 4. 不直接修改 DeerFlow 核心执行引擎，优先官方扩展接口。无法满足关键要求时先启动重新评估，不默认通过侵入式补丁或长期 Fork 解决。
 5. 必须锁定上游 release 对应的完整 commit；没有 release 时锁定完整 commit。P2 开始前登记 commit、依赖锁、镜像 digest、配置与适配器版本及许可证核查结果；禁止使用浮动 main / latest 作为可复现基线。
 6. 本次没有指定已验收版本，不虚构 commit 或兼容性结论。P2 报告必须补齐上述版本信息和复现命令；升级必须重跑集成契约与 Raman 回归并保留回滚版本。
@@ -72,7 +82,7 @@ DeerFlow 官方资料描述了 Lead Agent、Subagent、Middleware、Tools / MCP�
 P2 改为 DeerFlow Integration Spike，不再要求至少两个框架完成全量比较。以固定 Raman 材料与模拟工具验证：
 
 - Backend 无需 DeerFlow 前端即可独立被 MIS 调用；Lead Agent + 三个 Specialist 可配置并执行。
-- Context Builder 接入与 Specialist 隔离；原生 Memory 的读取、自动提取写入和隐藏注入均关闭或替换。
+- 轻量 Context Builder 与 Specialist 隔离；默认 MemoryMiddleware 对正式库的自动写入/读回和隐藏注入隔离；另在非正式候选存储上验证 DeerMem 提取、去重、整合能否低侵入复用。
 - 结构化 AgentArtifact 经 MIS 校验后幂等写入 Project Service；异常、重复回调和部分失败不会丢失或重复业务记录。
 - MIS REST / SSE 契约和 React 最小接入；A4 提问、持久暂停、进程重启后的回答与恢复。
 - PostgreSQL Checkpoint 在独立 schema 中恢复运行，不将运行状态变成业务主数据。
