@@ -6,9 +6,9 @@
 - 开发计划：[docs/plans/development_plan.md](docs/plans/development_plan.md)
 - Agent Runtime / 记忆复用边界：[ADR-0002](docs/adr/0002-agent-runtime-and-integration.md)、[Agent 内部架构](docs/design/agent_architecture.md)（P2 待验证）
 - 全部文档：[docs/README.md](docs/README.md)
-- 当前阶段：**P1 核心数据契约与 Project Service**（T1–T8 实现及自动验收通过；待负责人评审）
+- 当前阶段：**P2 Agent 架构设计与 DeerFlow 集成验证**（P2 开发分支已创建，集成验证尚未执行）。P1 的 T1–T8 实现与自动验收已完成，代码已合并 `main`；负责人最终人工评审记录尚待核对。
 
-进度与验收边界见 [P1 阶段报告](docs/reviews/P1_report.md)。
+阶段交接与验收边界见 [P1 阶段报告](docs/reviews/P1_report.md) 和 [P2 任务说明](docs/plans/P2_deerflow_integration.md)。
 
 ## 快速上手
 
