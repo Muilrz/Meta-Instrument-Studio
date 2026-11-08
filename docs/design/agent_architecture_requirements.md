@@ -3,6 +3,7 @@
 - 状态：持续更新
 - 创建：2026-11-06
 - 更新：
+  - 2026-11-08：细化 A11/B1，DeerFlow 原生 Context 直接复用、DeerMem 候选抽取去重整合优先受控复用；MIS 保留项目事实、人工晋升与 C2 治理。P2 验证后再绑定，不扩大 P1。
   - 2026-11-08：A9–A11 正式确认 DeerFlow Backend、MIS 自研 React UI / Backend、Context / Memory 接口边界；依据 ADR-0002 增加内部架构设计入口，保留 A1–A8、C1、C2。
   - 2026-11-08：C1 Trace 可观测性架构正式确认，确定三级数据内容、OpenTelemetry 标准、PostgreSQL 存储和数据保留策略。
   - 2026-11-08：C2 经验记忆评分与生命周期管理正式确认，确定综合评分、四个分项、状态转换、人工干预和有效性管理。
@@ -156,8 +157,9 @@
 
 ### A11 Context、Memory 与 Evolution 接口边界（2026-11-08 确认）
 
-- MIS Context Builder 负责 Brief、指定/不定参数、知识范围、Token Budget、角色隔离和记忆选择；DeerFlow Middleware 负责注入与通用上下文管理，不得绕过 MIS 的授权和来源要求。
-- MIS Memory Service 管理三层记忆的服务边界：项目记忆通过 Project Service 读取，跨项目知识和经验按 A1/A2/C2 管理，工作记忆仍归 Runtime。关闭或替换 DeerFlow 原生持久 Memory 的读取、自动提取写入和隐藏上下文注入。
+- MIS Context Builder 收敛为轻量 Business Context Assembler：按项目/角色授权选择 Brief、需求、Evidence 与已审核记忆引用；DeerFlow 原生 SubAgent 隔离、摘要压缩、文件卸载和 Middleware 承担通用 Context 运行管理，不另建压缩引擎。
+- MIS Memory Service 的三层边界不变：项目事实通过 Project Service，跨项目知识/经验遵循 A1/A2/C2，工作记忆由 Runtime Checkpoint 管理。DeerMem 事实抽取、近重复检测、可选整合和检索是**优先复用候选**，须在 P2 验证可否无正式库写入地独立使用。
+- 原生 MemoryMiddleware 对正式记忆的自动写入/读回和隐藏注入先禁用或隔离，但这不等于废弃 DeerMem 通用算法；所有候选按 A2 触发/审核，原生 staleness 不取代 C2。
 - 记忆被召回、选中、注入、实际应用及结果通过 C2 结构化事件区分；经验只能作为待查证线索，未经 P5 人工审核不得对 Agent 可见。
 - MIS Evolution Service 负责 Trace / 错误整理、经验候选、考题与改进草案；按 A6/A8 离线回归、人工批准后发布，禁止运行中自行修改 Prompt、Skill、评分权重或阈值。
 - 以上是后续实现边界，不扩大 P1 核心数据契约范围；P2 先以固定样例/模拟服务验证接入，C1/C2 的正式落地仍按原阶段安排。
@@ -167,6 +169,8 @@
 ## 3. 已有方向、待细化
 
 ### B1 上下文（Context）
+
+**V1 最小复用原则**：先沿用 DeerFlow 原生隔离、摘要压缩、文件卸载，只增加业务 Brief 的范围筛选；P2 测试跨项目/角色隔离、摘要后硬约束与 Evidence ID 不丢。
 
 | 角色 | 能看到的 | 看不到的 |
 |---|---|---|
