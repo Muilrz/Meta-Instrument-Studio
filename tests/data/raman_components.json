@@ -1,0 +1,87 @@
+{
+  "LAS-A": {
+    "requirements": ["R01", "R04", "R08", "R09", "R10"],
+    "facts": [
+      {"metric": "laser.center_wavelength", "value": {"lower": 784.7, "upper": 785.3, "unit": "nm"}, "excerpt": "785.0 nm ± 0.3 nm"},
+      {"metric": "laser.max_power", "value": {"value": 500, "unit": "mW"}, "excerpt": "500 mW，连续可调"},
+      {"metric": "laser.linewidth", "value": {"value": 0.08, "unit": "nm"}, "excerpt": "0.08 nm"},
+      {"metric": "optics.fiber_connector", "value": "SMA905", "excerpt": "SMA905 光纤耦合"},
+      {"metric": "software.sdk", "value": "Windows+Python", "excerpt": "提供 Windows Python SDK"}
+    ]
+  },
+  "LAS-B": {
+    "requirements": ["R01", "R04", "R08", "R09", "R10"],
+    "facts": [
+      {"metric": "laser.center_wavelength", "value": {"lower": 784.5, "upper": 785.5, "unit": "nm"}, "excerpt": "785.0 nm ± 0.5 nm"},
+      {"metric": "laser.max_power", "value": {"value": 0.35, "unit": "W"}, "excerpt": "0.35 W"},
+      {"metric": "laser.linewidth", "value": {"value": 0.05, "unit": "nm"}, "excerpt": "0.05 nm"},
+      {"metric": "optics.fiber_connector", "value": "SMA905", "excerpt": "SMA905 光纤耦合"},
+      {"metric": "software.sdk", "value": "Windows+C", "excerpt": "提供 Windows C SDK"}
+    ]
+  },
+  "LAS-C": {
+    "requirements": ["R01", "R04", "R08", "R09", "R10"],
+    "facts": [
+      {"metric": "laser.center_wavelength", "value": {"lower": 782, "upper": 788, "unit": "nm"}, "excerpt": "785 nm ± 3 nm"},
+      {"metric": "laser.max_power", "value": {"value": 1000, "unit": "mW"}, "excerpt": "1000 mW"},
+      {"metric": "laser.linewidth", "value": {"value": 2, "unit": "nm"}, "excerpt": "2 nm（多模）"},
+      {"metric": "optics.fiber_connector", "value": "SMA905", "excerpt": "SMA905"},
+      {"metric": "software.sdk", "value": "none", "excerpt": "模拟电压调制，无 SDK"}
+    ]
+  },
+  "SPEC-A": {
+    "requirements": ["R02", "R03", "R05", "R06", "R07", "R09", "R10"],
+    "facts": [
+      {"metric": "spectrometer.wavelength_coverage", "value": {"lower": 790, "upper": 1000, "unit": "nm"}, "excerpt": "790–1000 nm"},
+      {"metric": "spectrometer.resolution", "value": {"value": 6, "unit": "cm^-1"}, "excerpt": "6 cm⁻¹（785 nm 激发，全范围）"},
+      {"metric": "spectrometer.detector_temperature", "value": {"value": -15, "unit": "degC"}, "excerpt": "TE 制冷至 -15 °C"},
+      {"metric": "spectrometer.integration_time", "value": {"lower": 1, "upper": 60000, "unit": "ms"}, "excerpt": "1 ms – 60 s"},
+      {"metric": "system.snr_cyclohexane_802", "value": {"value": 800, "unit": "ratio"}, "excerpt": "800:1（环己烷 802 cm⁻¹，785 nm，300 mW，积分 1 s）"},
+      {"metric": "optics.fiber_connector", "value": "SMA905", "excerpt": "SMA905"},
+      {"metric": "software.sdk", "value": "Windows+Python", "excerpt": "提供 C 和 Python SDK"}
+    ]
+  },
+  "SPEC-B": {
+    "requirements": ["R02", "R03", "R05", "R06", "R07", "R09", "R10"],
+    "facts": [
+      {"metric": "spectrometer.wavelength_coverage", "value": {"lower": 790, "upper": 960, "unit": "nm"}, "excerpt": "790–960 nm"},
+      {"metric": "spectrometer.resolution", "value": {"value": 0.6, "unit": "nm"}, "excerpt": "0.6 nm（FWHM）"},
+      {"metric": "spectrometer.detector_temperature", "value": {"value": -10, "unit": "degC"}, "excerpt": "TE 制冷至 -10 °C"},
+      {"metric": "spectrometer.integration_time", "value": {"lower": 5, "upper": 10000, "unit": "ms"}, "excerpt": "5 ms – 10 s"},
+      {"metric": "system.snr_cyclohexane_802", "unknown": "满量程信号条件不符合环己烷 SOP", "excerpt": "1000:1（满量程信号）"},
+      {"metric": "optics.fiber_connector", "value": "SMA905", "excerpt": "SMA905"},
+      {"metric": "software.sdk", "value": "Windows+C", "excerpt": "提供 C SDK"}
+    ]
+  },
+  "SPEC-C": {
+    "requirements": ["R02", "R03", "R05", "R06", "R07", "R09", "R10"],
+    "facts": [
+      {"metric": "spectrometer.wavelength_coverage", "value": {"lower": 792, "upper": 950, "unit": "nm"}, "excerpt": "792–950 nm"},
+      {"metric": "spectrometer.resolution", "value": {"value": 7, "unit": "cm^-1"}, "excerpt": "7 cm⁻¹（785 nm 激发）"},
+      {"metric": "spectrometer.detector_temperature", "unknown": "未提供制冷温度", "excerpt": "更多参数请联系销售"},
+      {"metric": "spectrometer.integration_time", "value": {"lower": 10, "upper": 10000, "unit": "ms"}, "excerpt": "10 ms – 10000 ms"},
+      {"metric": "system.snr_cyclohexane_802", "unknown": "第二代产品未提供 SNR，不能采用上一代实测值", "excerpt": "全新第二代产品"},
+      {"metric": "optics.fiber_connector", "value": "SMA905", "excerpt": "SMA905"},
+      {"metric": "software.sdk", "value": "Windows+Python", "excerpt": "提供 Python SDK（兼容上一代）"}
+    ]
+  },
+  "SPEC-D": {
+    "requirements": ["R02", "R03", "R05", "R06", "R07", "R09", "R10"],
+    "facts": [
+      {"metric": "spectrometer.wavelength_coverage", "value": {"lower": 785, "upper": 1050, "unit": "nm"}, "excerpt": "785–1050 nm"},
+      {"metric": "spectrometer.resolution", "value": {"value": 4, "unit": "cm^-1"}, "excerpt": "4 cm⁻¹（785 nm 激发，全范围）"},
+      {"metric": "spectrometer.detector_temperature", "value": {"value": -60, "unit": "degC"}, "excerpt": "TE 制冷至 -60 °C"},
+      {"metric": "spectrometer.integration_time", "value": {"lower": 1, "upper": 120000, "unit": "ms"}, "excerpt": "1 ms – 120 s"},
+      {"metric": "system.snr_cyclohexane_802", "value": {"value": 2000, "unit": "ratio"}, "excerpt": "2000:1（环己烷 802 cm⁻¹，785 nm，300 mW，积分 1 s）"},
+      {"metric": "optics.fiber_connector", "value": "FC/PC", "excerpt": "FC/PC"},
+      {"metric": "software.sdk", "value": "Windows+C", "excerpt": "提供 C、Python、LabVIEW SDK"}
+    ]
+  },
+  "PRB-A": {
+    "requirements": ["R09"],
+    "facts": [
+      {"metric": "optics.fiber_connector", "value": "SMA905", "excerpt": "105 µm，SMA905"},
+      {"metric": "optics.excitation_fiber_diameter", "value": {"value": 105, "unit": "µm"}, "excerpt": "105 µm，SMA905"}
+    ]
+  }
+}

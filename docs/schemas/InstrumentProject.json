@@ -1,0 +1,78 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^prj_[0-9A-HJKMNP-TV-Z]{26}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "kind": {
+      "default": "normal",
+      "enum": [
+        "normal",
+        "benchmark"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "members": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Members",
+      "type": "array"
+    },
+    "knowledge_scope": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Knowledge Scope",
+      "type": "array"
+    },
+    "current_baseline_version": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Current Baseline Version"
+    },
+    "current_plan_version": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Current Plan Version"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "title": "InstrumentProject",
+  "type": "object"
+}

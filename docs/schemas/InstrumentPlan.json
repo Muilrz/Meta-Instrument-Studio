@@ -1,0 +1,310 @@
+{
+  "$defs": {
+    "BomEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "subject": {
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "quantity": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Quantity",
+          "type": "integer"
+        },
+        "claim_refs": {
+          "items": {
+            "$ref": "#/$defs/ClaimRef"
+          },
+          "minItems": 1,
+          "title": "Claim Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "subject",
+        "claim_refs"
+      ],
+      "title": "BomEntry",
+      "type": "object"
+    },
+    "ClaimRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "pattern": "^art_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "claim_id": {
+          "minLength": 1,
+          "title": "Claim Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "claim_id"
+      ],
+      "title": "ClaimRef",
+      "type": "object"
+    },
+    "PlanConclusion": {
+      "additionalProperties": false,
+      "properties": {
+        "statement": {
+          "minLength": 1,
+          "title": "Statement",
+          "type": "string"
+        },
+        "claim_refs": {
+          "items": {
+            "$ref": "#/$defs/ClaimRef"
+          },
+          "minItems": 1,
+          "title": "Claim Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "statement",
+        "claim_refs"
+      ],
+      "title": "PlanConclusion",
+      "type": "object"
+    },
+    "RunRef": {
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "trace_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{32}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trace Id"
+        },
+        "actor": {
+          "enum": [
+            "copilot",
+            "lab",
+            "research",
+            "procurement",
+            "rule_engine",
+            "user"
+          ],
+          "title": "Actor",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "skill_versions": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Skill Versions",
+          "type": "object"
+        },
+        "prompt_version": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prompt Version"
+        }
+      },
+      "required": [
+        "run_id",
+        "actor"
+      ],
+      "title": "RunRef",
+      "type": "object"
+    },
+    "StatusChange": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "draft",
+            "accepted",
+            "rejected",
+            "stale"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "trigger_id": {
+          "minLength": 1,
+          "title": "Trigger Id",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "reason",
+        "trigger_id"
+      ],
+      "title": "StatusChange",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^pln_[0-9A-HJKMNP-TV-Z]{26}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "project_id": {
+      "pattern": "^prj_[0-9A-HJKMNP-TV-Z]{26}$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "baseline_version": {
+      "minimum": 1,
+      "title": "Baseline Version",
+      "type": "integer"
+    },
+    "artifact_ids": {
+      "items": {
+        "pattern": "^art_[0-9A-HJKMNP-TV-Z]{26}$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Artifact Ids",
+      "type": "array"
+    },
+    "modules": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/PlanConclusion"
+      },
+      "title": "Modules",
+      "type": "array"
+    },
+    "bom": {
+      "items": {
+        "$ref": "#/$defs/BomEntry"
+      },
+      "minItems": 1,
+      "title": "Bom",
+      "type": "array"
+    },
+    "rationale": {
+      "items": {
+        "$ref": "#/$defs/PlanConclusion"
+      },
+      "minItems": 1,
+      "title": "Rationale",
+      "type": "array"
+    },
+    "risks": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Risks",
+      "type": "array"
+    },
+    "stage2_tasks": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Stage2 Tasks",
+      "type": "array"
+    },
+    "check_summary": {
+      "additionalProperties": {
+        "enum": [
+          "pass",
+          "fail",
+          "unknown"
+        ],
+        "type": "string"
+      },
+      "title": "Check Summary",
+      "type": "object"
+    },
+    "produced_by": {
+      "$ref": "#/$defs/RunRef"
+    },
+    "status": {
+      "default": "draft",
+      "enum": [
+        "draft",
+        "accepted",
+        "rejected",
+        "stale"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "status_history": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/StatusChange"
+      },
+      "title": "Status History",
+      "type": "array"
+    }
+  },
+  "required": [
+    "project_id",
+    "version",
+    "baseline_version",
+    "artifact_ids",
+    "bom",
+    "rationale",
+    "check_summary",
+    "produced_by"
+  ],
+  "title": "InstrumentPlan",
+  "type": "object"
+}

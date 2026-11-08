@@ -1,0 +1,30 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "const": "unknown",
+      "default": "unknown",
+      "title": "Kind",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "evidence_ids": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Evidence Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "reason"
+  ],
+  "title": "Unknown",
+  "type": "object"
+}

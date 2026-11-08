@@ -1,0 +1,358 @@
+{
+  "$defs": {
+    "OpenParam": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "unit"
+      ],
+      "title": "OpenParam",
+      "type": "object"
+    },
+    "RequirementItem": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "metric": {
+          "minLength": 1,
+          "title": "Metric",
+          "type": "string"
+        },
+        "comparator": {
+          "enum": [
+            "min",
+            "max",
+            "range",
+            "covers",
+            "enum"
+          ],
+          "title": "Comparator",
+          "type": "string"
+        },
+        "lower": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lower"
+        },
+        "upper": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Upper"
+        },
+        "allowed": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Allowed",
+          "type": "array"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "priority": {
+          "default": "must",
+          "enum": [
+            "must",
+            "should"
+          ],
+          "title": "Priority",
+          "type": "string"
+        },
+        "verification": {
+          "minLength": 1,
+          "title": "Verification",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "name",
+        "metric",
+        "comparator",
+        "verification"
+      ],
+      "title": "RequirementItem",
+      "type": "object"
+    },
+    "SpecifiedParam": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "requirement_key": {
+          "minLength": 1,
+          "title": "Requirement Key",
+          "type": "string"
+        },
+        "target": {
+          "$ref": "#/$defs/RequirementItem"
+        }
+      },
+      "required": [
+        "name",
+        "requirement_key",
+        "target"
+      ],
+      "title": "SpecifiedParam",
+      "type": "object"
+    },
+    "StatusChange": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "draft",
+            "accepted",
+            "rejected",
+            "stale"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "trigger_id": {
+          "minLength": 1,
+          "title": "Trigger Id",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "reason",
+        "trigger_id"
+      ],
+      "title": "StatusChange",
+      "type": "object"
+    },
+    "TaskBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "seconds": {
+          "default": 300,
+          "exclusiveMinimum": 0,
+          "title": "Seconds",
+          "type": "number"
+        },
+        "searches": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Searches",
+          "type": "integer"
+        },
+        "model_calls": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Model Calls",
+          "type": "integer"
+        }
+      },
+      "title": "TaskBudget",
+      "type": "object"
+    },
+    "Usage": {
+      "additionalProperties": false,
+      "properties": {
+        "seconds": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Seconds",
+          "type": "number"
+        },
+        "input_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Input Tokens",
+          "type": "integer"
+        },
+        "output_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Output Tokens",
+          "type": "integer"
+        },
+        "searches": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Searches",
+          "type": "integer"
+        },
+        "cost_cny": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Cost Cny",
+          "type": "number"
+        }
+      },
+      "title": "Usage",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^brf_[0-9A-HJKMNP-TV-Z]{26}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "project_id": {
+      "pattern": "^prj_[0-9A-HJKMNP-TV-Z]{26}$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "baseline_version": {
+      "minimum": 1,
+      "title": "Baseline Version",
+      "type": "integer"
+    },
+    "requirement_refs": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Requirement Refs",
+      "type": "array"
+    },
+    "specialist": {
+      "enum": [
+        "lab",
+        "research",
+        "procurement"
+      ],
+      "title": "Specialist",
+      "type": "string"
+    },
+    "goal": {
+      "minLength": 1,
+      "title": "Goal",
+      "type": "string"
+    },
+    "specified_params": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SpecifiedParam"
+      },
+      "title": "Specified Params",
+      "type": "array"
+    },
+    "open_params": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/OpenParam"
+      },
+      "title": "Open Params",
+      "type": "array"
+    },
+    "constraints": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Constraints",
+      "type": "array"
+    },
+    "acceptance": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Acceptance",
+      "type": "array"
+    },
+    "budget": {
+      "$ref": "#/$defs/TaskBudget"
+    },
+    "usage": {
+      "$ref": "#/$defs/Usage"
+    },
+    "status": {
+      "default": "draft",
+      "enum": [
+        "draft",
+        "accepted",
+        "rejected",
+        "stale"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "status_history": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/StatusChange"
+      },
+      "title": "Status History",
+      "type": "array"
+    }
+  },
+  "required": [
+    "project_id",
+    "baseline_version",
+    "requirement_refs",
+    "specialist",
+    "goal"
+  ],
+  "title": "AgentTaskBrief",
+  "type": "object"
+}

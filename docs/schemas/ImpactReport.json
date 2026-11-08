@@ -1,0 +1,64 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "project_id": {
+      "pattern": "^prj_[0-9A-HJKMNP-TV-Z]{26}$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "from_version": {
+      "minimum": 1,
+      "title": "From Version",
+      "type": "integer"
+    },
+    "to_version": {
+      "description": "Must equal from_version + 1 (adjacent baselines).",
+      "minimum": 1,
+      "title": "To Version",
+      "type": "integer"
+    },
+    "changed_keys": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Changed Keys",
+      "type": "array"
+    },
+    "brief_ids": {
+      "items": {
+        "pattern": "^brf_[0-9A-HJKMNP-TV-Z]{26}$",
+        "type": "string"
+      },
+      "title": "Brief Ids",
+      "type": "array"
+    },
+    "artifact_ids": {
+      "items": {
+        "pattern": "^art_[0-9A-HJKMNP-TV-Z]{26}$",
+        "type": "string"
+      },
+      "title": "Artifact Ids",
+      "type": "array"
+    },
+    "plan_ids": {
+      "items": {
+        "pattern": "^pln_[0-9A-HJKMNP-TV-Z]{26}$",
+        "type": "string"
+      },
+      "title": "Plan Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "project_id",
+    "from_version",
+    "to_version",
+    "changed_keys",
+    "brief_ids",
+    "artifact_ids",
+    "plan_ids"
+  ],
+  "title": "ImpactReport",
+  "type": "object"
+}

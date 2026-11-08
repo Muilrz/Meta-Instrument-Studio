@@ -7,6 +7,20 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: mis_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d mis_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      MIS_TEST_DATABASE_URL: postgresql+psycopg://postgres:postgres@localhost:5432/mis_test
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
@@ -16,5 +30,7 @@ jobs:
         run: uv run ruff check .
       - name: Format check
         run: uv run ruff format --check .
+      - name: JSON Schema consistency
+        run: uv run python -m mis.schemas.export --check
       - name: Test
         run: uv run pytest

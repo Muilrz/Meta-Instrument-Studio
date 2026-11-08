@@ -1,0 +1,20 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "value": {
+      "title": "Value",
+      "type": "number"
+    },
+    "unit": {
+      "minLength": 1,
+      "title": "Unit",
+      "type": "string"
+    }
+  },
+  "required": [
+    "value",
+    "unit"
+  ],
+  "title": "Quantity",
+  "type": "object"
+}

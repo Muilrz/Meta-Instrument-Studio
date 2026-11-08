@@ -5,7 +5,14 @@ description = "MetaInstrumentStudio — AI-native scientific instrument engineer
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "alembic>=1.20.1",
+    "pint>=0.26.2",
+    "psycopg[binary]>=3.3.8",
+    "pydantic>=2.14.3",
+    "python-dotenv>=1.2.4",
+    "python-ulid>=4.1.0",
     "pyyaml>=6.0",
+    "sqlalchemy>=2.1.8",
 ]
 
 [dependency-groups]

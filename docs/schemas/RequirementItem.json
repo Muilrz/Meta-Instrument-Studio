@@ -1,0 +1,100 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "key": {
+      "minLength": 1,
+      "title": "Key",
+      "type": "string"
+    },
+    "name": {
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "metric": {
+      "minLength": 1,
+      "title": "Metric",
+      "type": "string"
+    },
+    "comparator": {
+      "enum": [
+        "min",
+        "max",
+        "range",
+        "covers",
+        "enum"
+      ],
+      "title": "Comparator",
+      "type": "string"
+    },
+    "lower": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Lower"
+    },
+    "upper": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Upper"
+    },
+    "allowed": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Allowed",
+      "type": "array"
+    },
+    "unit": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Unit"
+    },
+    "priority": {
+      "default": "must",
+      "enum": [
+        "must",
+        "should"
+      ],
+      "title": "Priority",
+      "type": "string"
+    },
+    "verification": {
+      "minLength": 1,
+      "title": "Verification",
+      "type": "string"
+    }
+  },
+  "required": [
+    "key",
+    "name",
+    "metric",
+    "comparator",
+    "verification"
+  ],
+  "title": "RequirementItem",
+  "type": "object"
+}

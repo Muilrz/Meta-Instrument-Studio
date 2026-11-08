@@ -1,0 +1,29 @@
+[
+  {
+    "metric": "design.excitation_choice",
+    "statement": "采用 785 nm 激发以降低荧光背景",
+    "value": "785 nm excitation reduces fluorescence",
+    "evidence": [
+      {"file": "lab_docs/lab_doc_01_prototype_review.md", "excerpt": "下一代应改用 785 nm 激发"},
+      {"file": "papers/paper_01_excitation_fluorescence.md", "excerpt": "785 nm 激发的荧光背景比 532 nm 低约一个数量级"}
+    ]
+  },
+  {
+    "metric": "procurement.inventory_reuse",
+    "statement": "优先复用库存 PRB-A；采购全部三件的预算作为保守上限",
+    "value": "Prefer reusing the unused PRB-A probe in lab inventory",
+    "evidence": [
+      {"file": "lab_docs/lab_doc_01_prototype_review.md", "excerpt": "1 支 PRB-A 785 nm 拉曼探头"},
+      {"file": "lab_docs/lab_doc_02_procurement_rules.md", "excerpt": "实验室已有库存的器件应优先复用"}
+    ]
+  },
+  {
+    "metric": "verification.snr_protocol",
+    "statement": "信噪比须按实验室环己烷 SOP 验收；不能采用满量程信号的 SNR",
+    "value": "Verify cyclohexane 802 cm^-1 at 785 nm, 300 mW, integration 1 s using the lab SOP",
+    "evidence": [
+      {"file": "lab_docs/lab_doc_03_snr_sop.md", "excerpt": "不能直接用来判定"},
+      {"file": "component_pages/SPEC-B.md", "excerpt": "1000:1（满量程信号）"}
+    ]
+  }
+]

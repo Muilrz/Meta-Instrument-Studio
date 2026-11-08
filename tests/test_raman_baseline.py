@@ -11,6 +11,14 @@ import json
 import pytest
 
 from mis.fixtures import baseline_dir, load_checkpoints, load_manifest, load_requirements
+from mis.units import convert
+from mis.units.raman import (
+    resolution_nm_to_cm1,
+    wavelength_at_shift_nm,
+)
+from mis.units.raman import (
+    shift_cm1 as raman_shift_cm1,
+)
 
 PKG = baseline_dir("raman_baseline")
 MANIFEST = load_manifest()
@@ -21,19 +29,8 @@ REQUIREMENT_IDS = {r["id"] for r in REQUIREMENTS}
 PART_IDS = {p.stem for p in (PKG / "component_pages").glob("*.md")}
 LISTED_FILES = {f for group in MANIFEST["files"].values() for f in group}
 
-# Multiplier to convert each unit into its group's base unit.
-UNIT_SCALE = {"mW": 1.0, "W": 1000.0, "nm": 1.0, "µm": 1000.0, "ms": 1.0, "s": 1000.0}
-
 # P0 acceptance: the package must exercise each of these traps at least once.
 REQUIRED_CHECKPOINT_TYPES = {"must_unknown", "unit_trap", "budget", "must_exclude"}
-
-
-def raman_shift_cm1(excitation_nm: float, wavelength_nm: float) -> float:
-    return 1e7 / excitation_nm - 1e7 / wavelength_nm
-
-
-def wavelength_at_shift_nm(excitation_nm: float, shift_cm1: float) -> float:
-    return 1e7 / (1e7 / excitation_nm - shift_cm1)
 
 
 # --- manifest ---------------------------------------------------------------
@@ -135,13 +132,15 @@ def test_checkpoint_references_resolve(cp):
 def _passes(check: dict) -> bool:
     kind = check["kind"]
     if kind == "unit_compare":
-        value = check["value"] * UNIT_SCALE[check["unit"]]
-        threshold = check["threshold"] * UNIT_SCALE[check["threshold_unit"]]
+        value = convert(check["value"], check["unit"], check["threshold_unit"])
+        threshold = check["threshold"]
         return value >= threshold if check["op"] == "ge" else value <= threshold
     if kind == "raman_resolution":
         lo, hi = check["shift_range_cm1"]
         worst = max(
-            check["resolution_nm"] / wavelength_at_shift_nm(check["excitation_nm"], s) ** 2 * 1e7
+            resolution_nm_to_cm1(
+                check["resolution_nm"], wavelength_at_shift_nm(check["excitation_nm"], s)
+            )
             for s in (lo, hi)
         )
         assert worst == pytest.approx(check["worst_cm1_approx"], abs=0.01)

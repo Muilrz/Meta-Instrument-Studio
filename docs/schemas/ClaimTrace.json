@@ -1,0 +1,470 @@
+{
+  "$defs": {
+    "Claim": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "minLength": 1,
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "statement": {
+          "minLength": 1,
+          "title": "Statement",
+          "type": "string"
+        },
+        "subject": {
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "metric": {
+          "minLength": 1,
+          "title": "Metric",
+          "type": "string"
+        },
+        "value": {
+          "discriminator": {
+            "mapping": {
+              "known": "#/$defs/Known",
+              "unknown": "#/$defs/Unknown"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Known"
+            },
+            {
+              "$ref": "#/$defs/Unknown"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "statement",
+        "subject",
+        "metric",
+        "value"
+      ],
+      "title": "Claim",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^evd_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^prj_[0-9A-HJKMNP-TV-Z]{26}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "source_type": {
+          "enum": [
+            "document",
+            "web",
+            "vendor_api",
+            "fx_rate",
+            "measurement",
+            "user_decision"
+          ],
+          "title": "Source Type",
+          "type": "string"
+        },
+        "locator": {
+          "minLength": 1,
+          "title": "Locator",
+          "type": "string"
+        },
+        "excerpt": {
+          "minLength": 1,
+          "title": "Excerpt",
+          "type": "string"
+        },
+        "page_or_anchor": {
+          "minLength": 1,
+          "title": "Page Or Anchor",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "source_version": {
+          "minLength": 1,
+          "title": "Source Version",
+          "type": "string"
+        },
+        "retrieved_by": {
+          "$ref": "#/$defs/RunRef"
+        },
+        "tool_call_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tool Call Id"
+        },
+        "quote": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quote"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "fx_rate": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FxRate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "project_id",
+        "source_type",
+        "locator",
+        "excerpt",
+        "page_or_anchor",
+        "source_version",
+        "retrieved_by"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "FxRate": {
+      "additionalProperties": false,
+      "properties": {
+        "source_currency": {
+          "const": "USD",
+          "title": "Source Currency",
+          "type": "string"
+        },
+        "target_currency": {
+          "const": "CNY",
+          "default": "CNY",
+          "title": "Target Currency",
+          "type": "string"
+        },
+        "rate": {
+          "exclusiveMinimum": 0,
+          "title": "Rate",
+          "type": "number"
+        },
+        "as_of": {
+          "format": "date",
+          "title": "As Of",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_currency",
+        "rate",
+        "as_of"
+      ],
+      "title": "FxRate",
+      "type": "object"
+    },
+    "Known": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "known",
+          "default": "known",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quantity"
+            },
+            {
+              "$ref": "#/$defs/QuantityRange"
+            },
+            {
+              "minLength": 1,
+              "type": "string"
+            }
+          ],
+          "title": "Value"
+        },
+        "evidence_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "value",
+        "evidence_ids"
+      ],
+      "title": "Known",
+      "type": "object"
+    },
+    "PriceTier": {
+      "additionalProperties": false,
+      "properties": {
+        "min_qty": {
+          "minimum": 1,
+          "title": "Min Qty",
+          "type": "integer"
+        },
+        "unit_price": {
+          "minimum": 0,
+          "title": "Unit Price",
+          "type": "number"
+        }
+      },
+      "required": [
+        "min_qty",
+        "unit_price"
+      ],
+      "title": "PriceTier",
+      "type": "object"
+    },
+    "Quantity": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Quantity",
+      "type": "object"
+    },
+    "QuantityRange": {
+      "additionalProperties": false,
+      "properties": {
+        "lower": {
+          "title": "Lower",
+          "type": "number"
+        },
+        "upper": {
+          "title": "Upper",
+          "type": "number"
+        },
+        "unit": {
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lower",
+        "upper",
+        "unit"
+      ],
+      "title": "QuantityRange",
+      "type": "object"
+    },
+    "Quote": {
+      "additionalProperties": false,
+      "properties": {
+        "currency": {
+          "enum": [
+            "CNY",
+            "USD"
+          ],
+          "title": "Currency",
+          "type": "string"
+        },
+        "price_tiers": {
+          "items": {
+            "$ref": "#/$defs/PriceTier"
+          },
+          "minItems": 1,
+          "title": "Price Tiers",
+          "type": "array"
+        },
+        "region": {
+          "minLength": 1,
+          "title": "Region",
+          "type": "string"
+        },
+        "valid_until": {
+          "format": "date",
+          "title": "Valid Until",
+          "type": "string"
+        },
+        "tax_included": {
+          "title": "Tax Included",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "currency",
+        "price_tiers",
+        "region",
+        "valid_until",
+        "tax_included"
+      ],
+      "title": "Quote",
+      "type": "object"
+    },
+    "RunRef": {
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "trace_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{32}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trace Id"
+        },
+        "actor": {
+          "enum": [
+            "copilot",
+            "lab",
+            "research",
+            "procurement",
+            "rule_engine",
+            "user"
+          ],
+          "title": "Actor",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "skill_versions": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Skill Versions",
+          "type": "object"
+        },
+        "prompt_version": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prompt Version"
+        }
+      },
+      "required": [
+        "run_id",
+        "actor"
+      ],
+      "title": "RunRef",
+      "type": "object"
+    },
+    "Unknown": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "unknown",
+          "default": "unknown",
+          "title": "Kind",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "reason"
+      ],
+      "title": "Unknown",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Business provenance; independent of execution Trace infrastructure.",
+  "properties": {
+    "artifact_id": {
+      "pattern": "^art_[0-9A-HJKMNP-TV-Z]{26}$",
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "claim": {
+      "$ref": "#/$defs/Claim"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/Evidence"
+      },
+      "title": "Evidence",
+      "type": "array"
+    }
+  },
+  "required": [
+    "artifact_id",
+    "claim",
+    "evidence"
+  ],
+  "title": "ClaimTrace",
+  "type": "object"
+}

@@ -1,0 +1,39 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "excitation_nm": {
+      "exclusiveMinimum": 0,
+      "title": "Excitation Nm",
+      "type": "number"
+    },
+    "shift_range_cm1": {
+      "maxItems": 2,
+      "minItems": 2,
+      "prefixItems": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
+      "title": "Shift Range Cm1",
+      "type": "array"
+    },
+    "evidence_ids": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Evidence Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "excitation_nm",
+    "shift_range_cm1"
+  ],
+  "title": "RamanContext",
+  "type": "object"
+}

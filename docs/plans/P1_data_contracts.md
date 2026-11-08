@@ -1,15 +1,18 @@
 # P1 任务说明：核心数据契约与 Project Service
 
-- 状态：草案，待评审
+- 状态：T1–T8 实现及自动验收通过，待负责人评审；Q1–Q4 已确认，见 ADR-0003
 - 日期：2026-11-05
 - 修订：
+  - 2026-11-08，完成 T1–T8；本地及 PostgreSQL CI 118 passed，五项自动验收通过，详见 P1_report.md
+  - 2026-11-08，同步实际分支 feat/p1-core-data-contracts；明确 Q1–Q4 默认建议与确认状态，保留草案待评审状态
+  - 2026-11-08，依据已确认的 C1 更新 RunRef 与 Trace 的连接边界；Trace 基础设施在 P3 实现，C2 对象不加入 P1 范围
   - 2026-11-05，数据库改为 PostgreSQL（见 ADR-0001），并相应地从 P1 起引入 Alembic
   - 2026-11-06，依据 [Agent 架构需求清单](../design/agent_architecture_requirements.md)：新增出处字段 `RunRef`（3.8）、Brief 参数分类（3.9）、用户问答 `UserQuestion`（3.10）、用户纠正 `UserCorrection`（3.11）
   - 2026-11-06，`InstrumentProject` 增加 `kind`（normal / benchmark），导入器把基准任务包导入为 benchmark 项目
   - 2026-11-06，开发数据库改为 Neon：T5 改为普通 SQL 初始化脚本 `db/init.sql` + Neon `test` 分支，`compose.yaml` 变为可选；本文件移到 `docs/plans/`
 - 上级计划：[开发计划 · P1](development_plan.md#p1-核心数据契约与-project-service)
 - 前置条件：P0 完成（[P0 报告](../reviews/P0_report.md)）
-- 分支：`p1-data-contracts`，按下文任务拆成多个提交或 PR
+- 分支：`feat/p1-core-data-contracts`，按下文任务拆成多个提交或 PR
 
 ---
 
@@ -52,7 +55,7 @@ P1 结束时，平台应当能做到以下几件事。全程**不调用任何 LL
 
 ## 3. 关键设计决定
 
-下面每一条都是默认选择。评审时如有异议，在开工前提出；无异议的话，开工时把它们写成一份新的 ADR（单位库与存储方式）。
+以下关键设计已随 2026-11-08 P1 正式启动确认；单位库与存储方式见 ADR-0003。
 
 ### 3.1 “未知”必须显式表示（原则 G2）
 
@@ -131,14 +134,16 @@ SpecValue = Annotated[Known | Unknown, Field(discriminator="kind")]
 
 ### 3.8 出处字段：业务记录与 trace 的连接
 
-trace 的详细程度和存储方式在 P2 才定（见 [Agent 架构需求清单](../design/agent_architecture_requirements.md) C1），但业务记录必须**现在**就预留连接字段，否则以后无法从结论追溯到产生它的那次运行。
+[Agent 架构需求清单](../design/agent_architecture_requirements.md) C1 已确定 Trace 标准、数据粒度、存储方式和保留策略：采用 OpenTelemetry Trace + GenAI Semantic Conventions，关键业务 Span 100% 采集，PostgreSQL `trace` schema 分离骨架与 Payload，骨架永久保留，内容按运行类型保留。
 
-统一用一个 `RunRef` 结构，P1 只定义和存储，不负责生成：
+业务记录与 Trace 统一通过 `RunRef` 关联。P1 只定义和存储 RunRef，不负责生成 Trace，不实现 Trace Collector、Span 采集、Payload 存储和 Trace Viewer；实际 Trace 基础设施在 P3 实现。C2 的 ExperienceMemory、MemoryUsageEvent、MemoryScoreHistory 不加入 P1 核心数据模型范围，数据契约与实际实现安排在 P3～P5（P2 先做架构设计）。
+
+RunRef 字段：
 
 | 字段 | 含义 |
 |---|---|
 | `run_id` | 一次规划运行的 ID |
-| `trace_id` | trace 系统中的 ID（P2 确定格式之前可以为空） |
+| `trace_id` | OpenTelemetry Trace ID，P1 阶段允许为空 |
 | `actor` | 产生者：copilot / lab / research / procurement / rule_engine / user |
 | `model` | 使用的模型名称和版本，非模型产生时为空 |
 | `skill_versions` | 使用的技能及其版本，例如 `{"raman_resolution": "1.2.0"}` |
@@ -269,50 +274,50 @@ T7 中的示例数据，是**假设一个完美的 Specialist 会产出什么**�
 
 用 T7 的示例数据跑规则引擎，结果必须与 `checkpoints.yaml` 一致：
 
-- [ ] CP02：LAS-A 线宽 → `pass`
-- [ ] CP03：LAS-B 功率 0.35 W 对比 ≥ 450 mW → `fail`
-- [ ] CP04：LAS-C 线宽 2 nm → `fail`
-- [ ] CP05：SPEC-B 分辨率 0.6 nm 换算到 R02 全范围 → `fail`
-- [ ] CP06：SPEC-A 波长范围覆盖 200–2000 cm⁻¹ → `pass`
-- [ ] CP07、CP08：SPEC-C 的制冷温度、信噪比为 `Unknown` → `unknown`，**不是 `pass`**
-- [ ] CP10：SPEC-D 单件预算 → `fail`
-- [ ] CP11：LAS-A + SPEC-A + PRB-A 的组合，预算为 `pass`，且 must 级需求汇总结果为 `pass`
-- [ ] 包含 SPEC-C 的组合，must 级需求汇总结果为 `unknown`
+- [x] CP02：LAS-A 线宽 → `pass`
+- [x] CP03：LAS-B 功率 0.35 W 对比 ≥ 450 mW → `fail`
+- [x] CP04：LAS-C 线宽 2 nm → `fail`
+- [x] CP05：SPEC-B 分辨率 0.6 nm 换算到 R02 全范围 → `fail`
+- [x] CP06：SPEC-A 波长范围覆盖 200–2000 cm⁻¹ → `pass`
+- [x] CP07、CP08：SPEC-C 的制冷温度、信噪比为 `Unknown` → `unknown`，**不是 `pass`**
+- [x] CP10：SPEC-D 单件预算 → `fail`
+- [x] CP11：LAS-A + SPEC-A + PRB-A 的组合，预算为 `pass`，且 must 级需求汇总结果为 `pass`
+- [x] 包含 SPEC-C 的组合，must 级需求汇总结果为 `unknown`
 
 ### 拒绝非法数据
 
-- [ ] `Known` 值没有证据时，创建失败
-- [ ] 量纲错误时（例如功率字段的单位是 nm），创建失败
-- [ ] Claim 引用了不存在的 Evidence ID 时，写入失败
-- [ ] Brief 的 `specified_params` 引用了基线中不存在的需求项，或同一参数同时出现在指定和不定两个列表中时，创建失败
+- [x] `Known` 值没有证据时，创建失败
+- [x] 量纲错误时（例如功率字段的单位是 nm），创建失败
+- [x] Claim 引用了不存在的 Evidence ID 时，写入失败
+- [x] Brief 的 `specified_params` 引用了基线中不存在的需求项，或同一参数同时出现在指定和不定两个列表中时，创建失败
 
 ### 出处与问答
 
-- [ ] 示例 Artifact、Evidence、Plan 都带 `RunRef`，能按 `run_id` 查出同一次运行产生的全部业务记录
-- [ ] 写入一个 `UserQuestion` 并回答后，生成 `user_decision` 类型的 Evidence，后续 Claim 可以引用它
-- [ ] 对示例 Artifact 中 SPEC-C 的一条 Claim 写入 `UserCorrection` 后：生成 `user_decision` Evidence；原 Artifact 内容不变、状态变为 `stale`，包含它的 Plan 也变为 `stale`；纠正前后的值都能读出
+- [x] 示例 Artifact、Evidence、Plan 都带 `RunRef`，能按 `run_id` 查出同一次运行产生的全部业务记录
+- [x] 写入一个 `UserQuestion` 并回答后，生成 `user_decision` 类型的 Evidence，后续 Claim 可以引用它
+- [x] 对示例 Artifact 中 SPEC-C 的一条 Claim 写入 `UserCorrection` 后：生成 `user_decision` Evidence；原 Artifact 内容不变、状态变为 `stale`，包含它的 Plan 也变为 `stale`；纠正前后的值都能读出
 
 ### 版本与影响分析
 
-- [ ] 把 R04 从 ≥ 450 mW 改为 ≥ 300 mW 生成需求 v2 后，`ImpactReport` 只列出引用 R04 的 Brief、Artifact 及包含它们的 Plan，引用其他需求项的对象不受影响
-- [ ] 执行标记后，这些对象的状态变为 `stale`，状态历史记录了原因（“需求 v1 → v2，R04 变更”）
-- [ ] v1 的需求和 Plan 仍然可以完整读取，内容不变
+- [x] 把 R04 从 ≥ 450 mW 改为 ≥ 300 mW 生成需求 v2 后，`ImpactReport` 只列出引用 R04 的 Brief、Artifact 及包含它们的 Plan，引用其他需求项的对象不受影响
+- [x] 执行标记后，这些对象的状态变为 `stale`，状态历史记录了原因（“需求 v1 → v2，R04 变更”）
+- [x] v1 的需求和 Plan 仍然可以完整读取，内容不变
 
 ### 证据追溯
 
-- [ ] 对示例 Plan 中的每个 BOM 条目和每条 Claim，都能沿 `Plan → Artifact → Claim → Evidence` 找到原文片段，并且该片段确实出现在基准任务包对应的文件里
-- [ ] 预算计算引用了汇率 Evidence
+- [x] 对示例 Plan 中的每个 BOM 条目和每条 Claim，都能沿 `Plan → Artifact → Claim → Evidence` 找到原文片段，并且该片段确实出现在基准任务包对应的文件里
+- [x] 预算计算引用了汇率 Evidence
 
 ### 备份恢复（原则 G1）
 
-- [ ] 导出全部数据 → 清空数据库 → 导入，前后所有对象逐个相等
-- [ ] 这个过程不需要任何 Agent 运行状态参与
+- [x] 导出全部数据 → 清空数据库 → 导入，前后所有对象逐个相等
+- [x] 这个过程不需要任何 Agent 运行状态参与
 
 ### 工程
 
-- [ ] `uv run pytest`、`ruff check`、`ruff format --check` 本地和 CI 都通过
-- [ ] 新增依赖（pydantic、pint、sqlalchemy、psycopg、alembic、python-ulid）的许可证登记在 P1 报告中
-- [ ] README 写明开发数据库的连接方法（Neon，`.env`），以及可选的本地 Docker 方法
+- [x] `uv run pytest`、`ruff check`、`ruff format --check` 本地和 CI 都通过
+- [x] 新增依赖（pydantic、pint、sqlalchemy、psycopg、alembic、python-ulid）的许可证登记在 P1 报告中
+- [x] README 写明开发数据库的连接方法（Neon，`.env`），以及可选的本地 Docker 方法
 
 ---
 
@@ -327,11 +332,46 @@ T7 中的示例数据，是**假设一个完美的 Specialist 会产出什么**�
 
 ---
 
-## 9. 需要你确认的事项
+## 9. 启动决策确认记录
 
-| 编号 | 问题 | 默认选择 |
-|---|---|---|
-| Q1 | 是否同意用 pint 做单位换算 | 同意 |
-| Q2 | P1 是否做 HTTP API | 不做，留到 P3 |
-| Q3 | 存储采用“文档 + 索引列”，用 PostgreSQL，从 P1 起引入 Alembic | **已确定**使用 PostgreSQL；“文档 + 索引列”和 Alembic 待确认 |
-| Q4 | 示例的结构化器件数据放在 `tests/data/`，而不是基准任务包中 | 同意 |
+2026-11-08，项目负责人在 P1 启动会话中明确确认以下事项，已同步 ADR-0003。
+
+| 编号 | 问题 | 默认建议 | 确认状态 |
+|---|---|---|---|
+| Q1 | 是否用 pint 做单位换算 | 使用 pint | 已确认，2026-11-08，项目负责人 |
+| Q2 | P1 是否做 HTTP API | 不做，留到 P3 | 已确认，2026-11-08，项目负责人 |
+| Q3 | 存储采用“文档 + 索引列”，用 PostgreSQL，从 P1 起引入 Alembic | 文档 + 索引列，使用 Alembic | 全部已确认，2026-11-08，项目负责人 |
+| Q4 | 示例结构化器件数据是否放在 `tests/data/` | 放在 `tests/data/`，不修改基准任务包 | 已确认，2026-11-08，项目负责人 |
+
+## 10. 实施进度（2026-11-08）
+
+- T1：已实现并通过本地回归：69 passed；ruff 检查及格式化通过。
+- T2：已实现并通过本地回归：76 passed；含缺证据、非法单位、量纲转换拒绝、序列化和 JSON Schema。
+- T3：已实现；模型正反例、序列化与 Schema 导出一致性测试通过。跨记录引用待 T5 服务校验。
+- T4：核心规则已实现并通过本地完整回归：104 passed；完整数据库场景验收待 T5–T7。
+- T5：已实现；独立 Neon test 分支初始化和迁移成功；完整回归 111 passed，含角色权限、不可变约束及版本测试。CI 数据库服务已配置，远程结果待运行。
+- T6：已实现；R04/R11 精确传播、直接 Artifact 依赖、跨版本复用、报告复核和重放测试通过；完整回归 113 passed。
+- T7：已实现；基准包导入、8 器件样例、13 个检查点、Plan 出处链、用户问答和纠正测试通过；完整回归 115 passed。
+- T8：逻辑导出/导入、空目标恢复与原子失败已实现；本地及最终 PostgreSQL CI 均为 118 passed，五项自动验收通过；待负责人评审。
+
+### 实现字段补充
+
+- Evidence 增加必填 project_id，以便 Project Service 校验项目范围；fx_rate 包含结构化币种、汇率、日期。
+- Claim 的证据 ID 统一存于 value.evidence_ids，Claim.evidence_ids 为只读访问属性，避免双份引用不一致。
+- InstrumentPlan 的 modules/rationale 使用带 ClaimRef 的 PlanConclusion；BOM 使用带 ClaimRef 的 BomEntry；每条引用包含 artifact_id、claim_id。
+- Brief 和 Plan 增加 status_history；SpecifiedParam.target 使用完整 RequirementItem，服务写入时与基线核对。
+- 所有模型禁止额外字段，冻结实例，列表型业务内容用 tuple；JSON 仍序列化为数组。
+- Schema 导出命令：`uv run python -m mis.schemas.export`；CI 用 `--check` 检查。
+
+- 最终代码 CI：[42417562572](https://github.com/Muilrz/Meta-Instrument-Studio/actions/runs/42417562572)。
+- ProjectBackup v1 为九类业务对象的逻辑备份；ClaimTrace 表达业务出处链，均导出 JSON Schema。
+
+## 11. 静态审查边界加固（2026-11-08）
+
+负责人已确认 Impact Analysis 限定相邻版本；契约同步 [ADR-0003](../adr/0003-p1-units-and-storage.md)。
+
+- 并发同 ID 同内容写入：项目锁后复查，并使用 PostgreSQL ON CONFLICT；不同内容返回 ValueError，事务仍可使用。测试以两个独立连接、真实提交、同步屏障复现窗口，数据隔离在测试专用临时 schema。
+- 新 Artifact / Plan 拒绝 stale 上游；历史读取与空目标备份恢复保持可用，恢复入口不作为新业务写入的通用开关。
+- analyze() 和 ImpactReport 均拒绝跳级版本，继续检查更早版本复用对象。
+- Alembic 0002 为 questions 增加内容、状态和删除保护；0001 保持不变。迁移角色使用 SET LOCAL，避免提交后影响连接池的下一次使用。
+- 新增 8 项并发、stale、相邻版本和问答 SQL 保护测试；恢复兼容性通过，本地及 CI 完整回归 126 passed，详见阶段报告。
