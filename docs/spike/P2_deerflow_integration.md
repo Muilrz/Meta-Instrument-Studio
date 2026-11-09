@@ -334,3 +334,19 @@ API 请求/脱敏响应：无（未发送）；运行日志：无（未启动）
 | Docker/Sandbox | BLOCKED | 本轮未开展容器验证 |
 
 本轮模型调用 0 次，已知累计费用仍为 0.0000259 USD。负责人已批准本次纯文档提交豁免完整 pytest，因为测试 fixture 会触发 MIS 数据库初始化与 Alembic 迁移。文档提交以 ruff、diff、代码围栏和本地链接检查为准。
+
+## 13. 人工确认分支及实际登录（2026-11-09）
+
+| 检查项 | 状态 | 依据与结果 |
+|---|---|---|
+| 目标绑定 | PASS | **负责人在 Neon 控制台人工确认**：`mis-p2-deerflow-spike` 属于正确的 MIS 项目，父分支为 `test`，Endpoint 与本地 `DEER_FLOW_TEST_DATABASE_URL` 对应，连接角色选择 `mis_runtime`。未执行控制面自动化核验，未取得实际 Project ID 或 Branch ID |
+| 本地目标护栏 | PASS | Runtime URL 用户名为 `mis_runtime`，hostname 属于 Neon，规范化目标区别于开发和 P1 测试连接。固定上游 HEAD 为 `58fc5bd5b8e6ea46538e9481ba06ca2a46e14e2a` |
+| 网络与实际登录 | FAIL | TCP 可达。通过 psycopg 使用 `.env` 中的 Runtime URL 尝试登录，两次均返回 `OperationalError`，诊断重试识别到 `no password supplied`，无可用 SQLSTATE。URL 解析后无非空密码，检查的独立 Runtime 密码字段也未配置。未输出任何凭据 |
+| 实际身份、角色权限、业务拒写 | NOT RUN | 会话未建立。`session_user`、`current_user`、ACL 及回滚探针均无新证据 |
+| 迁移前快照与范围、迁移 | BLOCKED | 第 10 节的旧目标快照不能用于新分支。待实际登录和拒写通过后再取新快照，核验 runtime 的对象、权限及实际 DDL。未执行 SQL 迁移，数据库对象变化为无 |
+| Gateway、配置 Hash、HTTP/SSE、落表 | NOT RUN | 前置条件未满足，未生成生效配置、启动日志或 HTTP/SSE 证据 |
+| Docker/Sandbox | BLOCKED | 本轮未开展专项验收 |
+
+复现使用 MIS 的 `.venv/Scripts/python.exe`，以 `dotenv_values` 和 `make_url` 从本地文件解析目标，使用 `psycopg.connect(..., connect_timeout=12)` 尝试登录。第二次诊断使用 10 秒连接超时，并用 `socket.create_connection` 单独确认 TCP。异常仅记录类型、预设错误分类和 SQLSTATE。需将带有效 `mis_runtime` 密码的连接串保存到现有本地秘密配置后重试。
+
+本轮模型调用 0 次，已知累计支出 **0.0000259 USD**。本次只有报告变更，沿用本轮 P2-0B 纯文档检查口径。完整 pytest 会运行 MIS 初始化和 Alembic 迁移，未执行。
