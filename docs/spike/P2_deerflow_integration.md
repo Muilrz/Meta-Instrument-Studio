@@ -350,3 +350,5 @@ API 请求/脱敏响应：无（未发送）；运行日志：无（未启动）
 复现使用 MIS 的 `.venv/Scripts/python.exe`，以 `dotenv_values` 和 `make_url` 从本地文件解析目标，使用 `psycopg.connect(..., connect_timeout=12)` 尝试登录。第二次诊断使用 10 秒连接超时，并用 `socket.create_connection` 单独确认 TCP。异常仅记录类型、预设错误分类和 SQLSTATE。需将带有效 `mis_runtime` 密码的连接串保存到现有本地秘密配置后重试。
 
 本轮模型调用 0 次，已知累计支出 **0.0000259 USD**。本次只有报告变更，沿用本轮 P2-0B 纯文档检查口径。完整 pytest 会运行 MIS 初始化和 Alembic 迁移，未执行。
+
+续跑复核仍沿用上表的负责人 Neon 控制台人工确认。重新读取 `.env` 后，Runtime URL 的 endpoint 标签和 `mis_runtime` 用户名匹配，但密码字段仍为空。实际连接再次返回 `OperationalError: no password supplied`，无可用 SQLSTATE。认证结果为 FAIL，阶段 A 后续权限与拒写探针为 NOT RUN，迁移与 Gateway Smoke 为 BLOCKED。本轮无数据库对象变化、有效运行配置 Hash 或新增模型费用。
