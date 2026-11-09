@@ -270,3 +270,67 @@ API 请求/脱敏响应：无（未发送）；运行日志：无（未启动）
 负责人指定模型服务配置位于 MIS 根目录 `.env`，服务商为 openai，测试模型选择 **GPT-6 Luna**。再次从该文件读取的磁盘结果仍为 `LLM_PROVIDER`、`LLM_API_KEY` 空值，未发现模型 ID 或 Base URL 字段；可能尚未保存，但原因未核实。没有回显或改写秘密。模型展示名称不能直接当作 API ID；精确 ID、接口能力、价格表/服务端硬预算以及跨会话累计支出仍待核实，真实请求继续 BLOCKED。本次追加核查未发生模型调用，已知本 chat 累计支出仍为 0 USD。
 
 本次提交范围只包含 `docs/spike/P2_deerflow_integration.md` 和 `docs/README.md`。提交前核对分支正确，fetch 后本地/远程差异为 `0 0`；执行 ruff、diff、文档本地链接/代码围栏检查。提交推送结果由 Git 历史和任务最终汇报记录，不把提交成功当作 Smoke 通过。
+
+## 10. P2-0B 模型直连与迁移前置检查（2026-11-09）
+
+| 检查 | 状态 | 证据 |
+|---|---|---|
+| 模型与单价 | PASS | 磁盘 `.env` 的 `LLM_PROVIDER=openai` 和 `LLM_API_KEY` 已配置。OpenAI Docs 核对 `gpt-6-luna`、Responses API、`reasoning.effort=none`，标准短上下文输入 0.10 USD/百万 Token、输出 0.50 USD/百万 Token。[官方模型页](https://developers.openai.com/api/docs/models/gpt-6-luna) |
+| 普通文本直连 | PASS | 官方 `POST /v1/responses` 返回 HTTP 200、`completed`、`OK`，服务端报告 `gpt-6-luna`、`reasoning.effort=none`、`service_tier=default`。请求 `req_d07cf148b7584ef8864784b4ee1d5be9` |
+| 最小函数调用直连 | PASS | 文本成功后发起第二次请求，HTTP 200、`completed`，仅返回一次 `smoke_probe`，参数为 `{"value":"OK"}`。未执行函数、未回传工具结果。请求 `req_71453c44cce644afbe2ae3519f9625b2` |
+| DeerFlow 自动路由 | SOURCE CONFIRMED | 固定 commit `58fc5bd5b8e6ea46538e9481ba06ca2a46e14e2a` 的 `models/factory.py:490` 起，对官方 endpoint 上的 `BaseChatOpenAI` GPT-6 模型自动设 `use_responses_api=true` 和 `output_version=responses/v1`。显式路由、Azure 或自定义 endpoint 会影响选择。未启动 Gateway 验证其实际生效的配置 |
+| 测试库目录快照 | PASS | PostgreSQL 17.11 的只读事务成功。五个 schema 的 owner、ACL、关系、索引及默认权限已保存。`runtime` 无关系，`mis_runtime` 对现有 `mis` 表的写权限计数为 0 |
+| 实际 `mis_runtime` 登录与拒写 | BLOCKED | `.env` 和进程均未发现独立 Runtime DSN。快照使用测试 owner 只读连接，实际 Runtime 登录及其拒写探针未执行 |
+| Bootstrap、Alembic、Checkpoint DDL | SOURCE CONFIRMED | 见下方静态审查。实际 SQL 及受限登录下的执行仍待确认 |
+| 测试迁移、迁移后差异比较 | BLOCKED | 负责人已授予有条件许可，实际受限身份与 DDL 边界前置条件尚未通过。没有执行 DDL、变更角色或 ACL |
+| Gateway、health/ready、Thread/Run/SSE、落表 | BLOCKED | 尚无符合条件的数据库登录与迁移环境，未启动 Gateway，因此没有相关响应、日志、ID 或写入证据 |
+| Docker/Sandbox | BLOCKED | Docker 未获可用环境，宿主机命令执行未用于替代 |
+
+两次模型调用通过独立 Python `urllib.request` 客户端读取本地 `.env`，向 `https://api.openai.com/v1/responses` 发送 JSON，Bearer 头由内存组装。每次请求体小于 4096 字节，`max_output_tokens=64`、`reasoning.effort=none`、`service_tier=default`、`store=false`，25 秒 socket 超时，禁用重定向和代理，零重试、零后台模型调用。文本输入为 `Reply with exactly OK.`。函数输入为 `Call smoke_probe with value OK.`，只声明一个严格 JSON Schema 函数，固定选择该函数且禁用并行工具调用。文本失败或缺少用量时会停止第二次请求。
+
+| 请求 | 输入 Token | 输出 Token | 推理 / 缓存命中 / 缓存写入 Token | 按用量计算 USD |
+|---|---:|---:|---:|---:|
+| 文本 | 11 | 5 | 0 / 0 / 0 | 0.0000036 |
+| 函数 | 128 | 19 | 0 / 0 / 0 | 0.0000223 |
+| 合计 | 139 | 24 | 0 / 0 / 0 | 0.0000259 |
+
+每次发送前按本报告已知支出检查 10 USD 额度，并保守预留 0.001 USD。第一次预检可用 10 USD，第二次为 9.9999964 USD，现已知余额为 **9.9999741 USD**。费用以响应 Token 计数和官方单价计算。账户账单及其他会话消费未核对，余额仅覆盖本报告可见的 P2 调用。后续 Gateway 请求需额外核查后台调用数、Token 和总费用上限，直连限额不适用于 Gateway。
+
+数据库快照在仓库外 `C:\Users\Muil\Desktop\MIS_workspace\mis-p2-0b-z9m27spf\pre-migration-catalog.json`，SHA-256 为 `e640cbf81a93becd2a68204135e24824547415e53d060dc4cdeb13269a1a3cc8`。通过 `engine_for(test=True)` 执行 `SET TRANSACTION READ ONLY` 和 `SET LOCAL statement_timeout='10s'`，查询 `pg_namespace`、`pg_class`、`pg_indexes`、`pg_default_acl`，最后 rollback。快照只含目录元数据。实际迁移前应重取快照，迁移后对 `mis`、`knowledge`、`trace`、`public` 的目录内容逐项比较。
+
+- Bootstrap 的 asyncpg engine 与 Alembic 迁移 engine 均有 `postgres_schema` 对应的 `search_path` 路径。对 50 个 migration Python 文件扫描显式业务 schema 引用、建库、建扩展、建 schema、角色及授权 SQL，未发现匹配项。扫描是静态证据，尚未验证运行时生成 SQL、迁移分支或扩展初始化。
+- 从 `uv.lock` 下载并验证 SHA-256 的 `langgraph-checkpoint-postgres` 3.1.3 wheel，读取 `langgraph/checkpoint/postgres/base.py` 的迁移列表。其 DDL 使用未限定的 `checkpoint_migrations`、`checkpoints`、`checkpoint_blobs`、`checkpoint_writes`，包括 ALTER TABLE 与三个 CONCURRENTLY 索引。实际位置依赖 psycopg 会话 `search_path=runtime`，并需核查对象所有权和并发索引所需的事务模式。
+- ORM 和 Checkpoint 启动路径均可能执行 `CREATE SCHEMA IF NOT EXISTS "runtime"`。测试目录显示 `mis_runtime` 的 runtime schema CREATE 为 true，数据库级 CREATE 为 false。需先用实际身份验证启动所需权限及既有 schema 分支。数据库不存在时 engine 还有建库回退，因此必须核对目标已经存在。未尝试 DDL，暂无失败 SQLSTATE。如果 schema 初始化语句受限，应单独审查可用的预建 schema 启动路径，保持现有授权边界。
+
+下一步需要在本地秘密配置中提供 `DEER_FLOW_TEST_DATABASE_URL`，指向同一独立测试目标并直接以 `mis_runtime` 登录。随后核对 `session_user`、`current_user`、schema 权限和 `mis` 拒写边界。Gateway 的有效模型路由、数据库迁移和 API/SSE 测试仍待执行。持久暂停、重启恢复、Multi-Agent 与完整 P2 验收维持原状态。
+
+## 11. P2-0B Runtime 凭据目标核验（2026-11-09）
+
+| 阶段 | 状态 | 证据 |
+|---|---|---|
+| A：读取 Runtime 凭据 | PASS | 本地 `.env` 已配置 `DEER_FLOW_TEST_DATABASE_URL`。解析得到直连 Neon hostname，URL 用户为 `mis_runtime`。输出仅含比较布尔值 |
+| A：目标核验 | BLOCKED | 与 `MIS_TEST_DATABASE_URL` 的库名和端口相同，hostname 不同，去除 `-pooler` 别名后仍不同。与 `MIS_DATABASE_URL` 的 hostname 亦不同。仅凭 URL 无法证明此 endpoint 属于此前核验并获有条件迁移许可的独立测试目标 |
+| A：实际登录、角色继承、业务拒写 | NOT RUN | 目标门槛在建立连接前停止，未向该 endpoint 登录，因此没有实际身份、权限探针或 SQLSTATE |
+| B：DeerFlow 版本 | PASS | `git -C ../deer-flow-p2-0a-filtered rev-parse HEAD` 返回 `58fc5bd5b8e6ea46538e9481ba06ca2a46e14e2a` |
+| B：运行配置、迁移与回退 | BLOCKED | 现有快照属于此前的测试目标。第 10 节 DDL 源码审查仍适用，需在获准目标重取快照并核对实际配置、所有权、迁移范围和回退对象。没有执行 DDL |
+| C：Gateway / Sandbox | BLOCKED | A、B 未通过，未启动 Gateway。无 HTTP、SSE、Thread/Run 或落表结果。Docker/Sandbox 维持 BLOCKED |
+
+实际检查使用 MIS `.venv/Scripts/python.exe`，通过 `dotenv_values` 和 SQLAlchemy `make_url` 在内存比较三组 hostname、port 和 database。测试与开发连接地址均未输出。恢复条件是将 Runtime URL 改为此前测试目标的 `mis_runtime` 登录，或提供新 endpoint 的 Neon 测试分支证据并明确授权范围。
+
+目标核实后，先开启只读事务，检查 `session_user`、`current_user`、角色属性、递归角色成员关系、schema ACL、表和列权限。业务拒写探针计划在独立事务内对已确认的测试业务表执行 `EXPLAIN`（省略 `ANALYZE`），例如 `EXPLAIN DELETE FROM mis.projects WHERE false`，验证规划权限检查并回滚。预期 SQLSTATE `42501`，仅在实际得到该错误后登记。若出现可规划的写入、跨 schema 写权限或特权成员关系，停止并报告。目录权限也须覆盖 INSERT、UPDATE 和 TRUNCATE。
+
+已知累计模型费用仍为 **0.0000259 USD**。本轮模型调用次数为 0。提交前完整 pytest 会调用 MIS 数据库初始化与 Alembic 迁移，当前许可仅覆盖获准测试目标的 DeerFlow `runtime` 迁移，上一轮文档提交豁免仅限当次。当前报告保留在工作区，提交等待本次检查范围确认。
+
+## 12. 独立 Neon 分支目标调整（2026-11-09）
+
+负责人指定 `mis-p2-deerflow-spike` 为 P2-0B 唯一候选目标，原 `test` 分支继续用于 P1/MIS 回归。两个 endpoint 不一致符合新方案，第 11 节的同一 endpoint 要求由 Neon 控制台的分支与 endpoint 绑定核验取代。`MIS_TEST_DATABASE_URL` 保持原配置。迁移许可仅覆盖指定 P2 分支的 `runtime` schema，并受既有登录、权限、DDL 审查和快照门槛约束。
+
+| 检查项 | 状态 | 证据 |
+|---|---|---|
+| Runtime URL 的 Endpoint ID 提取 | PASS | 从本地 URL hostname 提取 endpoint 标签，去除 `-pooler` 后缀。凭据和完整 URL 未输出 |
+| Neon 控制台 Project ID、Branch ID、Endpoint ID、父分支 | BLOCKED | 浏览器打开控制台后停在登录页。本地未发现 Neon 管理 API Key 或 CLI。尚未从控制面核对 Project/Branch/Endpoint 绑定与父分支 |
+| 实际 `mis_runtime` 登录与拒写 | NOT RUN | 等待上述控制面核验 |
+| 新目标迁移前快照、DDL、Gateway Smoke | BLOCKED | 第 10 节快照属于旧目标。须在已核验的新目标重新取得基线，确认实际身份、DDL 和权限范围后才可迁移 |
+| Docker/Sandbox | BLOCKED | 本轮未开展容器验证 |
+
+本轮模型调用 0 次，已知累计费用仍为 0.0000259 USD。负责人已批准本次纯文档提交豁免完整 pytest，因为测试 fixture 会触发 MIS 数据库初始化与 Alembic 迁移。文档提交以 ruff、diff、代码围栏和本地链接检查为准。
