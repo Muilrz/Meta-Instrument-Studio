@@ -352,3 +352,9 @@ API 请求/脱敏响应：无（未发送）；运行日志：无（未启动）
 本轮模型调用 0 次，已知累计支出 **0.0000259 USD**。本次只有报告变更，沿用本轮 P2-0B 纯文档检查口径。完整 pytest 会运行 MIS 初始化和 Alembic 迁移，未执行。
 
 续跑复核仍沿用上表的负责人 Neon 控制台人工确认。重新读取 `.env` 后，Runtime URL 的 endpoint 标签和 `mis_runtime` 用户名匹配，但密码字段仍为空。实际连接再次返回 `OperationalError: no password supplied`，无可用 SQLSTATE。认证结果为 FAIL，阶段 A 后续权限与拒写探针为 NOT RUN，迁移与 Gateway Smoke 为 BLOCKED。本轮无数据库对象变化、有效运行配置 Hash 或新增模型费用。
+
+## 14. 更新凭据后的身份护栏（2026-11-14）
+
+本地更新的 `DEER_FLOW_TEST_DATABASE_URL` 使用 `postgresql+psycopg` 格式，密码字段已存在，Endpoint 与负责人确认的 P2 分支匹配。但解析的用户名为 `neondb_owner`，阶段 A 的受限身份护栏为 FAIL。检查在连接前停止，实际登录、拒写探针、迁移及 Gateway Smoke 为 NOT RUN，P2-0B 继续 BLOCKED。需从 Neon Connect 选择 `mis_runtime` 并使用该角色的有效凭据更新本地配置。
+
+检查仅输出匹配布尔值及非秘密角色名，未输出连接串或密码。SQLAlchemy URL 可保留 `postgresql+psycopg`，直连 psycopg 时在内存规范化 scheme。模型调用次数为 0，已知累计费用仍为 0.0000259 USD。报告检查采用既有纯文档豁免，完整 pytest 的 MIS 初始化/迁移 fixture 未运行。
