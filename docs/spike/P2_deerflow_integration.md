@@ -358,3 +358,34 @@ API 请求/脱敏响应：无（未发送）；运行日志：无（未启动）
 本地更新的 `DEER_FLOW_TEST_DATABASE_URL` 使用 `postgresql+psycopg` 格式，密码字段已存在，Endpoint 与负责人确认的 P2 分支匹配。但解析的用户名为 `neondb_owner`，阶段 A 的受限身份护栏为 FAIL。检查在连接前停止，实际登录、拒写探针、迁移及 Gateway Smoke 为 NOT RUN，P2-0B 继续 BLOCKED。需从 Neon Connect 选择 `mis_runtime` 并使用该角色的有效凭据更新本地配置。
 
 检查仅输出匹配布尔值及非秘密角色名，未输出连接串或密码。SQLAlchemy URL 可保留 `postgresql+psycopg`，直连 psycopg 时在内存规范化 scheme。模型调用次数为 0，已知累计费用仍为 0.0000259 USD。报告检查采用既有纯文档豁免，完整 pytest 的 MIS 初始化/迁移 fixture 未运行。
+
+## 15. 受限身份通过与 schema bootstrap 权限停止（2026-11-14）
+
+| 项目 | 状态 | 实际证据 |
+|---|---|---|
+| 登录与角色 | PASS | 新 P2 目标登录成功，`session_user=current_user=mis_runtime`。LOGIN=true，superuser/CREATEDB/CREATEROLE/BYPASSRLS/REPLICATION=false，INHERIT=true。无其他角色成员关系，数据库 CREATE=false |
+| schema 边界 | PASS | runtime owner=mis_admin，USAGE/CREATE=true。mis USAGE=true、CREATE=false，knowledge/cache 均无 USAGE/CREATE，trace/public USAGE=true、CREATE=false |
+| 业务表权限 | PASS | mis 10 张普通表，表级 INSERT/UPDATE/DELETE/TRUNCATE/TRIGGER 和列级 INSERT/UPDATE 的可写表计数为 0 |
+| 回滚拒写探针 | PASS | 对 mis.projects 分别执行 EXPLAIN DELETE、UPDATE 和 INSERT SELECT，均返回 SQLSTATE `42501`，每次 rollback。均未使用 ANALYZE，因此没有执行业务 DML |
+| 新目标迁移前快照 | PASS | runtime 当前无关系。已保存 schema owner/ACL、表与其他关系、索引、列定义及默认权限 |
+| 上游 schema 初始化语句 | FAIL | 实际受限身份执行 `CREATE SCHEMA IF NOT EXISTS "runtime"` 返回 `InsufficientPrivilege`，SQLSTATE `42501`，涉及 runtime。事务已回滚 |
+| 后续 app / Checkpoint 迁移 | BLOCKED | 已到达约定的 DDL 权限停止条件 |
+| Gateway health/readiness、Thread/Run/SSE | NOT RUN | 等待限定权限下的启动方案 |
+| Docker/Sandbox | BLOCKED | 专项环境仍缺失 |
+
+快照路径 `C:\Users\Muil\Desktop\MIS_workspace\mis-p2-runtime-8ibko0g6\pre-migration.json`，SHA-256 `3d7eb47f9e54c920d752e1253e32f7b6a0dc97a49786736af2f3a6a98280ef68`。它来自实际 Runtime 身份的只读事务，查询 pg_namespace、pg_class、pg_indexes、pg_attribute/pg_attrdef 和 pg_default_acl 后 rollback。数据库连接格式在内存转换为 libpq 可接受的 `postgresql://`。
+
+拒写命令如下，每条置于单独事务并回滚，statement_timeout 为 5 秒。
+
+```sql
+EXPLAIN DELETE FROM mis.projects WHERE false;
+EXPLAIN UPDATE mis.projects SET id=id WHERE false;
+EXPLAIN INSERT INTO mis.projects (id)
+SELECT id FROM mis.projects WHERE false;
+```
+
+固定 commit 仍为 `58fc5bd5b8e6ea46538e9481ba06ca2a46e14e2a`。`persistence/engine.py:259–273` 在 bootstrap_schema 之前执行 schema 创建，Checkpoint 的 `persistence/postgres_schema.py:create_schema_sql` 也生成同一语句。实际重现说明现有 schema 并未避免这条语句的权限错误。只授予 runtime schema CREATE 不足以通过该启动步骤。
+
+最小修正方向需负责人审核。优先核实官方扩展是否允许复用预建 schema 并跳过 schema 创建，让初始化/迁移与运行身份分别承担权限。若固定版本缺少该路径，再评估薄启动适配方案及其审计边界。直接授予数据库 CREATE 会扩大到其他 schema 的创建能力，超出当前授权，本次未实施。schema owner、角色与 ACL 均未调整。所有已尝试事务均已回滚，未形成迁移对象或业务数据变更。
+
+本轮实际模型调用 0 次，已知 P2 累计费用仍为 **0.0000259 USD**。未生成 Gateway 生效配置或配置 Hash。完整 pytest 按纯文档范围豁免，因 fixture 会初始化 MIS schema 并迁移。ruff、diff、文档检查作为本次报告提交门槛。
