@@ -164,6 +164,23 @@ class DeerFlowClient:
             raise DeerFlowError("thread_mapping_conflict", raw=data)
         return ThreadBinding(project_id, task_id, thread_id, upstream_id)
 
+    def get_thread(self, binding: ThreadBinding) -> dict[str, Any]:
+        """Read a thread and reject a response belonging to another MIS mapping."""
+        data = self._json("GET", f"api/threads/{_segment(binding.deerflow_thread_id)}")
+        metadata = data.get("metadata")
+        expected = {
+            "mis_project_id": binding.project_id,
+            "mis_task_id": binding.task_id,
+            "mis_thread_id": binding.thread_id,
+        }
+        if (
+            data.get("thread_id") != binding.deerflow_thread_id
+            or not isinstance(metadata, dict)
+            or any(metadata.get(key) != value for key, value in expected.items())
+        ):
+            raise DeerFlowError("thread_mapping_conflict", raw=data)
+        return data
+
     def start_run(
         self,
         thread: ThreadBinding,

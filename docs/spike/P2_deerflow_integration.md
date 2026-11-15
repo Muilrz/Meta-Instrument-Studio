@@ -544,3 +544,151 @@ ALTER ROLE mis_runtime IN DATABASE neondb SET search_path = runtime;
 本轮真实模型调用 **0**，新增 Token **0**、费用 **0 USD**；已知累计仍为 **0.0000259 USD / 10 USD**，已知余额 **9.9999741 USD**。没有重试模型或后台模型调用；其他会话消费和服务账单仍未知。最小 Adapter 维持第 16 节已推送版本，未新增代码。P1 最终人工评审记录仍待确认。
 
 本次仅修改本报告及文档索引，沿用负责人批准的纯文档完整 pytest 豁免，避免再次触发 MIS 初始化/迁移 fixture；既有 Adapter 完整回归为第 16 节的 147 passed。本次 `uv run ruff check .`、`git diff --check` 及两份文档的代码围栏/本地链接检查均 PASS。推送前 fetch 确认远端无新增提交。
+
+## 19. 官方源码恢复与真实 Gateway Smoke（2026-11-15）
+
+负责人报告此前官方文件被火绒隔离，并已自行暂时关闭火绒。本轮没有操作安全软件、添加排除项或执行全仓库 reset。仅从原 checkout 的固定 commit 恢复缺失文件。告警原因依据负责人说明，未获取火绒检测名称、隔离记录或独立恶意样本分析，因此不将“误报”写为已自动化证实的安全结论。后续恢复防护及处理误隔离仍需负责人复核。
+
+### 19.1 源码完整性与启动配置
+
+| 检查 | 状态 | 证据 |
+|---|---|---|
+| 固定 HEAD | PASS | `58fc5bd5b8e6ea46538e9481ba06ca2a46e14e2a`，没有升级 |
+| 单文件恢复 | PASS | `backend/packages/harness/deerflow/skills/skillscan/orchestrator.py` 恢复后和 Smoke 完成后 Git Blob SHA 均为 `e20ac016fe575f7869b224a9939ff15ba77efba5` |
+| 其他源码变更 | PASS | 恢复后及测试结束 `git status --short` 均为空；未发现其他工作树差异。这不是全面安全审计 |
+| 完整 Agent 装配 | PASS | 实际 descriptor.tools=[]、enabled_skills=[]；RBAC 所有配置角色均拒绝 tools/sandbox/skills。保留 AIO Provider、allow_host_bash=false、prewarm=false，没有启用宿主机执行或未知 Skill |
+| 官方模型路由 | PASS | 模型 gpt-6-luna；root_client.base_url 为官方默认 https://api.openai.com/v1/，没有自定义 base_url；use_responses_api=true、output_version=responses/v1、配置 reasoning_effort=none |
+
+恢复命令在 `C:\Users\Muil\Desktop\MIS_workspace\deer-flow-p2-0a-filtered` 执行：
+
+```powershell
+git restore --source=58fc5bd5b8e6ea46538e9481ba06ca2a46e14e2a -- backend/packages/harness/deerflow/skills/skillscan/orchestrator.py
+git hash-object --path=backend/packages/harness/deerflow/skills/skillscan/orchestrator.py backend/packages/harness/deerflow/skills/skillscan/orchestrator.py
+git status --short
+```
+
+首次完整装配已越过旧的模块导入错误，但发现数据库 URL 的 `ssl=require` 被官方同步 agent/skill 存储路径复用，psycopg 不接受此参数。实际异常链为：
+
+```text
+assemble_lead_agent -> get_enabled_skills_for_config -> require_unenrolled
+  -> sqlalchemy.create_engine(database.app_sync_sqlalchemy_url)
+  -> psycopg.ProgrammingError: invalid connection option "ssl"
+  -> HostCapabilityError: UNAVAILABLE: Cannot verify durable skill enrollment
+```
+
+仅调整仓库外的预检/启动脚本：ORM URL 在内存中省略驱动专用查询参数，进程设置 `PGSSLMODE=require`，供 asyncpg 与 psycopg 同时使用；Checkpoint DSN 仍保留其 libpq 参数。没有修改 `.env`、连接目标、角色或上游工厂。重新装配通过。首次外置启动器还因脚本目录不含 backend/app 而报 `ModuleNotFoundError: app`；启动器显式将当前 backend 加入 sys.path 后通过，不涉及重装。
+
+启动器采用 WindowsSelectorEventLoopPolicy，在 `asyncio.run()` 中运行 `uvicorn.Server.serve()`，仅监听 `127.0.0.1:18001`、单 worker，不启动 Next.js。没有主动重新运行 migrate.py 或 setup_checkpoint.py。官方 lifespan 必然调用 bootstrap/setup，启动日志显示已有 revision `0048_extension_execution_leases` 对齐同一个 head，前后结构快照完全一致，没有实际版本升级或新增对象。stream_bridge 为单进程 memory 传输，与 PostgreSQL Checkpoint/Store 的持久化选择不同，不是数据库静默回退。
+
+### 19.2 HTTP、认证与 Adapter
+
+```json
+GET /health
+200 {"status":"healthy","service":"deer-flow-gateway"}
+GET /health/ready
+200 {"status":"ready","service":"deer-flow-gateway","database":"ok","checkpointer":"ok","stream_bridge":"not_configured","provisioner":"not_configured"}
+```
+
+未带认证的 Adapter POST /api/threads 实际返回 **403**：`CSRF token missing. Include X-CSRF-Token header.`。保留该 FAIL 作为与 Mock 环境的差异，没有关闭认证、伪造 Bearer 或绕过 CSRF。随后通过官方 `/api/v1/auth/register` 建立普通测试用户，使用会话与正常 CSRF cookie/header 签发一天有效的 PAT，scope 仅 threads:read/write、runs:create/read/cancel。密码随机生成，密码、会话与 PAT 只在客户端进程内保存，没有打印或提交。每次测试 finally 均撤销 PAT（HTTP 200）并 logout；没有创建 admin、授予数据库权限或更改业务身份。
+
+MIS Adapter 的 create_thread 在有效 PAT 下 **PASS**。新增 `get_thread(binding)`，GET 官方 Thread 接口后校验 thread_id 及全部 MIS 关联 metadata，返回原始字段；冲突保持安全异常摘要与内部 raw 信息。补充匹配、ID 冲突、metadata 冲突/缺失四项 Mock 测试，独立 Adapter 共 **25 passed**。P1 模型和数据库契约未变；调用方仍负责映射持久化和凭据管理。无 PAT 的客户端不自动注册用户、获取 cookie 或重试。最终只读 SQL 确认本轮 3 个测试 PAT 共 3 个已撤销；Runtime 无其他角色成员关系，受检 mis/knowledge/trace/public 普通表的 INSERT/UPDATE/DELETE/TRUNCATE 可写表计数为 0。
+
+### 19.3 真实 Run 的前置限制及首次失败
+
+复核发现 OpenAI SDK 的 max_retries=0 不会自动关闭 DeerFlow 的 LLMErrorHandlingMiddleware 重试。本轮在仓库外候选配置中增加 `llm_call.retry_max_attempts=1`、max_concurrent_calls=1，并使用官方 `extensions.middlewares` 入口加载本地 Smoke 专用 `p2_budget_guard:P2BudgetGuard`。该扩展只做模型入口检查与计数，不含 Skill 或代码执行工具，不修改上游执行引擎，也未作为 MIS 产品功能加入。
+
+限制包括：进程共享锁下最多准入 1 次模型 handler；拒绝工具、非纯文本、多于 20 条消息、结构化输出及输出上限覆盖；要求 gpt-6-luna / Responses API / SDK 零重试 / max_tokens=64；消息 JSON 大小不超过 60000 字节，另预留 4096 Token 角色/协议余量。以保守输入上界 64096、输出 64 和已确认单价，调用前预留 **0.0064416 USD**，低于已知余额 9.9999741 USD。该输入界限针对本次无媒体/工具的文本请求，不是对任意多模态计费的通用保证。离线假 handler 验证大输入、工具、非文本均拒绝，首次准入及重复准入拒绝通过，没有产生真实调用。原 token_budget Middleware 仍保留，但其提示/用量反馈没有被当作单次费用硬限制。
+
+第一次 Run 配置 recursion_limit=3，实际在模型前到达步数上限：
+
+```text
+Run dbc9aedf-9cf4-43e3-95ba-1820b2faf209
+GraphRecursionError: Recursion limit of 3 reached without hitting a stop condition.
+status=error; stop_reason=recursion_capped; llm_call_count=0
+input_tokens=0; output_tokens=0
+```
+
+该次 Run 为 **FAIL**，SSE error/end 和 Adapter failed 映射均可观察；没有模型重试或费用。离线编译图确认包括 start/end 共 28 个节点，多个 before/after Middleware 各占图步数。随后明确将单次图上限设为 40（配置与请求一致），保持进程最多 1 次真实模型调用不变，再发起一个受控 Run；不是自动重试模型。
+
+### 19.4 成功的真实 Run 与 SSE
+
+独立 Python 客户端用 Adapter 验证 Thread，使用官方 HTTP Run 创建接口显式指定测试 context，再通过 Adapter 观察 SSE、查询 Run 和 Thread。没有为单次 Spike 扩大 Adapter 的通用配置传递接口。实际请求如下，Bearer 凭据已省略：
+
+```json
+POST /api/threads/19822a2d-536e-5921-9a43-d8f2bd26f9e6/runs
+Idempotency-Key: mis-p2-smoke-20261115-bounded-once
+{
+  "assistant_id":"lead_agent",
+  "input":{"messages":[{"type":"human","content":"Reply with exactly OK. Do not invoke tools."}]},
+  "metadata":{"mis_project_id":"p2-0b-smoke","mis_task_id":"gateway-http","mis_thread_id":"smoke-20261115-6882bef9","mis_run_id":"smoke-run-20261115"},
+  "config":{"recursion_limit":40},
+  "context":{"model_name":"gpt-6-luna","thinking_enabled":false,"subagent_enabled":false},
+  "multitask_strategy":"reject"
+}
+```
+
+HTTP 200 返回 run_id=`e5efe3fa-2d15-442f-be48-c25438b2540d`、同一 thread_id、pending 及关联 metadata。GET Run 最终为 success，Adapter 映射 completed，stop_reason=null。模型真实返回文本 **OK**，response.status=completed、service_tier=default、model/model_name=gpt-6-luna；API 没有返回带日期的独立模型快照版本，不能自行补写。
+
+SSE HTTP 200，实际事件依次为 metadata、6 个 values、end；Adapter 映射 run.updated、6 个 runtime.event、stream.closed。原事件名和 data/id 保存在 raw 字段。此次默认 values 流验证的是图状态快照流，不是逐 Token 流或断线重放。业务终态通过 GET Run 确认，没有把 end 单独当作任务成功。最终 Thread state 含用户输入与模型 OK，tool_calls、invalid_tool_calls、skill_context、background_tasks 均为空。进程准入计数 1，实际请求消息 JSON 为 14690 字节；Run llm_call_count=1、subagent_tokens=0、middleware_tokens=0，无后台模型调用证据，也没有重试日志。
+
+### 19.5 实际落表、范围与费用
+
+| 项目 | 状态 | 证据 |
+|---|---|---|
+| Gateway 导入、独立启动与 health/readiness | PASS | 两轮独立启动均可达健康接口；最终采用 Selector 事件循环 |
+| Thread 创建、查询与真实契约 | PASS | PAT 身份下 ID/metadata 校验通过，GET 返回 materialized state；凭据已撤销 |
+| 成功 Run、终态与 SSE | PASS | 上述真实 ID、success/completed、metadata/values/end 事件及 OK |
+| PostgreSQL Checkpoint 实际写入及同进程读回 | PASS | 成功 Thread 在 runtime.checkpoints 有 29 条、checkpoint_writes 34 条、checkpoint_blobs 9 条；Thread API 读回模型消息 |
+| Run 与 Thread 记录 | PASS | 成功 Thread 的 runtime.threads_meta=1、runs=1、run_events=6、run_event_thread_seq=1 |
+| schema、权限及业务数据边界 | PASS | Gateway 前后全部受检 schema/对象/列/索引/default ACL 完全相等，mis 业务数据摘要相等；仍为 47 张 runtime 表。身份 current_user=session_user=mis_runtime，schema/search_path=runtime；superuser/CREATEDB/CREATEROLE/BYPASSRLS/REPLICATION 均 false |
+| 持久暂停、进程重启后恢复与重复恢复 | NOT RUN | 本轮没有发起暂停或重启恢复流程；之前启动切换不构成 Run 恢复验证 |
+| Docker/Sandbox 隔离专项 | BLOCKED | 没有执行 Sandbox 或宿主机工具 |
+| 完整 Memory 隔离 | NOT RUN | 本次无 memory 内容/工具，但完整自动记忆边界仍需专测，见下方发现 |
+
+启动仍会构造 DeerMem manager 并 warm tokenizer，即使 memory.enabled/injection_enabled=false。本地发现 `home/.retrieval/memory-fts5.sqlite3`，只读检查 memory_fts、memory_fts_content、memory_fts_docsize 的记录数均为 0，内部 FTS 配置/数据页非空属索引结构。该文件是原生记忆检索索引，不能隐瞒，也不能当作 PostgreSQL Checkpoint 回退。它位于仓库外独立 DEER_FLOW_HOME；本次没有记忆文档或记忆模型调用，但尚未证明完全不创建长期记忆相关文件。后续 Memory 专项应审查 manager warm 路径并验证文件/读回/隐藏注入边界。
+
+实际 usage 为 input=3011、output=5、total=3016，cache_read=0、reasoning=0。按负责人确认的短上下文单价，费用计算为 `3011 × 0.10 / 1000000 + 5 × 0.50 / 1000000` = **0.0003036 USD**。加此前已知 0.0000259，本次后已知累计 **0.0003295 USD / 10 USD**，已知余额 **9.9996705 USD**。这是实测 Token 按单价计算值，不是账户账单核销；其他会话消费仍未知。无更多真实模型请求，临时进程限制不是整个 P2 多进程预算治理的实现。
+
+### 19.6 证据、命令与交付检查
+
+以下材料位于仓库外 `C:\Users\Muil\Desktop\MIS_workspace\mis-p2-gateway-evidence`，不提交秘密或原始运行目录：
+
+| 文件 | 作用 / SHA-256 |
+|---|---|
+| before-gateway.json / after-gateway.json | 前后快照；二者均 `c2e70b092089438cd2f920b6f3ac50848be047a0e2e73477f1aeafee71cfcb73` |
+| gateway.yaml | 本轮最终候选配置，`4e2f68c6c127c0c5806d1dcfeaba37a55907c16ca104bfa2374248f8a9e90005`；区别于第 18 节旧 Hash，新增重试/准入限制及图步数调整 |
+| launch_gateway.py | 独立 Selector 启动/日志脱敏/退出标记监控，`147e4d09b90b0976e4753eac655d638de701d97b17375a6eaa93d2d4d513183f` |
+| p2_budget_guard.py | 官方扩展入口加载的本地限制器，`ec7f73041e12d86a5312d4e5ea47a2690096607fb55ce3fe986c57ce45ecb1ff` |
+| http_smoke.py | 独立 Python HTTP/Adapter 客户端，`93b8443ee5e7d3199d89eeffb95031f5b7f92b2f9c700748701bb79374ac1ccd` |
+| health.json / thread-only-smoke.json | 健康响应及非 Agent 接口证据 |
+| failed-recursion-smoke.json / http-smoke.json | 保留首次失败与最终成功的请求、响应、原始事件、终态及 PAT 撤销状态 |
+| budget-admission.json / budget-outcome.json | 准入上界、次数与真实模型文本/usage；不含 API Key |
+| runtime-write-evidence.json / memory-index-counts.json | 只读查询的落表数量、身份及空记忆索引检查 |
+| gateway-sanitized.log | 第二轮启动、运行与优雅关闭日志；连接地址、密码及 API Key 在输出前替换 |
+
+实际命令在上游 backend 目录执行预检、快照及启动：
+
+```powershell
+.\.venv\Scripts\python.exe C:/Users/Muil/Desktop/MIS_workspace/mis-p2-gateway-evidence/validate_gateway_config.py
+.\.venv\Scripts\python.exe C:/Users/Muil/Desktop/MIS_workspace/mis-p2-gateway-evidence/snapshot.py before-gateway.json
+.\.venv\Scripts\python.exe C:/Users/Muil/Desktop/MIS_workspace/mis-p2-gateway-evidence/launch_gateway.py
+```
+
+客户端在 MIS 根目录，使用 MIS 独立环境：
+
+```powershell
+.\.venv\Scripts\python.exe C:/Users/Muil/Desktop/MIS_workspace/mis-p2-gateway-evidence/http_smoke.py
+.\.venv\Scripts\python.exe C:/Users/Muil/Desktop/MIS_workspace/mis-p2-gateway-evidence/http_smoke.py run
+```
+
+首次 Run 的低步数失败与第二次有限步数请求均已登记，不自动重复上述 run 命令。后续任何真实调用必须重新检查累计预算与配置，不能复用本轮硬编码的调用前余额作为新证据。最终通过 stop-gateway 标记令 server.should_exit=true，日志确认 application shutdown complete，测试服务已停止。未清除测试 Thread/Run/用户审计记录，所有测试 PAT 已撤销。
+
+本轮仓库变更仅为 Adapter 的 get_thread、对应四个 Mock 测试、本报告与文档索引；没有新增业务表、MIS Adapter 之外的业务功能或 P3 内容。实际检查命令与结果：
+
+- `uv run pytest tests/test_deerflow_adapter.py -q`：25 passed。
+- `uv run pytest`：**151 passed in 397.91s**，使用已获准的原 P1 测试目标，未更换为 P2 分支。
+- `uv run ruff check .`：PASS。
+- `uv run ruff format --check src/mis/adapters/deerflow.py tests/test_deerflow_adapter.py`：2 files already formatted。
+- `uv run python -m mis.schemas.export --check`、`git diff --check`、报告与索引的代码围栏/本地链接检查：PASS。
+
+P1 最终人工评审记录仍待确认；此次有限 Smoke 不代表完整 P2、Checkpoint 恢复或 Docker/Sandbox 验收通过。不自动进入下一任务或 P3，不合并 main。

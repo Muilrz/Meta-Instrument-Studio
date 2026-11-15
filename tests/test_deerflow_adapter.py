@@ -53,6 +53,42 @@ def test_thread_conflicting_existing_mapping_is_rejected():
             client.create_thread("p", "t", "mt")
 
 
+@pytest.mark.parametrize("mismatch", [None, "thread", "metadata", "missing_metadata"])
+def test_get_thread_checks_mapping_and_preserves_upstream_fields(binding, mismatch):
+    payload = {
+        "thread_id": "dt1",
+        "status": "idle",
+        "metadata": {
+            "mis_project_id": "p1",
+            "mis_task_id": "task1",
+            "mis_thread_id": "mt1",
+        },
+        "values": {"messages": []},
+    }
+    if mismatch == "thread":
+        payload["thread_id"] = "other"
+    elif mismatch == "metadata":
+        payload["metadata"]["mis_task_id"] = "other"
+    elif mismatch == "missing_metadata":
+        del payload["metadata"]
+
+    def handler(request):
+        assert request.method == "GET"
+        assert request.url.path == "/api/threads/dt1"
+        assert request.headers["Authorization"] == "Bearer test-token"
+        return httpx.Response(200, json=payload)
+
+    with DeerFlowClient(
+        "https://gateway.invalid", token="test-token", transport=httpx.MockTransport(handler)
+    ) as client:
+        if mismatch:
+            with pytest.raises(DeerFlowError, match="thread_mapping_conflict") as exc:
+                client.get_thread(binding.thread)
+            assert exc.value.raw == payload
+        else:
+            assert client.get_thread(binding.thread) == payload
+
+
 def test_start_query_and_cancel_preserve_binding_and_do_not_infer_cancellation(binding):
     requests = []
 
