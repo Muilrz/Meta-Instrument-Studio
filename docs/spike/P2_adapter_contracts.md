@@ -57,3 +57,6 @@ uv run pytest tests/test_task_bridge.py tests/test_deerflow_adapter.py -q
 本轮补充 7 项分页/范围测试、2 项提交顺序/超时后重入测试；存储 25 项离线 SQL/驱动/codec 测试与真实 PostgreSQL opt-in 验收分别计数。mock ledger 的 coordinator 重建不冒充 PostgreSQL 跨进程验收。
 
 Run command 终态与业务 Thread 状态必须分离：固定版 before_agent interrupt 可让 Run.status=success，同时 Checkpoint 仍有 pending interrupt，因此映射中的 completed 仅表示一次 Runtime command 结束；A4 业务 waiting_user/最终完成需联合 Checkpoint 与 Question 对账。不能把 command.completed 自动当作 Agent 产物已接收或整个业务任务完成。
+
+
+P2-0D补验：批准P2目标已安装两表并通过真实PostgreSQL测试；固定A4流程也已将ProjectService Question/回答Evidence与两条独立命令映射接合，通过跨MIS客户端进程重载与Gateway重启恢复。原生interrupt ID允许明确缺失，仅作审计；单Question/当前Checkpoint/唯一节点与Evidence绑定不放宽。已核验的持久Question可为业务waiting_user提供证明，不能凭模型文本或伪造ID完成此证明。参见[Gateway持久化补验](P2_gateway_a4.md)。尚未推广为通用生产恢复接口或并发exactly-once。

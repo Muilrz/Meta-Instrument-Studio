@@ -1,6 +1,6 @@
 # P2 DeerFlow 集成预检与验证记录
 
-> 当前进度（2026-11-15）：P2-0B 真实 Gateway Smoke 已完成（第 19 节）；P2-0C 的四 Agent、恢复、Memory 与薄适配验证见第 20 节；P2-0D 诊断、唯一真实复验、持久映射和 Gateway A4 见第 21 节。第 1–18 节保留历史时间点的证据与限制，不代表最新状态。Sandbox 仍 BLOCKED，完整 P2 尚未验收，不进入 P3。
+> 当前进度（2026-11-15）：P2-0B 真实 Gateway Smoke 已完成（第 19 节）；P2-0C 的四 Agent、恢复、Memory 与薄适配验证见第 20 节；P2-0D 诊断、唯一真实复验与 Gateway A4 见第 21 节；新凭据到位后的持久映射与 A4 补验见第 22 节。第 1–18 节保留历史时间点的证据与限制，不代表最新状态。Sandbox 仍 BLOCKED，完整 P2 尚未验收，不进入 P3。
 
 - 日期：2026-11-08（Asia/Singapore）
 - 本次范围：**P2-0A 基线冻结与环境预检**；P2-0B 尚未执行。
@@ -818,3 +818,39 @@ Docker/Sandbox继续BLOCKED，火绒告警复核未完成，未启用宿主机�
 - `uv run pytest`：**235 passed、1 skipped in 564.68s**。全量启动后A4最终标量接口新增4个场景，因此随后对最终相关源文件另跑 **69 passed、1 skipped**（含最终A4 26项与完整性9项），均通过；跳过的始终是真实PostgreSQL批准表/凭据验收，并非模型或Gateway失败被跳过。
 - `uv run ruff check .`、`uv run ruff format --check .`（81文件）、`uv run python -m mis.schemas.export --check`、`git diff --check`及10份相关文档链接/代码围栏检查PASS。MIS依赖锁与P1业务schema无修改，上游源码最终固定commit且工作树干净。
 - 新模型证据 `agents-live-0d.json` SHA-256：`ea8891e9d9e33136e8ada5b4812e17c3f84152dbe0420b15c4a3607f0eb68516`；Gateway最终证据 `gateway-a4-0d.json`：`62440ff62750d326b78dda5747ec2853c4cdc821c3d50ff0ac23247f2fa6e587`，均仓库外、不含凭据。关闭日志的finalization CancelledError/pending cleanup警告如实保留，未将本次作为完整后台清理验收。
+
+
+## 22. P2-0D 补验：批准数据库安装与持久业务恢复（2026-11-15）
+
+负责人提供正确P2 owner连接后继续第21节未完成项，基线 `bb033cf`。沿用已明确批准的两表DDL与mis_app最小授权，不重复审批、不升级DeerFlow、不修改上游核心/P1迁移。本轮没有新增真实模型任务，累计费用及此前未知费用的保守占用保持第21.2节数值。
+
+### 22.1 持久映射安装与真实 PostgreSQL 验收
+
+[映射专项](P2_mapping_storage.md) 已完成仅批准P2目标的事务安装：`mis_integration.thread_bindings/run_commands`；mis_app仅新增schema USAGE及两表SELECT/INSERT/UPDATE，无DELETE/TRUNCATE；mis_runtime无新增schema/table权限。安装前后原mis/runtime/knowledge/trace/public的schema、对象、列、索引、default ACL与MIS数据摘要完全相等。没有在MIS开发/P1测试或Neon主分支执行DDL，没有创建角色或扩大成员关系。
+
+实际业务权限由owner连接后每事务 `SET LOCAL ROLE mis_app` 验证，非用owner权限冒充应用权限。显式PostgreSQL opt-in测试 **1 passed in18.92s**：三个独立子进程读回intent/uncertain/completed，确认数据来自PostgreSQL；同内容重放、幂等键/Hash/task冲突、跨项目占用Thread、upstream Run唯一约束及savepoint回滚通过。崩溃窗口使用已提交intent但尚未绑定HTTP ack的确定性模拟，未执行收费外部动作。
+
+模型命令预算仍要求全正；确定性无模型流程新增严格全零预算 `(0,0,0,Decimal('0'))`，混合零/正、负数或非有限值拒绝，无DDL变更。账本预算只是审计，真正禁止模型由固定workflow的ZeroModelGuard和无效模型凭据保证。
+
+### 22.2 持久化 A4 fixture 接合
+
+`gateway_a4.py --persistent` 与独立MIS客户端 `a4_persistence.py` 使用既有ProjectService与批准两表，不创建更多Schema。首次HTTP前保存固定测试Project、Baseline、Brief和open UserQuestion；回答通过 `ProjectService.answer_question` 生成持久user_decision Evidence，恢复命令意图与回答同事务提交，再提交uncertain后才发HTTP。暂停与恢复分别使用独立MIS run_id/upstream Run，原问题继续绑定父run。
+
+MIS客户端每个DB阶段均在独立进程执行、每事务角色为mis_app。重载从数据库获取Question/Evidence/Brief/Run映射；从Gateway状态核验同question_id、当前checkpoint与唯一待恢复节点，再重建标量resume请求，与账本request_sha256完全一致才准入。Question.context只保存不可变的固定fixture配置，未调用私有更新接口或建设第二套Context引擎。
+
+原生interrupt ID只作可选审计，跨重启不可取得时明确为None而非伪造；严格Question/Checkpoint/单节点/Evidence/key校验不变。业务waiting_user也可依据经过核验的持久Question绑定判定，不要求制造一个native ID。恢复完成或状态不完整时仍须重新核对Checkpoint，不能仅凭success完成业务任务。
+
+首次持久化试验已完成真实恢复与账本重载，但重放比较捕获了执行loop checkpoint，随后duration元数据checkpoint落盘导致ID变化，断言失败。只读PostgreSQL确认最新head的source=update且含同Run的run_durations；不是重复执行业务节点。失败json/log另存为 `gateway-a4-persistent-first-finalization.*`，没有覆盖。复验改为等待当前Run的duration标记落盘再比较重放head，严格有界只读轮询，不修改核心或重试模型。
+
+最终持久化Gateway补验 **PASS（固定流程）**：8个独立MIS客户端从数据库重建数据，3个Gateway进程完成暂停/重启/恢复/再次重放；Question与唯一回答Evidence已持久保存，pause/resume两条命令均绑定到各自upstream Run。账本重入不POST，原生API显式重复同key返回同Run与同完成Checkpoint，改答案同key409。PAT撤销HTTP200、3个Gateway退出0；本次日志无CancelledError/pending cleanup警告，模型调用/正式经验写入0。完整证据和复现步骤见[Gateway A4补验](P2_gateway_a4.md)。
+
+所有业务记录均为隔离P2固定测试fixture，非正式经验、业务产物采纳或人工方案批准；两次fixture与新表审计行保留，不通过扩大DELETE权限清理。通过的是单Question/单pending节点确定性流程，仍不承诺并发恢复、任意多interrupt或外部副作用exactly-once；真实三Specialist闭环仍未通过。
+
+
+### 22.3 检查、费用及交付
+
+- 常规完整 `uv run pytest`：**240 passed、1 skipped in426.43s**；默认opt-in跳过保护CI不连接P2，真实P2数据库测试已显式另跑1 passed。
+- 全量启动后补充无native审计ID和持久Question状态证明两个A4场景，最终相关源代码重跑 **63 passed**（A4接口28项、存储26项、提交2项、分页对账7项）。
+- `ruff check`、`ruff format --check`（82文件）、P1 JSON Schema一致性、diff与文档链接检查通过；未改P1迁移或上游核心。
+- 本轮模型调用/Token/费用新增均0。可核算累计仍为 **0.0036288 USD**，保守占用 **0.0535860 USD / 10 USD**；不核销原Lab/Research缺失usage。
+- 当前剩余重点：真实三Specialist完整返回与Lead汇总、未知provider历史根因、预算多进程治理、并发/多Question恢复、压缩/卸载保真及Sandbox专项。Docker/Sandbox仍BLOCKED，火绒复核未完成，不合并main、不进入P3。

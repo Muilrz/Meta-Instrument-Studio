@@ -8,7 +8,7 @@
 |---|---|---|
 | 平台最终要做成什么样 | [architecture.md](architecture.md) | 目标架构，V4.0；已同步 DeerFlow / MIS 职责与独立部署 |
 | 分几个阶段做、每阶段做什么、怎样算完成 | [plans/development_plan.md](plans/development_plan.md) | v0.2.9，待评审；新增 Context 原生复用与 DeerMem 无正式写入 Spike |
-| 当前阶段（P2）具体怎么做 | [plans/P2_deerflow_integration.md](plans/P2_deerflow_integration.md) | P2-0B Gateway Smoke 已通过；P2-0D 真实复验、持久映射与 Gateway A4 继续验证；完整验收仍有缺口 |
+| 当前阶段（P2）具体怎么做 | [plans/P2_deerflow_integration.md](plans/P2_deerflow_integration.md) | P2-0B Gateway Smoke 已通过；P2-0D 持久映射已在批准目标安装，A4 补验见第22节；完整验收仍有缺口 |
 | Agent 架构要满足哪些要求、已经做了哪些决定 | [design/agent_architecture_requirements.md](design/agent_architecture_requirements.md) | 持续更新；A1–A11、C1、C2 已确认；B1、B2 的实现绑定在 P2 验证定稿 |
 | 技术栈、目录、数据库布局、部署 | [adr/0001-repo-structure-and-stack.md](adr/0001-repo-structure-and-stack.md) | 提议中，整体仍待评审；数据库与开发部署（Neon）、C1 Trace 存储与保留策略、C2 经验评分与生命周期存储规划已确认 |
 | Runtime 选什么、哪些复用和自研、何时重新评估 | [adr/0002-agent-runtime-and-integration.md](adr/0002-agent-runtime-and-integration.md) | 已接受 DeerFlow + MIS 分层集成；DeerMem 复用接口与效果待 P2 验证 |

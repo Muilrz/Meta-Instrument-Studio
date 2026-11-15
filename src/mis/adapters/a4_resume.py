@@ -15,7 +15,7 @@ class PauseBinding:
     run: RunBinding
     question_id: str
     checkpoint_id: str
-    interrupt_id: str
+    interrupt_id: str | None
     pending_node: str
 
 
@@ -23,11 +23,14 @@ def reconcile_a4_status(
     run_status: str,
     checkpoint_state: dict[str, Any] | None,
     *,
-    pending_interrupt_id: str | None,
+    pending_interrupt_id: str | None = None,
+    pending_question_id: str | None = None,
 ) -> str:
     """Reconcile command completion with the separately inspected graph state.
 
-    The caller proves that the pending interrupt belongs to its stored Question.
+    The caller proves that pending execution belongs to its stored Question.
+    A persisted question binding may substitute for an unavailable audit ID;
+    neither a model assertion nor a fabricated native ID is such proof.
     The native Run can say ``success`` while its graph is durably interrupted.
     This is graph progress only; ``completed`` does not adopt an Artifact or Plan.
     """
@@ -38,8 +41,8 @@ def reconcile_a4_status(
     ):
         return "unknown"
     if checkpoint_state["next"]:
-        return "waiting_user" if pending_interrupt_id else "unknown"
-    if pending_interrupt_id:
+        return "waiting_user" if pending_interrupt_id or pending_question_id else "unknown"
+    if pending_interrupt_id or pending_question_id:
         return "unknown"
     return {
         "success": "completed",
@@ -59,7 +62,7 @@ def resume_request(
     resume_key: str,
     resume_run_id: str,
     current_checkpoint_id: str,
-    observed_interrupt_id: str,
+    observed_interrupt_id: str | None,
     current_pending_nodes: tuple[str, ...],
 ) -> dict[str, Any]:
     """Build the pinned native command only after checking trusted stored records.
@@ -75,7 +78,7 @@ def resume_request(
     """
     if (
         not pause.checkpoint_id
-        or not pause.interrupt_id
+        or (pause.interrupt_id is not None and not pause.interrupt_id.strip())
         or pause.checkpoint_id != current_checkpoint_id
         or pause.interrupt_id != observed_interrupt_id
         or not pause.pending_node
@@ -108,7 +111,7 @@ def resume_request(
         "answer_evidence_id": evidence.id,
         "resume_key": resume_key,
         "answer": answer,
-        "observed_interrupt_id": pause.interrupt_id,
+        **({"observed_interrupt_id": pause.interrupt_id} if pause.interrupt_id is not None else {}),
     }
     return {
         "assistant_id": "lead_agent",

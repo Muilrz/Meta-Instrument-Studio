@@ -298,3 +298,14 @@ def test_invalid_intent_rejected_before_database(intent, change):
 def test_invalid_budget_rejected(reservation):
     with pytest.raises(ValueError):
         CallBudget(7, 1000, 1000, reservation)
+
+
+def test_strictly_zero_budget_records_no_model_authorization():
+    assert CallBudget(0, 0, 0, Decimal("0")).as_json() == {
+        "max_calls": 0,
+        "max_input_tokens": 0,
+        "max_output_tokens": 0,
+        "reserved_usd": "0",
+    }
+    with pytest.raises(ValueError):
+        CallBudget(0, 1000, 1000, Decimal("0"))

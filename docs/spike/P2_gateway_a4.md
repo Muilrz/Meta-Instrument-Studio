@@ -1,5 +1,7 @@
 # P2-0D Gateway A4 暂停与恢复
 
+> 当前状态：原内存fixture验收之后，已在批准P2分支完成持久Question/Evidence与命令账本接合，见末尾“持久化补验”。前文的凭据阻塞及26项测试为原轮历史，不代表最新状态。
+
 - 日期：2026-11-15（Asia/Singapore）。固定 DeerFlow v2.2.0 / `58fc5bd5b8e6ea46538e9481ba06ca2a46e14e2a`。
 - 范围：原 Neon P2 / `mis_runtime` / `runtime`，官方 HTTP Run admission、PostgreSQL Checkpoint 和配置扩展；不改核心、Schema、权限或依赖，不调用模型与工具。
 - 相关：[P2 Spike](P2_deerflow_integration.md)、[先前底层恢复](P2_checkpoint_recovery.md)、[Adapter 契约](P2_adapter_contracts.md)。
@@ -68,3 +70,32 @@ P2 分支专用 owner 凭据当前不可用，不能把 `mis_runtime` 提升为�
 ```
 
 运行时会创建新的专用 Thread/普通测试用户、保留 runtime 审计，结束撤销 PAT。不会删除既有 Thread 或执行宿主机 Agent 工具。Docker/Sandbox 和火绒复核仍是独立未验收事项。
+
+
+## 持久化补验：真实 ProjectService 与命令账本
+
+负责人补齐P2 owner凭据后，先完成已批准的两表安装与mis_app最小授权（见[映射专项](P2_mapping_storage.md)）。本工作流仍不执行DDL；每个MIS数据库事务连接后SET LOCAL ROLE mis_app并核验current_user，Gateway仍使用mis_runtime，双方权限未混用。
+
+```powershell
+.\.venv\Scripts\python.exe docs/spike/probes/gateway_a4.py --persistent
+```
+
+控制器创建独立随机前缀的P2固定fixture。首次HTTP前，独立MIS进程通过ProjectService保存Project/Baseline/Brief/open UserQuestion及pause命令intent并提交；uncertain另行提交后才POST。第一次Gateway停止并重启后，通过ProjectService.answer_question写入唯一user_decision Evidence，回答和resume intent在同一事务提交；第二个MIS进程从PostgreSQL重载Question/Evidence/Brief/映射，读取Gateway持久状态中的相同Question、当前checkpoint和唯一pending节点，重建请求并核对request_sha256。没有调用私有业务更新函数或修改P1迁移。
+
+Question.context只保存固定fixture的不可变配置，未塞入动态Checkpoint。新进程使用公开Gateway状态读取当前暂停点，native interrupt ID取不到时明确None并省略审计字段；不是捏造ID或把旧SSE ID当稳定游标。Question/Checkpoint/节点/Evidence/key等确定性校验仍执行。预算账本为严格全0，ZeroModelGuard与无效模型凭据阻断模型执行。
+
+最终结果PASS：8个独立MIS客户端PID分别为9700/25212/21212/30240/11412/10128/33852/27716，完成prepare、uncertain、bind、answer_prepare、resume_reload、uncertain、bind、verify。三个Gateway实际worker为2632/38796/38368；均在日志中完成关闭，launcher退出码全0。最终固定项目保存5条业务fixture（Project、Baseline、Brief、Question、Evidence），对应1条Thread绑定、2条独立Runtime命令映射；Question=answered且只存在1条回答Evidence。正常重入账本返回created=false及既有upstream映射，不再POST；独立原生API兼容性重放同key返回同一Run、同一完成Checkpoint，更改答案同key返回409。PAT撤销HTTP200，模型调用与正式经验写入均0。
+
+第一次持久fixture试验已完成恢复和账本绑定，但测试在Run.success后立即取到执行loop checkpoint；随后duration checkpoint落盘，跨重启比较ID产生假失败。只读PostgreSQL确认其head source=update且run_durations包含同一Run。失败材料保留为gateway-a4-persistent-first-finalization.json/.log；修正测试为有界等待对应Run的duration标记落盘再比较，没有重试模型或修改核心。两次固定fixture均保留用于审计，不新增DELETE权限清理。
+
+仓库外证据（mis-p2-gateway-evidence）：
+
+| 文件 | SHA-256 |
+|---|---|
+| gateway-a4-persistent-0d.json | `8a508e87d23859ab5dd7a3552c4c55cb858c677ab09fd2f313a7915c28da08e7` |
+| gateway-a4-persistent-0d.log | `8e128535198d7b931a7c7fdc97bd145bebc3b62e52794118c8b2c05efd3bd337` |
+| gateway-a4-persistent-verification-0d.json | 由主代理独立核对全部进程、数据库阶段、PAT、终态和重放Checkpoint的摘要 |
+
+最终接口测试28项通过，相关A4/映射/提交/对账63项通过；真实PG单独1项通过。原默认CI不连接P2分支，opt-in跳过项不再代表缺少验收。本次成功日志没有CancelledError或pending cleanup警告，但不据此扩展为所有取消/Sandbox清理验收。
+
+通过范围为固定单Question、单pending节点、无模型/无工具流程的持久化接合。Question与resume ledger已串联，但MIS侧并发答案串行化服务、通用多interrupt恢复、数据库故障切换、任意外部副作用exactly-once仍未验收。没有建设正式BFF/UI或第二套Runtime，真实三Specialist闭环也没有因这次零模型补验而变为通过。

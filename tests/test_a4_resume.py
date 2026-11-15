@@ -64,6 +64,19 @@ def test_resume_command_binds_native_interrupt_checkpoint_and_durable_evidence(a
     assert first["metadata"]["mis_parent_run_id"] == pause.run.run_id
 
 
+def test_restart_can_omit_unavailable_audit_id_but_still_requires_current_single_pause(
+    answer_records,
+):
+    pause, question, evidence, kwargs = answer_records
+    pause = replace(pause, interrupt_id=None)
+    kwargs = {**kwargs, "observed_interrupt_id": None}
+    body = resume_request(pause, question, evidence, **kwargs)
+    assert "observed_interrupt_id" not in body["command"]["resume"]
+    for changed in ({"current_checkpoint_id": "old"}, {"current_pending_nodes": ()}):
+        with pytest.raises(ValueError):
+            resume_request(pause, question, evidence, **{**kwargs, **changed})
+
+
 @pytest.mark.parametrize(
     "changed",
     [
@@ -138,3 +151,22 @@ def test_checkpoint_end_reconciles_success_but_mismatched_interrupt_does_not():
     assert reconcile_a4_status("success", state, pending_interrupt_id=None) == "completed"
     assert reconcile_a4_status("success", state, pending_interrupt_id="i") == "unknown"
     assert reconcile_a4_status("error", state, pending_interrupt_id=None) == "failed"
+
+
+def test_durable_question_binding_can_identify_pause_when_native_audit_id_is_unavailable():
+    assert (
+        reconcile_a4_status(
+            "success",
+            {"checkpoint_id": "cp", "next": ["a4.before_agent"]},
+            pending_question_id="stored-question",
+        )
+        == "waiting_user"
+    )
+    assert (
+        reconcile_a4_status(
+            "success",
+            {"checkpoint_id": "cp", "next": []},
+            pending_question_id="stored-question",
+        )
+        == "unknown"
+    )

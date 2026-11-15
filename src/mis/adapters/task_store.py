@@ -94,14 +94,17 @@ class CallBudget:
 
     def __post_init__(self):
         for value in (self.max_calls, self.max_input_tokens, self.max_output_tokens):
-            if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
-                raise ValueError("budget limits must be positive integers")
+            if not isinstance(value, int) or isinstance(value, bool) or value < 0:
+                raise ValueError("budget limits must be nonnegative integers")
         if (
             not isinstance(self.reserved_usd, Decimal)
             or not self.reserved_usd.is_finite()
-            or self.reserved_usd <= 0
+            or self.reserved_usd < 0
         ):
-            raise ValueError("budget requires a finite positive Decimal reservation")
+            raise ValueError("budget requires a finite nonnegative Decimal reservation")
+        values = (self.max_calls, self.max_input_tokens, self.max_output_tokens, self.reserved_usd)
+        if any(value == 0 for value in values) and not all(value == 0 for value in values):
+            raise ValueError("only a strictly zero budget may disable all model calls")
 
     def as_json(self) -> dict[str, Any]:
         return {
