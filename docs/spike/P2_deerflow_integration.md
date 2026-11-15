@@ -906,10 +906,12 @@ Project Copilot 与 Lab、Research、Procurement 继续使用原生 AgentConfig/
 
 本轮真实准入0、模型HTTP请求0、Runtime llm_call_count/total_tokens=0，故本轮实际新增 **0 USD**；可核算累计仍 **0.0036288 USD**，保守累计仍 **0.0535860 USD /10 USD**。旧缺失 usage 不核销；账户其他会话消费未知。没有后台模型、正式经验写入或未经验证的工具执行。
 
-统计口径：基线 `a07dea9` 的远端 CI 为 **242 passed、1 skipped（收集243）**。第22节的240是补充最后两个 A4 测试之前的历史完整运行，不应当作基线最终数量。本轮新增21项完整性单测和2项 Artifact 数据库测试，常规**收集266**；默认跳过1项显式P2数据库opt-in。原生 MockTransport 探针、实际 Run、PG失败对账分别记录，不叠加为pytest总数。最终回归与CI结果在本节后补记。
+统计口径：基线 `a07dea9` 的远端 CI 为 **242 passed、1 skipped（收集243）**。第22节的240是补充最后两个 A4 测试之前的历史完整运行，不应当作基线最终数量。本轮新增21项完整性单测和2项 Artifact 数据库测试，常规**收集266**；默认跳过1项显式P2数据库opt-in。原生 MockTransport 探针、实际 Run、PG失败对账分别记录，不叠加为pytest总数。最终本地与CI结果分别如下。
 
 检查记录：新增完整性21项及两项 Artifact 数据库用例均已通过；后者独立重跑为 **2 passed in64.33s**。ruff check、format check（95个文件）、Schema导出一致性、文档本地链接、staged密钥值扫描和diff检查通过。最终完整运行为 **264 passed、1 failed、1 skipped in582.77s**，唯一失败为既有并发用例 `identical-project` 的BrokenBarrierError；该确切用例不改代码独立重跑 **1 passed in16.58s**，不等于整套回归已通过。本地完整回归尚未全绿：此前还出现dump的服务端断连与数据库setup建连失败。保留仓库外 `regression-0e/` 原始日志，不把分次通过拼成完整通过。测试fixture增加仅输出阶段/类型/有限类别/SQLSTATE的脱敏诊断，未放宽业务断言。
 
-当前提交/CI状态：负责人已明确批准本次本地数据库异常的提交例外，允许提交推送当前功能分支并由Docker CI作最终验证；CI失败仍须修复，不合并main。此批准仅豁免本次 [AGENTS.md](../../AGENTS.md) 的本地全绿提交门槛，不把本地失败改写为通过，也不代表真实多Agent或Sandbox验收通过。远端结果在核验后补记。
+当前提交/CI状态：负责人已明确批准本次本地数据库异常的提交例外，允许提交推送当前功能分支并由Docker CI作最终验证；CI失败仍须修复，不合并main。此批准仅豁免本次 [AGENTS.md](../../AGENTS.md) 的本地全绿提交门槛，不把本地失败改写为通过，也不代表真实多Agent或Sandbox验收通过。
+
+实现提交 **`dc9dcba`** 已推送至 `feat/p2-deerflow-integration`；[Docker CI #43731967818](https://github.com/Muilrz/Meta-Instrument-Studio/actions/runs/43731967818) 的 test job **132866185749 全部成功**，实际日志为 **265 passed、1 skipped in2.98s（collected266）**，Lint、format、JSON Schema一致性均成功。跳过项仍为需要显式批准目标/凭据的P2数据库opt-in，本轮不重复该已验收Smoke。CI的完整通过与本地网络/Barrier波动分别保留，不将其合并成另一套数量；CI通过也不改变23.2的真实Run失败结论。
 
 剩余重点是固定版技能投影的合规无 Sandbox 集成方式、真实三角色返回及完整汇总/候选写入、压缩卸载保真、事件重连、DeerMem候选复用、跨进程预算和并发恢复。Docker/Sandbox继续BLOCKED，火绒复核未完成。没有合并main，没有进入P3。
