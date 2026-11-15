@@ -1,6 +1,6 @@
 # P2 DeerFlow 集成预检与验证记录
 
-> 当前进度（2026-11-15）：P2-0B 真实 Gateway Smoke 已完成（第 19 节）；P2-0C 的四 Agent、恢复、Memory 与薄适配验证见第 20 节及其专项报告。第 1–18 节保留历史时间点的证据与限制，不代表最新状态。Sandbox 仍 BLOCKED，完整 P2 尚未验收，不进入 P3。
+> 当前进度（2026-11-15）：P2-0B 真实 Gateway Smoke 已完成（第 19 节）；P2-0C 的四 Agent、恢复、Memory 与薄适配验证见第 20 节；P2-0D 诊断、唯一真实复验、持久映射和 Gateway A4 见第 21 节。第 1–18 节保留历史时间点的证据与限制，不代表最新状态。Sandbox 仍 BLOCKED，完整 P2 尚未验收，不进入 P3。
 
 - 日期：2026-11-08（Asia/Singapore）
 - 本次范围：**P2-0A 基线冻结与环境预检**；P2-0B 尚未执行。
@@ -757,3 +757,64 @@ Gateway 已优雅停止。此次恢复专项模型调用、Token、费用均为 
 剩余 P2 门槛：Gateway 四 Agent 持久配置与完整真实结果验收、MIS 问答 Evidence/Checkpoint 幂等恢复串联、Artifact 经 ProjectService/规则幂等接收、ID 映射持久化与事件重连契约、压缩/文件卸载后的硬约束/Evidence 保真、DeerMem 候选能力、取消/失败/部分结果与预算治理、最小 REST/SSE/React 验证页及 C1 适配路径。正式 BFF/UI/Trace 基础设施不在本轮实现。
 
 Docker/Sandbox 文件/网络/资源隔离及取消清理继续 **BLOCKED**，镜像 digest 尚未闭合，不以宿主机执行替代。火绒告警仍未完成独立复核，不将临时关闭安全软件记作安全验收。P1 最终人工评审证据仍待确认。完整 P2 尚未验收，不自动合并 main、不进入 P3。
+
+
+## 21. P2-0D：真实失败诊断与持久化集成（2026-11-15）
+
+从 `fd169db` 同步开工，基础 Smoke 不重跑，上游仍固定 `58fc5bd5b8e6ea46538e9481ba06ca2a46e14e2a`，依赖不升级、核心不修改。负责人批准 A/C 并行，本轮分为 Provider 诊断、持久映射、确定性 Gateway A4 三条工作线。
+
+### 21.1 A：Lab / Research 历史根因与最小修复
+
+[Provider 诊断专项](P2_provider_diagnostics.md) 分别认定历史 **Lab=UNKNOWN、Research=UNKNOWN**：原 `agents-live.json` 没有异常链或 HTTP 阶段数据，无法事后还原；快速失败和缺失 usage 都不意味着未发送或零费用。新增官方 Responses SDK + MockTransport/本地 HTTP keepalive 测试覆盖非流式、Streaming SSE、同 loop 并发共享 client、连续/同时存活 loops、401/503、ConnectError、ReadTimeout、发送前关闭 client、坏响应/SSE、流读取失败和取消清理；全部通过，未复现历史异常。
+
+经公开 `ModelConfig.use` 和 `http_async_client` 新增每模型独立异步 client、loop 归属检查、所属 loop 清理及脱敏遥测。这是对共享缓存风险的防御性薄适配，不是已证实根因修复。保留 httpx 正常代理/SSL 行为，没有通过关闭安全工具或网络验证来绕过问题。Streaming/非流式原生全图离线均通过，三 Specialist 实际 barrier 并发及 canary 隔离通过。
+
+本轮官方 `skillscan/orchestrator.py` 再次消失，负责人报告火绒删除并明确要求恢复；仅从固定 commit 正常恢复单文件，Blob 为 `e20ac016fe575f7869b224a9939ff15ba77efba5`，未添加排除项、关闭防护或替换 scanner。该环境中断不归因为历史 provider 根因，火绒复核仍未验收。
+
+### 21.2 A/B：7 次硬限制与唯一真实复验
+
+若一批下发，Lead分派1 + Specialist3 + Lead汇总1 = 5；分两批需要6，逐个分派最多7。因此将 cap 固定为 **7**，不是取消 guard；每角色 max_turns=1，subagent总数最多3，SDK零重试、中间件attempts=1，所有后台模型功能关闭。Lead仅task，子任务无工具/技能/Sandbox，拒绝非isolated和模型覆盖。每次消息/工具schema JSON<=90000字节+8192输入Token协议余量、输出<=1024，单任务最坏预留 **0.0723184 USD**；以前轮保守占用0.0519855计，入场累计上界 **0.1243039 USD / 10 USD**。
+
+离线前置通过后仅执行 **一次** 新真实任务，使用官方GPT-6 Luna/Responses：
+
+| 步骤 | 实际结果 |
+|---|---|
+| Lead第1次 | 仅派发Lab |
+| Lab | HTTP200，真实结构化JSON返回，包含EV-lab、4 cm^-1和available unknown，原生status=completed |
+| Lead第2次 | 直接汇总；Research/Procurement为null summary、No result received，没有派发它们 |
+| 总结果 | **FAIL：三角色结果不齐**，非provider/连接异常，也未触及7次cap |
+
+共3次handler与3次HTTP200，均 `stream=false`，无异常类型、无重试，所有client在所属loop关闭。不能把 graph.astream 等同于 API Streaming；历史请求的stream设置未知。没有真实三Specialist并行成功，也没有完整汇总，停止新请求，不为通过继续扩大次数或重复执行。新增结果完整性校验按原生tool call/receipt状态识别completed/missing/failed，实际证据得到lab=completed、research=missing、procurement=missing；Lead声称unreviewed不能替代三角色执行证据，部分结果不自动接收为AgentArtifact。
+
+原始证据为仓库外 `mis-p2-gateway-evidence/agents-live-0d.json`，调用前exclusive-create防覆盖/再次启动，旧证据不变。实际usage完整：**14385 input、324 output**，新增 **0.0016005 USD**，可核算累计 **0.0036288 USD**。本次无缺失usage，释放未使用的新任务预留后，加此前未核销的保守占用，累计保守占用 **0.0535860 USD / 10 USD**；旧Lab/Research未知费用仍不按零计。以上按既有单价核算，非账户账单，其他会话消费未知。
+
+### 21.3 C：持久映射实现与数据库准入
+
+[持久映射报告](P2_mapping_storage.md) 与 [具体SQL](sql/task_run_mapping.sql) 提供独立 `mis_integration.thread_bindings/run_commands` 两表。负责人已通过本轮审批明确批准 **仅现有Neon P2测试分支**执行该DDL，并仅授mis_app新schema USAGE及两表SELECT/INSERT/UPDATE，mis_runtime不增权，不改P1迁移或既有表。
+
+已实现 `PostgresTaskRunLinkStore`：唯一Thread/Run绑定、同内容幂等、冲突/savepoint、intent/uncertain、重载与权威响应对账、终态不回退。`DurableTaskSubmission` 强制intent commit → uncertain commit → HTTP → bind/reconcile commit，HTTP不持有事务，重复进入/查无结果均不自动重发。Adapter增加原生keyset分页只读查Run，多条/截断/错配均拒绝；预算快照不替代Runtime准入。
+
+**当前未执行DDL或授权**：现有owner身份连接P2目标认证失败，已请求将正确P2 owner URL通过本机 `.env` 的 `MIS_INTEGRATION_OWNER_DATABASE_URL` 提供，不能用mis_runtime提升或在其他分支执行。存储离线25项通过；真实PG跨进程、唯一约束和崩溃窗口opt-in验收已准备，尚未执行/默认跳过。mock row跨进程codec测试不冒充真实PG持久性。批准已有效，待凭据到位不重复审批同一方案。
+
+### 21.4 D：Gateway A4
+
+具体实现、原生HTTP与重启验证见 [Gateway A4专项](P2_gateway_a4.md)。通过官方before_agent middleware执行确定性interrupt，恢复后跳end，模型与工具入口均禁止，无新增模型费用。业务状态需联合Checkpoint对账：Run.status=success与持久pending interrupt可同时存在；此时MIS仍waiting_user，不能仅按Run终态宣布业务完成。
+
+确定性Gateway实测 **PASS（Runtime层）**：暂停后重启仍pending，第二个进程以标量native command.resume继续，next=[]、a4_completion的Evidence/Question匹配、completions=1；第三个Gateway进程重放同一resume key返回同一Run及同一完成checkpoint，改答案同key返回409。错误答案/Checkpoint/节点/Evidence在客户端预检拒绝。首次旧ID映射导致再次暂停的失败证据另存，未被通过结果覆盖。三个Gateway均exit0，PAT撤销HTTP200，模型调用/正式业务写入均0。
+
+正式Question/回答Evidence经ProjectService持久保存仍依赖可用的P2业务写入身份，不能把内存Evidence fixture当已写入业务事实。C的命令账本与恢复命令尚未端到端串联，因此**完整业务A4未验收**。该单问题兼容路径不支持任意多interrupt图，GET状态到POST之间还需MIS侧持久锁/意图串行化，不能声称并发恢复exactly-once。
+
+### 21.5 边界与后续
+
+真实三角色闭环尚未通过；历史两个provider根因仍未知。下一步先完成有证据的缺失角色处理/有限补调度设计，再在新的明确授权下复验，不依靠Prompt保证完整性；本轮不会再调用模型。持久映射等待P2 owner凭据完成批准安装和真实PG验收，A4与命令账本、持久Question/Evidence需继续接合。
+
+Docker/Sandbox继续BLOCKED，火绒告警复核未完成，未启用宿主机执行或绕过安全工具。未进入P3，未实现正式BFF/UI/Trace基础设施，不自动合并main。
+
+
+### 21.6 本轮检查与交付
+
+- 相关增量：A4、结果完整性、映射/提交/对账 **69 passed、1 skipped**；跳过项为需要批准表与正确P2 owner凭据的真实PostgreSQL验收，未以mock替代。
+- 独立复跑官方SDK诊断probe、原生Streaming MockTransport全图PASS，均0外网模型调用；本轮真实任务仅第21.2节一次，失败后停止。
+- `uv run pytest`：**235 passed、1 skipped in 564.68s**。全量启动后A4最终标量接口新增4个场景，因此随后对最终相关源文件另跑 **69 passed、1 skipped**（含最终A4 26项与完整性9项），均通过；跳过的始终是真实PostgreSQL批准表/凭据验收，并非模型或Gateway失败被跳过。
+- `uv run ruff check .`、`uv run ruff format --check .`（81文件）、`uv run python -m mis.schemas.export --check`、`git diff --check`及10份相关文档链接/代码围栏检查PASS。MIS依赖锁与P1业务schema无修改，上游源码最终固定commit且工作树干净。
+- 新模型证据 `agents-live-0d.json` SHA-256：`ea8891e9d9e33136e8ada5b4812e17c3f84152dbe0420b15c4a3607f0eb68516`；Gateway最终证据 `gateway-a4-0d.json`：`62440ff62750d326b78dda5747ec2853c4cdc821c3d50ff0ac23247f2fa6e587`，均仓库外、不含凭据。关闭日志的finalization CancelledError/pending cleanup警告如实保留，未将本次作为完整后台清理验收。

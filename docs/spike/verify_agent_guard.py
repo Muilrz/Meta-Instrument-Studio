@@ -63,7 +63,10 @@ def verify():
     rejected(request())
     Guard.admissions.clear()
     Guard.outcomes.clear()
-    print("GUARD_NEGATIVE_CHECKS_PASS; shared_call_cap=5; reserved_usd=" + str(Guard.RESERVED_USD))
+    print(
+        f"GUARD_NEGATIVE_CHECKS_PASS; shared_call_cap={Guard.MAX_CALLS}; reserved_usd="
+        + str(Guard.RESERVED_USD)
+    )
 
 
 if __name__ == "__main__":

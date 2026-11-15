@@ -9,7 +9,8 @@ import json
 import threading
 
 import httpx
-from langchain_openai import ChatOpenAI
+
+from mis.agents.responses_model import IsolatedResponsesModel, ModelAsyncClient
 
 ROLES = ("lab", "research", "procurement")
 BARRIER = threading.Barrier(3, timeout=15)
@@ -102,11 +103,50 @@ def _response(request):
 
 
 async def _transport(request):
-    return await asyncio.to_thread(_response, request)
+    response = await asyncio.to_thread(_response, request)
+    if not json.loads(request.content).get("stream"):
+        return response
+    body = response.json()
+    events = [
+        {"type": "response.created", "response": {**body, "output": [], "status": "in_progress"}}
+    ]
+    for index, item in enumerate(body["output"]):
+        events.append(
+            {
+                "type": "response.output_item.added",
+                "output_index": index,
+                "item": {**item, "arguments": ""} if item["type"] == "function_call" else item,
+            }
+        )
+        if item["type"] == "function_call":
+            events.append(
+                {
+                    "type": "response.function_call_arguments.delta",
+                    "output_index": index,
+                    "item_id": item["id"],
+                    "delta": item["arguments"],
+                }
+            )
+        else:
+            events.append(
+                {
+                    "type": "response.output_text.delta",
+                    "output_index": index,
+                    "content_index": 0,
+                    "item_id": item["id"],
+                    "delta": item["content"][0]["text"],
+                }
+            )
+    events.append({"type": "response.completed", "response": body})
+    data = "".join(f"event: {event['type']}\ndata: {json.dumps(event)}\n\n" for event in events)
+    return httpx.Response(200, content=data, headers={"Content-Type": "text/event-stream"})
 
 
-class OfflineResponsesModel(ChatOpenAI):
+class OfflineResponsesModel(IsolatedResponsesModel):
+    @classmethod
+    def create_http_client(cls, timeout):
+        return ModelAsyncClient(timeout=timeout, transport=httpx.MockTransport(_transport))
+
     def __init__(self, **kwargs):
-        kwargs["http_async_client"] = httpx.AsyncClient(transport=httpx.MockTransport(_transport))
-        kwargs["disable_streaming"] = True
+        kwargs["disable_streaming"] = not kwargs.get("streaming", False)
         super().__init__(**kwargs)

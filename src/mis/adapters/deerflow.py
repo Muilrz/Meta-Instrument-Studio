@@ -262,6 +262,62 @@ class DeerFlowClient:
     def get_run(self, binding: RunBinding) -> RunResult:
         return self._result(binding, self._json("GET", self._run_path(binding)))
 
+    def find_run(
+        self, thread: ThreadBinding, run_id: str, *, max_pages: int = 5
+    ) -> RunResult | None:
+        """Read-only reconciliation after an uncertain POST; never resubmit.
+
+        Scan bounded native keyset pages. A truncated scan is inconclusive,
+        including when it contains one match: an unseen duplicate may exist.
+        Absence does not authorize another model request.
+        """
+        _segment(run_id)
+        if (
+            isinstance(max_pages, bool)
+            or not isinstance(max_pages, int)
+            or not 1 <= max_pages <= 20
+        ):
+            raise ValueError("max_pages must be an integer from 1 to 20")
+        self.get_thread(thread)
+        params: dict[str, Any] = {"limit": 100}
+        cursors = set()
+        seen = set()
+        matches = []
+        for _ in range(max_pages):
+            page = self._json(
+                "GET", f"api/threads/{_segment(thread.deerflow_thread_id)}/runs/page", params=params
+            )
+            rows, more = page.get("data"), page.get("has_more")
+            if not isinstance(rows, list) or not isinstance(more, bool):
+                raise DeerFlowError("invalid_run_page", raw=page)
+            for row in rows:
+                if (
+                    not isinstance(row, dict)
+                    or row.get("thread_id") != thread.deerflow_thread_id
+                    or not isinstance(row.get("run_id"), str)
+                    or not row["run_id"]
+                    or row["run_id"] in seen
+                ):
+                    raise DeerFlowError("invalid_run_page", raw=page)
+                seen.add(row["run_id"])
+                metadata = row.get("metadata")
+                if isinstance(metadata, dict) and metadata.get("mis_run_id") == run_id:
+                    binding = RunBinding(thread, run_id, row["run_id"])
+                    matches.append(self._result(binding, row))
+            if len(matches) > 1:
+                raise DeerFlowError("ambiguous_run_mapping")
+            if not more:
+                return matches[0] if matches else None
+            cursor = (page.get("next_before_created_at"), page.get("next_before_run_id"))
+            if (
+                any(not isinstance(value, str) or not value for value in cursor)
+                or cursor in cursors
+            ):
+                raise DeerFlowError("invalid_run_cursor", raw=page)
+            cursors.add(cursor)
+            params.update(before_created_at=cursor[0], before_run_id=cursor[1])
+        raise DeerFlowError("reconciliation_incomplete")
+
     def cancel_run(self, binding: RunBinding, *, wait: bool = False) -> None:
         """Request cancellation. Query get_run afterwards to reconcile actual state."""
         try:

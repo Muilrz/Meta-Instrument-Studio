@@ -7,7 +7,7 @@
 - 修订：2026-11-08，明确原生 Context 复用及 DeerMem 候选抽取/去重/整合的受控复用路线；保留 MIS 权威数据、A2 人工晋升和 C2 经验治理
 - 相关：[总体架构](../architecture.md)、[Agent 内部架构设计](../design/agent_architecture.md)、[需求清单](../design/agent_architecture_requirements.md)、[开发计划](../plans/development_plan.md)、[ADR-0001](0001-repo-structure-and-stack.md)
 
-验证记录（2026-11-15）：P2-0B 真实 Gateway Smoke 与 P2-0C 后续集成证据见 [P2 Spike 报告第 19–20 节](../spike/P2_deerflow_integration.md)。选型决定不变，完整 P2 验收仍待关键缺口闭合；历史正文的“尚未执行”描述保留为决策当时状态。
+验证记录（2026-11-15）：P2-0B 真实 Gateway Smoke、P2-0C 集成与 P2-0D 诊断/恢复证据见 [P2 Spike 报告第 19–21 节](../spike/P2_deerflow_integration.md)。选型决定不变，完整 P2 验收仍待关键缺口闭合；历史正文的“尚未执行”描述保留为决策当时状态。
 
 ## 背景
 

@@ -125,3 +125,14 @@ Lab/Research 的 handler 异常没有在第一次版本 guard 中被捕获，只
 原生 Probe、guard 负向验证通过；真实主线失败保留，不用离线结果覆盖。
 后续仍需稳定真实多角色/汇总、上下文压缩保真、工具/文件隔离、真正 Gateway 配置安装，
 并与 Adapter 持久化 ID 映射及正式 Artifact 接收验证接合。保持 P2，不提前实施 P3 闭环。
+
+
+## P2-0D 补充（2026-11-15）
+
+诊断和薄修复详见 [Provider 诊断专项](P2_provider_diagnostics.md)。原P2-0C的Lab、Research异常链没有保存，分别仍为UNKNOWN；共享client、跨loop或Streaming都不能凭时长猜定。新SDK probes覆盖Streaming、共享client并发、连续/同时存活loops、HTTP/API、连接/超时/解析异常和取消清理。默认缓存风险未能在真实本地HTTP/1.1 fixture复现。
+
+新增公开ModelConfig.use provider `mis.agents.responses_model:IsolatedResponsesModel`，每模型专用http_async_client、loop归属保护和清理，并补安全阶段telemetry。原生Streaming及非流式MockTransport全图均PASS。Budget Guard保留，固定7次handler（3次子任务+最多3批派发+1次汇总），新增最坏预留0.0723184 USD，使用旧保守占用重算入场累计上界0.1243039 USD。
+
+唯一一次新真实任务整体仍**FAIL**：3次HTTP200且有usage，Lead→Lab→Lead成功，但Lead随后直接最终汇总，Research/Procurement没有分派，汇总显式列summary=null/No result received；未触发7次上限。实际3次底层请求均stream=false，不能由graph.astream推断必然Streaming。没有追加请求或真实三角色并发证明。
+
+本轮新增可核算0.0016005 USD，已知累计0.0036288 USD；保留旧未知usage占用后保守累计0.0535860 USD/10 USD。新原始证据为仓库外agents-live-0d.json；旧agents-live.json保持不变。9项结果完整性单测和原始证据离线校验确保missing角色不因Lead的unreviewed汇总而被判完成；这仍不是正式Artifact采纳或P3闭环。

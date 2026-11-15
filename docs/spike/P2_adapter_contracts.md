@@ -44,3 +44,16 @@ uv run pytest tests/test_task_bridge.py tests/test_deerflow_adapter.py -q
 ```
 
 本轮结果：42 passed。覆盖命名 Lead 路由、Brief 序列化/Hash、跨项目与任务错误在发送前拒绝、快照变化、角色/运行/需求范围错配、非 draft 产物拒绝，以及事件不泄露 raw payload、不把关闭事件当成功。均为 httpx MockTransport/纯函数测试，不代表 Gateway 上四 Agent 或 Artifact 写入已经验收。
+
+
+## P2-0D 增量：命令账本与只读对账
+
+2026-11-15：`task_store.py` 已实现 PostgreSQL `TaskRunLinkStore` 与独立命令意图账本；具体两表、负责人审批、权限和当前安装阻塞见 [持久映射报告](P2_mapping_storage.md)。本节替代前文“只有 Protocol”的当前实现状态，前文保留 P2-0C 历史事实。两表未实际安装前，不能把新增类等同于持久化已经验收。
+
+`task_submission.py::DurableTaskSubmission` 将事务顺序落实为：begin_intent 提交 → uncertain 提交 → HTTP → verified reconcile 提交，HTTP 不持有数据库事务。相同意图返回 `created=false` 后只返回已有记录，不发送；发送前/后任意崩溃均以 intent/uncertain 保守对账，不自动重发收费调用。预算快照是审计记录，仍需 Runtime 的真实准入限制器。request_sha256 是 Brief、Thread、MIS run、幂等键、部署 Hash 与命名 Agent 配置的语义指纹，不宣称是 HTTP 原始字节签名。
+
+`DeerFlowClient.find_run` 先检查远端 Thread metadata，再查询固定版原生 `/runs/page` keyset 分页；完整扫描才接受唯一匹配。多条匹配、跨项目/Thread、重复游标、截断扫描均拒绝；零匹配只表示未找到，不代表允许 POST。页数有硬上限，没有自动模型重试。
+
+本轮补充 7 项分页/范围测试、2 项提交顺序/超时后重入测试；存储 25 项离线 SQL/驱动/codec 测试与真实 PostgreSQL opt-in 验收分别计数。mock ledger 的 coordinator 重建不冒充 PostgreSQL 跨进程验收。
+
+Run command 终态与业务 Thread 状态必须分离：固定版 before_agent interrupt 可让 Run.status=success，同时 Checkpoint 仍有 pending interrupt，因此映射中的 completed 仅表示一次 Runtime command 结束；A4 业务 waiting_user/最终完成需联合 Checkpoint 与 Question 对账。不能把 command.completed 自动当作 Agent 产物已接收或整个业务任务完成。

@@ -28,13 +28,17 @@ from mis.agents import SPECIALISTS, deerflow_profiles  # noqa: E402
 def main():
     logging.disable(logging.CRITICAL)
     live = "--live" in sys.argv
-    http_mock = "--http-mock" in sys.argv
+    streaming_mock = "--streaming-mock" in sys.argv
+    http_mock = "--http-mock" in sys.argv or streaming_mock
     assert not (live and http_mock), "Live and HTTP mock must be separate modes"
     api_key = "offline-not-a-key"
     if live:
         from dotenv import dotenv_values
 
         api_key = dotenv_values(REPO / ".env")["LLM_API_KEY"]
+        evidence = REPO.parent / "mis-p2-gateway-evidence" / "agents-live-0d.json"
+        with evidence.open("x", encoding="utf-8") as handle:
+            json.dump({"phase": "reserved-before-call", "max_handler_calls": 7}, handle)
     with tempfile.TemporaryDirectory(prefix="mis-p2-agents-") as directory:
         home = Path(directory)
         os.environ.update(
@@ -48,7 +52,7 @@ def main():
             "models": [
                 {
                     "name": "gpt-6-luna",
-                    "use": "langchain_openai:ChatOpenAI",
+                    "use": "mis.agents.responses_model:IsolatedResponsesModel",
                     "model": "gpt-6-luna",
                     "api_key": "$OPENAI_API_KEY",
                     "use_responses_api": True,
@@ -100,6 +104,7 @@ def main():
         }
         if http_mock:
             config["models"][0]["use"] = "p2_http_model:OfflineResponsesModel"
+            config["models"][0]["streaming"] = streaming_mock
         import yaml
 
         config_path = home / "config.yaml"
@@ -330,22 +335,43 @@ def main():
                 )
             )
             try:
-                result = asyncio.run(
-                    assembly.graph.ainvoke(
-                        {"messages": [{"type": "human", "content": prompt}]},
-                        run_config,
-                        context=run_config["context"],
-                    )
-                )
+
+                async def execute():
+                    try:
+                        return await assembly.graph.ainvoke(
+                            {"messages": [{"type": "human", "content": prompt}]},
+                            run_config,
+                            context=run_config["context"],
+                        )
+                    finally:
+                        if live or http_mock:
+                            from mis.agents.responses_model import close_model_clients
+
+                            await close_model_clients()
+
+                result = asyncio.run(execute())
             finally:
                 if live:
-                    evidence = REPO.parent / "mis-p2-gateway-evidence" / "agents-live.json"
+                    from mis.agents.responses_model import ModelAsyncClient
+
                     evidence.write_text(
                         json.dumps(
                             {
                                 "reserved_usd": str(P2AgentBudgetGuard.RESERVED_USD),
                                 "admissions": P2AgentBudgetGuard.admissions,
                                 "outcomes": P2AgentBudgetGuard.outcomes,
+                                "prior_occupancy_usd": str(P2AgentBudgetGuard.PRIOR_OCCUPANCY_USD),
+                                "client_events": [
+                                    {
+                                        "client_id": id(client),
+                                        "loop_id": id(client.owner_loop),
+                                        "events": client.events,
+                                    }
+                                    for client in ModelAsyncClient.instances
+                                ],
+                                "all_clients_closed": all(
+                                    client.is_closed for client in ModelAsyncClient.instances
+                                ),
                                 "final_messages": [
                                     m.model_dump(mode="json") for m in result["messages"]
                                 ]
@@ -360,7 +386,8 @@ def main():
         assert 0 < len(P2AgentBudgetGuard.admissions) <= P2AgentBudgetGuard.MAX_CALLS
         if not live:
             assert len(P2AgentBudgetGuard.admissions) == 5
-        assert sum(not a["tools"] for a in P2AgentBudgetGuard.admissions) == 3
+        if not live:
+            assert sum(not a["tools"] for a in P2AgentBudgetGuard.admissions) == 3
         assert middleware_checks.count("lead-no-memory") == 1
         assert middleware_checks.count("child-date-only") == 3
         if http_mock:
@@ -388,6 +415,9 @@ def main():
             )
             return
         if live:
+            from mis.agents.results import require_complete_specialists
+
+            require_complete_specialists([m.model_dump(mode="json") for m in result["messages"]])
             final = result["messages"][-1]
             assert not final.additional_kwargs.get("deerflow_error_fallback"), "Live Lead failed"
             assert "unreviewed" in str(final.content), "Live aggregation was not returned"

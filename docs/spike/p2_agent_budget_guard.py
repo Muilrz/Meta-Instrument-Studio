@@ -1,5 +1,6 @@
 """Spike-only official middleware extension shared by Lead and SubAgent graphs."""
 
+import asyncio
 import json
 import threading
 import time
@@ -18,7 +19,8 @@ class P2AgentBudgetGuard(AgentMiddleware):
     INPUT_BYTES = 90000
     INPUT_TOKEN_BOUND = INPUT_BYTES + 8192
     OUTPUT_TOKENS = 1024
-    MAX_CALLS = 5
+    MAX_CALLS = 7
+    PRIOR_OCCUPANCY_USD = Decimal("0.0519855")
     RESERVED_USD = (
         Decimal(MAX_CALLS)
         * (Decimal(INPUT_TOKEN_BOUND) * Decimal("0.10") + Decimal(OUTPUT_TOKENS) * Decimal("0.50"))
@@ -54,7 +56,7 @@ class P2AgentBudgetGuard(AgentMiddleware):
         ).encode()
         if len(serialized) > self.INPUT_BYTES:
             raise RuntimeError("P2 agent input budget exceeded")
-        if Decimal("0.0003295") + self.RESERVED_USD > Decimal("10"):
+        if self.PRIOR_OCCUPANCY_USD + self.RESERVED_USD > Decimal("10"):
             raise RuntimeError("P2 cumulative budget exceeded")
         with self.lock:
             if len(self.admissions) >= self.MAX_CALLS:
@@ -68,9 +70,22 @@ class P2AgentBudgetGuard(AgentMiddleware):
                     # high-resolution intervals avoid false zero-duration overlap.
                     "started": time.perf_counter(),
                     "finished": None,
+                    "loop_id": id(asyncio.get_running_loop()) if self._has_loop() else None,
+                    "thread_id": threading.get_ident(),
+                    "client_id": id(
+                        getattr(getattr(model, "root_async_client", None), "_client", None)
+                    ),
                 }
             )
             return len(self.admissions) - 1
+
+    @staticmethod
+    def _has_loop():
+        try:
+            asyncio.get_running_loop()
+            return True
+        except RuntimeError:
+            return False
 
     @staticmethod
     def _text_content(content):
@@ -101,11 +116,34 @@ class P2AgentBudgetGuard(AgentMiddleware):
             chain.append(type(current).__name__)
             current = current.__cause__
         self.admissions[index]["error_types"] = chain
+        self.admissions[index]["http_status"] = getattr(exc, "status_code", None)
+        if "CancelledError" in chain:
+            category = "cancelled"
+        elif getattr(exc, "status_code", None) is not None:
+            category = "http_api"
+        elif "APITimeoutError" in chain:
+            category = "timeout"
+        elif any(t in chain for t in ("APIConnectionError", "ConnectError", "ReadError")):
+            category = "client_connection"
+        elif any(
+            t in chain
+            for t in (
+                "JSONDecodeError",
+                "ValidationError",
+                "AttributeError",
+                "TypeError",
+                "ValueError",
+            )
+        ):
+            category = "response_or_model_parse"
+        else:
+            category = "model_handler"
+        self.admissions[index]["error_category"] = category
         self.admissions[index]["error_frames"] = [
             frame.name for frame in traceback.extract_tb(exc.__traceback__)
         ]
 
-    def _record(self, result):
+    def _record(self, result, index=None):
         for message in getattr(result, "result", []):
             for call in getattr(message, "tool_calls", []):
                 args = call.get("args", {})
@@ -123,6 +161,7 @@ class P2AgentBudgetGuard(AgentMiddleware):
                         "tool_calls": getattr(message, "tool_calls", []),
                         "usage": getattr(message, "usage_metadata", None),
                         "response": getattr(message, "response_metadata", None),
+                        "admission_index": index,
                     }
                 )
         return result
@@ -130,8 +169,8 @@ class P2AgentBudgetGuard(AgentMiddleware):
     def wrap_model_call(self, request, handler):
         index = self._admit(request)
         try:
-            return self._record(handler(request))
-        except Exception as exc:
+            return self._record(handler(request), index)
+        except BaseException as exc:
             self._error(index, exc)
             raise
         finally:
@@ -140,8 +179,8 @@ class P2AgentBudgetGuard(AgentMiddleware):
     async def awrap_model_call(self, request, handler):
         index = self._admit(request)
         try:
-            return self._record(await handler(request))
-        except Exception as exc:
+            return self._record(await handler(request), index)
+        except BaseException as exc:
             self._error(index, exc)
             raise
         finally:
