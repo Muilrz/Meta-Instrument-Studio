@@ -484,3 +484,63 @@ ALTER ROLE mis_runtime IN DATABASE neondb RESET search_path;
 `validate_gateway_config.py` 离线构造上游 AppConfig、ChatOpenAI 和 RBAC provider，PASS。实际模型为 gpt-6-luna，use_responses_api=true、output_version=responses/v1、reasoning_effort=none、max_retries=0。工具/Sandbox/Skill 在所有配置角色下均拒绝，sandbox 使用 AIO provider，allow_host_bash=false、prewarm=false，memory/title/suggestions/summarization/scheduler 关闭。单次输出上限64、recursion_limit=3。完整 Agent 装配及后台调用总数仍须启动前核验。配置检查初稿曾发现 RBAC deny 类型和 reasoning 配置被默认策略移除，两项均通过正式配置字段修正并重新验证，没有改动核心工厂。
 
 Gateway 迁移和真实 Smoke 继续 BLOCKED，直到角色配置获准且全部实际连接的 schema 复核通过。Docker/Sandbox 专项保持 BLOCKED。累计真实模型费用仍为 **0.0000259 USD / 10 USD**。
+
+## 18. 获准角色默认值修复与 runtime 初始化（2026-11-15）
+
+本节续接第 17 节，保留此前失败记录。负责人明确批准仅在已人工确认的 `mis-p2-deerflow-spike` 分支，以 `mis_runtime` 自身设置该角色在 `neondb` 的默认 search_path。未使用 owner 运行，未新增分支，未修改 MIS_TEST_DATABASE_URL、MIS 业务契约或 DeerFlow 核心。
+
+### 18.1 已执行的修复与迁移
+
+执行前已保存适用的 pg_db_role_setting 至仓库外证据目录 `mis-p2-gateway-evidence/role-settings-before.json`，结果为空。实际执行并提交：
+
+```sql
+ALTER ROLE mis_runtime IN DATABASE neondb SET search_path = runtime;
+```
+
+新连接复验 `current_user=session_user=mis_runtime`、`current_database()=neondb`、`current_schema()=runtime`、`search_path=runtime`。原生 asyncpg 和 SQLAlchemy 使用官方命名 startup GUC 的新连接均为 runtime，pg_settings.source 为 `database user`；psycopg 使用官方 options 的新连接为 runtime，source 为 `client`。角色默认记录为 `search_path=runtime`。第 17 节的启动参数格式差异仍成立，本次通过已获准的角色默认值解决，不声称已修复驱动或 Neon 的根因。
+
+| 检查 | 状态 | 实际结果 |
+|---|---|---|
+| 固定版本与身份 | PASS | 上游 Git HEAD 为 `58fc5bd5b8e6ea46538e9481ba06ca2a46e14e2a`；数据库实际登录身份始终为 mis_runtime |
+| ORM / Alembic 初始化 | PASS | 官方 init_engine_from_config 返回成功；runtime 中 41 张表，alembic_version 为 `0048_extension_execution_leases`。空库路径是 create_all + stamp head，不能当作已有历史库升级验证 |
+| Alembic 参数路径 | SOURCE CONFIRMED | migrations/env.py 的独立 async engine 使用同一 build_asyncpg_connect_args(schema)。同参数新连接已实测为 runtime；空库路径未逐条执行历史 revision upgrade |
+| Checkpoint / Store setup | PASS | 官方 PostgreSQL pool 新连接身份为 mis_runtime、schema 为 runtime；make_checkpointer / make_store 分别完成 AsyncPostgresSaver、AsyncPostgresStore setup。checkpoint_migrations 最大版本 9，store_migrations 最大版本 3 |
+| 实际对象位置 | PASS | 最终 runtime 共 47 张普通表，表 owner 均 mis_runtime；额外 6 表为 checkpoint_blobs、checkpoint_migrations、checkpoint_writes、checkpoints、store、store_migrations。没有 SQLite 或内存模式替代 |
+| 越界结构与数据检查 | PASS | 前后 mis、knowledge、trace、public 的 schema owner/ACL、关系、列、索引均相等；默认 ACL 相等；mis 各业务表数据摘要相等 |
+| Checkpoint 写入、持久暂停及重启恢复 | NOT RUN | setup 成功只证明初始化，不证明实际 Run checkpoint 或恢复成功 |
+
+本轮复用第 16 节实际权限与拒写证据，没有扩大角色特权或 schema ACL。数据库级 CREATE 属于此前单独批准的权限，技术上仍允许创建其他 schema，不能描述为数据库自身已将全部 DDL 硬限制在 runtime；本次执行与快照检查均限定在获准范围。runtime schema 原有 owner 未改动。
+
+本轮使用较短路径的官方 Git checkout `C:\Users\Muil\Desktop\MIS_workspace\deer-flow-p2-0a-filtered\backend`，独立 Python 3.12 环境按官方锁文件安装。实际命令依次为：
+
+```powershell
+# 在上述 backend 目录执行；脚本只在进程内读取本地秘密配置
+& $env:LOCALAPPDATA/Microsoft/WinGet/Links/uv.exe sync --locked --all-packages --extra postgres --no-dev
+.\.venv\Scripts\python.exe C:/Users/Muil/Desktop/MIS_workspace/mis-p2-gateway-evidence/diagnose_search_path.py
+.\.venv\Scripts\python.exe C:/Users/Muil/Desktop/MIS_workspace/mis-p2-gateway-evidence/migrate.py
+.\.venv\Scripts\python.exe C:/Users/Muil/Desktop/MIS_workspace/mis-p2-gateway-evidence/setup_checkpoint.py
+.\.venv\Scripts\python.exe C:/Users/Muil/Desktop/MIS_workspace/mis-p2-gateway-evidence/validate_gateway_config.py
+```
+
+迁移输出摘要为 `ORM_MIGRATION_PASS`。Checkpoint 输出摘要为 `checkpoint_pool_identity: mis_runtime/runtime`、`checkpoint_setup AsyncPostgresSaver PASS`、`store_setup AsyncPostgresStore PASS`。Windows 默认 Proactor 事件循环曾导致 psycopg 异步连接不兼容及 pool timeout；独立 setup 脚本改用 WindowsSelectorEventLoopPolicy 后通过，没有修改上游。后续 Gateway 启动进程也须采用兼容的事件循环，不能仅据 setup 成功假定默认 uvicorn 命令可用。
+
+迁移前 `before.json` SHA-256 为 `ecaf4a23abb997fde0c193fbdfb4cdf0e187637023ba1941590d7f0dddd265ab`；最终 `after-checkpoint-store.json` 为 `c6df898145ff4a182e8d8b001a68c13fb0a3033e70088d07e91d071380a61253`，均位于仓库外 `C:\Users\Muil\Desktop\MIS_workspace\mis-p2-gateway-evidence`。快照包含 schema、对象/ACL、列、索引、默认 ACL 和业务数据摘要；未提交或公开其中的业务数据。必要回退须单独审核，不自动 DROP 表；角色默认值的同范围 RESET 方案见第 17 节。
+
+### 18.2 Gateway 本机导入阻塞
+
+| 检查 | 状态 | 实际结果 |
+|---|---|---|
+| 模型及 RBAC 配置构造 | PASS | 第 17.2 节的离线配置检查通过，Responses API、reasoning none、零自动重试、工具/技能/Sandbox 拒绝策略不变 |
+| 完整 Agent 装配与 Gateway app 导入 | FAIL | 官方 skillscan/orchestrator.py 加载先出现 OSError errno 9，随后该路径不存在；正常 git restore 恢复一次后复现。直接导入 app.gateway.app 报 ModuleNotFoundError: deerflow.skills.skillscan.orchestrator |
+| Gateway health / readiness | BLOCKED | app 无法导入，未取得服务启动或 HTTP 健康响应 |
+| 实际 Thread/Run、SSE、终止事件、模型返回 | NOT RUN | 未发送 API 请求，无响应或 Run ID 可登记 |
+| 无 Docker 最小 Agent 安全装配 | BLOCKED | 完整装配尚未通过，未执行宿主机工具，未调用真实模型 |
+| Docker/Sandbox 专项 | BLOCKED | 环境前置条件仍未解决 |
+
+上游 checkout 的 HEAD 固定，但工作树目前将 `backend/packages/harness/deerflow/skills/skillscan/orchestrator.py` 显示为删除；因此不能声称运行源码工作树完整。该文件在正常恢复后再次消失，原因尚未确定，不能归因为已证实的杀毒软件行为。没有建立替代模块、关闭安全软件、绕过扫描或修补核心。须先查明文件不可读/消失原因并恢复完整官方源码，才能继续 Gateway 验证。
+
+候选 gateway.yaml SHA-256 仍为 `a01ab442d11e79a3eea46bb3c451858ed558643180d5568b509f42357f959817`，含环境变量引用而无密钥。这是已构造验证的候选配置 Hash，不是成功运行 Gateway 的生效证据。恢复后先检查完整 Agent 装配的工具清单为空、后台调用受限及 Selector 事件循环，再进行 health/readiness、独立客户端最小 Thread/Run/SSE 和实际 checkpoint 落表；未批准开展后续 P2 业务任务。
+
+本轮真实模型调用 **0**，新增 Token **0**、费用 **0 USD**；已知累计仍为 **0.0000259 USD / 10 USD**，已知余额 **9.9999741 USD**。没有重试模型或后台模型调用；其他会话消费和服务账单仍未知。最小 Adapter 维持第 16 节已推送版本，未新增代码。P1 最终人工评审记录仍待确认。
+
+本次仅修改本报告及文档索引，沿用负责人批准的纯文档完整 pytest 豁免，避免再次触发 MIS 初始化/迁移 fixture；既有 Adapter 完整回归为第 16 节的 147 passed。本次 `uv run ruff check .`、`git diff --check` 及两份文档的代码围栏/本地链接检查均 PASS。推送前 fetch 确认远端无新增提交。

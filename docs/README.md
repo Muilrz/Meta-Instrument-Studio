@@ -22,7 +22,7 @@
 |---|---|---|
 | `plans/` | 开发计划、各阶段任务说明 | `development_plan.md`、`Px_<主题>.md` |
 | `design/` | 设计文档、需求清单 | 按主题命名 |
-| `spike/` | 集成预检与验证报告 | [P2 DeerFlow 预检记录](spike/P2_deerflow_integration.md)：最小 HTTP Adapter 的 Mock 测试通过，Gateway 迁移遇 public schema 权限错误，Sandbox 为 BLOCKED |
+| `spike/` | 集成预检与验证报告 | [P2 DeerFlow 预检记录](spike/P2_deerflow_integration.md)：最小 HTTP Adapter Mock 测试通过；runtime 初始化完成，Gateway 被本机上游模块导入错误阻塞，Sandbox 为 BLOCKED |
 | `adr/` | 架构决策记录 | `NNNN-<主题>.md`，模板见 `0000-template.md` |
 | `reviews/` | 阶段报告、审查记录 | `Px_report.md` |
 | `research/` | 调研资料和证据，只读存档 | 带日期 |
