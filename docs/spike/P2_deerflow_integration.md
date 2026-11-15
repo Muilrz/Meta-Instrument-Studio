@@ -389,3 +389,61 @@ SELECT id FROM mis.projects WHERE false;
 最小修正方向需负责人审核。优先核实官方扩展是否允许复用预建 schema 并跳过 schema 创建，让初始化/迁移与运行身份分别承担权限。若固定版本缺少该路径，再评估薄启动适配方案及其审计边界。直接授予数据库 CREATE 会扩大到其他 schema 的创建能力，超出当前授权，本次未实施。schema owner、角色与 ACL 均未调整。所有已尝试事务均已回滚，未形成迁移对象或业务数据变更。
 
 本轮实际模型调用 0 次，已知 P2 累计费用仍为 **0.0000259 USD**。未生成 Gateway 生效配置或配置 Hash。完整 pytest 按纯文档范围豁免，因 fixture 会初始化 MIS schema 并迁移。ruff、diff、文档检查作为本次报告提交门槛。
+
+## 16. P2 恢复开发与最小 HTTP Adapter（2026-11-15）
+
+负责人本轮批准独立 P2 分支的 `mis_runtime` 数据库级 CREATE，并授权最小 Adapter 开发及 Mock HTTP 测试。此前文档提交 `55487bc`、`99dd1c5`、`5758258`、`3e58061`、`9899450` 已安全推送到 `origin/feat/p2-deerflow-integration`。P1 最终人工评审记录仍待确认。
+
+### 16.1 Gateway 与数据库实际结果
+
+| 检查 | 状态 | 证据 |
+|---|---|---|
+| 实际身份与新增授权 | PASS | `current_user=session_user=mis_runtime`，数据库 CREATE=true。superuser/CREATEDB/CREATEROLE/BYPASSRLS 均 false，无其他角色成员关系 |
+| 业务拒写 | PASS | 新一轮 INSERT、UPDATE、DELETE 的 EXPLAIN 探针均返回 `42501`，逐条 rollback |
+| 固定上游 | PASS | Git checkout HEAD 仍为 `58fc5bd5b8e6ea46538e9481ba06ca2a46e14e2a`。执行环境来自同 commit 的仓库外完整源码存档，锁文件及 engine/bootstrap/schema helper/Alembic env/Gateway app/deps 共 8 个关键文件与 Git checkout 比较一致（忽略 CRLF 差异） |
+| 独立依赖环境 | PASS | 在源码存档的 backend 执行 `uv sync --locked --all-packages --extra postgres --no-dev`，Python 3.12.16。依赖安装于其独立 `.venv`。上游核心源码保持原文件 |
+| ORM 初始化尝试 | FAIL | 官方 `init_engine_from_config(DatabaseConfig(...))` 在 bootstrap 空库 create_all 路径尝试创建 `managed_subagents` 时返回 `ProgrammingError / InsufficientPrivilegeError`，SQLSTATE `42501`，错误为 `permission denied for schema public`。依约立即停止后续 DDL |
+| 连接诊断 | PASS | psycopg、asyncpg 及 SQLAlchemy asyncpg 均可用受限身份建立连接。首次初始化还遇到无 SQLSTATE 的 OSError，连接诊断成功后作一次重试得到上述确定性权限错误 |
+| 生效 search_path | FAIL | 只读连接以官方 `build_asyncpg_connect_args('runtime')` 构造参数，实际 `current_schema()` 为 public，`current_setting('search_path')` 为 `"$user", public`。期望值为 runtime。原因尚未确定，不能据源码中存在 server_settings 推断实际隔离成功 |
+| 前后数据库比较 | PASS | schema/ACL、对象、列、索引和默认权限快照逐项相等，runtime 仍无关系，mis 业务数据逐表摘要相等 |
+| Gateway health/readiness、Thread/Run、SSE | BLOCKED | 初始化遇 public 权限边界，未启动 Gateway。未取得 HTTP、运行状态、Token 或 Checkpoint 落表证据 |
+| Docker/Sandbox | BLOCKED | 未执行无隔离的宿主机 Agent 工具。无 Docker 最小 Agent 路径的安全验证仍待完成 |
+
+新快照位于仓库外 `C:\Users\Muil\Desktop\MIS_workspace\mis-p2-gateway-evidence\before.json`、`after.json`，二者 SHA-256 均为 `ecaf4a23abb997fde0c193fbdfb4cdf0e187637023ba1941590d7f0dddd265ab`。查询定义为同目录 `queries.json`，包含 schema owner/ACL、关系、列、索引和默认权限。mis 数据只读转换为 JSON 后排序计算逐表 Hash，报告仅登记是否相等。
+
+实际复现命令如下。迁移脚本位于仓库外，读取 MIS `.env` 后仅在内存处理凭据，关闭 SQL 日志，捕获并脱敏异常。它调用固定上游公开初始化入口，finally 关闭 engine。
+
+```powershell
+# 固定源码存档的 backend 目录
+& $env:LOCALAPPDATA/Microsoft/WinGet/Links/uv.exe sync --locked --all-packages --extra postgres --no-dev
+.\.venv\Scripts\python.exe C:/Users/Muil/Desktop/MIS_workspace/mis-p2-gateway-evidence/migrate.py
+```
+
+此次初始化参数为 `backend=postgres`、`postgres_schema=runtime`、连接用户 mis_runtime。为 asyncpg 使用秘密 URL 的 `ssl=require` 参数，移除 psycopg 专用的 sslmode/channel_binding 查询参数。此转换仅用于独立初始化进程，成功连通。没有产生 Gateway 生效配置及配置 Hash。SQLAlchemy/asyncpg 官方 schema 设置实际未达到期望，这是当前阻塞的具体复现条件。错误发生后无权限扩展、核心补丁或 owner 运行尝试。后续需先通过只读连接找出 search_path 未生效原因，再由负责人确认限定范围的修正方案。
+
+脱敏迁移配置的规范化 JSON 已保存在上述证据目录的 `migration-settings.json`，包含 backend、postgres_schema、driver、ssl、role 和 Endpoint ID。SHA-256 为 `6a0e69ea70e444f4f97370ca3ea8be47f16c27c83c4a0adc5073022e6c09449b`，不包含密码或完整 URL。`migrate.py` 的 SHA-256 为 `2d7ea18e21ac42d11357a50679be8234c8278224f54f4704d3bd4d905159e17f`。追加只读诊断显示 pg_settings 中 search_path 的 source 为 default，pg_db_role_setting 没有适用的 search_path 配置。尚不能据此确定连接参数未生效的原因。
+
+本轮真实模型调用 **0**，费用 **0 USD**，已知 P2 累计 **0.0000259 USD / 10 USD**，已知余额 **9.9999741 USD**。其他会话消费和账户账单仍未核对。
+
+### 16.2 最小 Adapter
+
+新增 `src/mis/adapters/deerflow.py`、`src/mis/adapters/__init__.py` 和 `tests/test_deerflow_adapter.py`，pyproject/uv.lock 新增 `httpx>=0.28,<0.29`，本次锁定 0.28.1。P1 业务模型沿用现状。Adapter 独立依赖官方 Thread/Run HTTP 接口，未依赖上游 Python 内部执行器。
+
+| 接口 | 行为 |
+|---|---|
+| `DeerFlowClient(base_url, token=..., timeout=...)` | 同步 HTTP，Bearer 凭据，禁止重定向和环境代理，零自动重试，可注入 MockTransport |
+| `create_thread(project_id, task_id, thread_id)` | 由 MIS 三个 ID 生成稳定 UUID，POST /api/threads，校验返回的 thread ID 与 MIS metadata |
+| `start_run(binding, run_id, messages, idempotency_key=...)` | POST /api/threads/{id}/runs，显式幂等键和 MIS 关联 metadata，返回 RunBinding 与状态 |
+| `get_run(binding)` | 校验 thread/run/metadata 一致性，再将上游状态转换为 MIS 状态 |
+| `cancel_run(binding, wait=False)` | 请求 interrupt 取消，之后由 get_run 对账实际终态 |
+| `stream_events(binding, max_seconds=..., max_event_bytes=...)` | 观察已有 Run SSE，解析多行 data，保留原 event/data/id，检查事件字节和时长边界及截断 |
+
+ThreadBinding/RunBinding 是可序列化的 Adapter 传输记录，建立 project/task/MIS thread/run 与上游 ID 的对应关系，调用方应在后续操作前持久保存它们。本版没有映射数据库表或持久化接入，不能保证单靠此客户端跨进程恢复全部映射。后续持久化应遵循独立 RunRef 与业务存储边界。
+
+状态转换为 pending→queued、running→running、success→completed、error/timeout→failed。`interrupted` 可能同时代表取消或等待，保守映射 unknown，保留 raw 状态供暂停点/问题对账。SSE `end` 转为 stream.closed，业务终态仍须通过 get_run 确认。未知事件为 runtime.event。错误保留 HTTP 状态及内部原始 detail，异常文本仅含安全摘要。raw 字段可能包含私有资料，BFF 暴露前需过滤。
+
+Mock 测试覆盖稳定 Thread 映射、返回关联冲突、跨 Client 的幂等键复用、误用 key、超时和网络错误零重试、取消状态对账、SSE 多行/注释/未知/错误/截断/大小/期限/关闭，以及重定向和非法 Header。独立运行 **21 passed**，执行命令 `uv run pytest tests/test_deerflow_adapter.py -q`。这些结果来自 Mock HTTP，真实 Gateway 兼容性待阻塞解除后验收。
+
+完整回归已获负责人明确批准使用原 P1 测试分支，执行结果在本节交付检查中登记。尚未完成的 P2 项包括真实 Gateway Thread/Run/SSE、runtime 落表与持久暂停/重启恢复、映射持久化、角色与 Context 保真、结构化产物业务幂等写入、Memory 隔离/候选复用、预算截停、C1 观测及 Sandbox 隔离。
+
+交付检查实际执行 `uv run pytest`，结果 **147 passed in 376.50s**，使用原 P1/MIS 测试目标，与 P2 分支分离。`uv run ruff check .`、`uv run ruff format --check .`（56 files already formatted）、`uv run python -m mis.schemas.export --check`、diff 与文档代码围栏/本地链接检查均 PASS。本轮代码检查通过不改变上表的 Gateway 与迁移阻塞状态。
