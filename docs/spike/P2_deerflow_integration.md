@@ -447,3 +447,40 @@ Mock 测试覆盖稳定 Thread 映射、返回关联冲突、跨 Client 的幂�
 完整回归已获负责人明确批准使用原 P1 测试分支，执行结果在本节交付检查中登记。尚未完成的 P2 项包括真实 Gateway Thread/Run/SSE、runtime 落表与持久暂停/重启恢复、映射持久化、角色与 Context 保真、结构化产物业务幂等写入、Memory 隔离/候选复用、预算截停、C1 观测及 Sandbox 隔离。
 
 交付检查实际执行 `uv run pytest`，结果 **147 passed in 376.50s**，使用原 P1/MIS 测试目标，与 P2 分支分离。`uv run ruff check .`、`uv run ruff format --check .`（56 files already formatted）、`uv run python -m mis.schemas.export --check`、diff 与文档代码围栏/本地链接检查均 PASS。本轮代码检查通过不改变上表的 Gateway 与迁移阻塞状态。
+
+## 17. Direct Connection 的 search_path 对照定位（2026-11-15）
+
+负责人在 Neon 控制台人工确认 P2 分支 pooling 关闭、数据库 neondb、角色 mis_runtime、Host 不带 -pooler。本地秘密 URL 的 Host、数据库和角色与该确认逐项匹配。本轮未重新调查连接池，未执行新 DDL 或真实模型请求。
+
+诊断脚本 `C:\Users\Muil\Desktop\MIS_workspace\mis-p2-gateway-evidence\diagnose_search_path.py` 在固定上游独立环境执行。它每次建立新连接，查询 `current_user`、`session_user`、`current_schema()`、`current_setting('search_path')` 及 `pg_settings.source`。结果写入同目录 `search-path-diagnostics.json`，用户名均为 mis_runtime。
+
+| 新连接方式 | current_schema / search_path / source | 状态 |
+|---|---|---|
+| 原生 asyncpg，server_settings.search_path=runtime | public / `"$user", public` / default | FAIL |
+| SQLAlchemy asyncpg，官方 build_asyncpg_connect_args(runtime) | public / `"$user", public` / default | FAIL |
+| psycopg，官方 dsn_with_search_path(runtime) 生成 options | runtime / runtime / client | PASS |
+| 原生 asyncpg，server_settings.options=`-c search_path=runtime` | runtime / runtime / client | PASS |
+| SQLAlchemy asyncpg，server_settings.options=`-c search_path=runtime` | runtime / runtime / client | PASS |
+| 三种连接在只读事务内 SET LOCAL search_path=runtime | runtime / runtime / session | PASS |
+
+官方 helper 实际返回 `{'server_settings': {'search_path': 'runtime'}}`。SQLAlchemy `do_connect` 只读观察回调确认该字典已传给驱动，Host/数据库/角色匹配，ssl=require。未发现 SQLAlchemy 层丢弃或覆盖参数的证据。原生 asyncpg 复现同一差异，问题位于命名启动 GUC 与 options 两种格式在 asyncpg/Neon 握手路径中的处理。传参格式的差异已经重现，尚未取得网络协议跟踪来进一步区分驱动发送与 Neon 接收环节。事务内显式设置有效，说明角色具备设置此会话参数的能力。
+
+### 17.1 最小持久配置方案，待批准
+
+固定 DeerFlow 的 DatabaseConfig 没有通用 asyncpg connect_args 覆盖入口，而官方 helper 采用上述未生效的命名 GUC。建议仅在已确认的 P2 分支，以 mis_runtime 自身修改该角色在 neondb 的会话默认值。
+
+```sql
+ALTER ROLE mis_runtime IN DATABASE neondb SET search_path = runtime;
+-- 回退，仅在需要时单独批准后执行
+ALTER ROLE mis_runtime IN DATABASE neondb RESET search_path;
+```
+
+该变更的目标是角色与数据库组合的新会话默认值，不改变对象 ACL 或角色特权。执行前需保存适用的 pg_db_role_setting。新会话生效及角色对自身默认值的修改能力有 PostgreSQL 17 官方说明，实际修复后必须对原生 asyncpg、ORM、Alembic 参数路径和 psycopg Checkpoint/Store 逐一验证 runtime，再进行限定迁移。此前许可只覆盖 runtime schema DDL，本轮已请求明确批准该持久角色配置，当前未执行。[PostgreSQL ALTER ROLE](https://www.postgresql.org/docs/17/sql-alterrole.html)
+
+### 17.2 Gateway 候选配置离线检查
+
+仓库外 `mis-p2-gateway-evidence/gateway.yaml` 已准备，SHA-256 `a01ab442d11e79a3eea46bb3c451858ed558643180d5568b509f42357f959817`，秘密仅为环境变量引用。ORM 使用 asyncpg 的 TLS URL，旧 checkpointer 段使用独立 psycopg DSN，二者同一目标且 postgres_schema=runtime。候选配置尚未用于启动。
+
+`validate_gateway_config.py` 离线构造上游 AppConfig、ChatOpenAI 和 RBAC provider，PASS。实际模型为 gpt-6-luna，use_responses_api=true、output_version=responses/v1、reasoning_effort=none、max_retries=0。工具/Sandbox/Skill 在所有配置角色下均拒绝，sandbox 使用 AIO provider，allow_host_bash=false、prewarm=false，memory/title/suggestions/summarization/scheduler 关闭。单次输出上限64、recursion_limit=3。完整 Agent 装配及后台调用总数仍须启动前核验。配置检查初稿曾发现 RBAC deny 类型和 reasoning 配置被默认策略移除，两项均通过正式配置字段修正并重新验证，没有改动核心工厂。
+
+Gateway 迁移和真实 Smoke 继续 BLOCKED，直到角色配置获准且全部实际连接的 schema 复核通过。Docker/Sandbox 专项保持 BLOCKED。累计真实模型费用仍为 **0.0000259 USD / 10 USD**。
