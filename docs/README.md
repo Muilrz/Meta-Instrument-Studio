@@ -8,7 +8,7 @@
 |---|---|---|
 | 平台最终要做成什么样 | [architecture.md](architecture.md) | 目标架构，V4.0；已同步 DeerFlow / MIS 职责与独立部署 |
 | 分几个阶段做、每阶段做什么、怎样算完成 | [plans/development_plan.md](plans/development_plan.md) | v0.2.9，待评审；新增 Context 原生复用与 DeerMem 无正式写入 Spike |
-| 当前阶段（P2）具体怎么做 | [plans/P2_deerflow_integration.md](plans/P2_deerflow_integration.md) | 分支已创建，DeerFlow 集成尚未验证；依 ADR-0002 开始启动准备 |
+| 当前阶段（P2）具体怎么做 | [plans/P2_deerflow_integration.md](plans/P2_deerflow_integration.md) | P2-0B Gateway Smoke 已通过；P2-0C Agent、恢复和 Memory 验证进行中，完整验收仍有缺口 |
 | Agent 架构要满足哪些要求、已经做了哪些决定 | [design/agent_architecture_requirements.md](design/agent_architecture_requirements.md) | 持续更新；A1–A11、C1、C2 已确认；B1、B2 的实现绑定在 P2 验证定稿 |
 | 技术栈、目录、数据库布局、部署 | [adr/0001-repo-structure-and-stack.md](adr/0001-repo-structure-and-stack.md) | 提议中，整体仍待评审；数据库与开发部署（Neon）、C1 Trace 存储与保留策略、C2 经验评分与生命周期存储规划已确认 |
 | Runtime 选什么、哪些复用和自研、何时重新评估 | [adr/0002-agent-runtime-and-integration.md](adr/0002-agent-runtime-and-integration.md) | 已接受 DeerFlow + MIS 分层集成；DeerMem 复用接口与效果待 P2 验证 |
@@ -22,7 +22,7 @@
 |---|---|---|
 | `plans/` | 开发计划、各阶段任务说明 | `development_plan.md`、`Px_<主题>.md` |
 | `design/` | 设计文档、需求清单 | 按主题命名 |
-| `spike/` | 集成预检与验证报告 | [P2 DeerFlow 预检记录](spike/P2_deerflow_integration.md)：Gateway 健康、Thread/Run、SSE 和 PostgreSQL Checkpoint 写入通过最小 Smoke；重启恢复未测，Sandbox 为 BLOCKED |
+| `spike/` | 集成预检与验证报告 | [P2 DeerFlow 验证记录](spike/P2_deerflow_integration.md)：P2-0B 真实 Smoke 与 P2-0C 集成结果；Sandbox 仍为 BLOCKED |
 | `adr/` | 架构决策记录 | `NNNN-<主题>.md`，模板见 `0000-template.md` |
 | `reviews/` | 阶段报告、审查记录 | `Px_report.md` |
 | `research/` | 调研资料和证据，只读存档 | 带日期 |
@@ -39,4 +39,6 @@
 
 - [P1 阶段报告](reviews/P1_report.md)：区分实现、测试和整体验收；T1–T8 已实现，本地和 CI 均 126 passed（含静态审查加固），已合并 `main`；最终人工评审记录尚待核对。
 
-- [P2 集成验证任务草案](plans/P2_deerflow_integration.md)：当前阶段任务说明，含原生 Context、DeerMem 候选能力验证；分支已创建，Spike 尚未执行。
+- [P2 集成验证任务草案](plans/P2_deerflow_integration.md)：当前阶段任务说明，含原生 Context、DeerMem 候选能力验证；Spike 进行中，已通过项目与剩余门槛见验证报告。
+
+- P2-0C 专项：[Agent 集成](spike/P2_agent_integration.md)、[Checkpoint 恢复](spike/P2_checkpoint_recovery.md)、[Memory 隔离](spike/P2_memory_isolation.md)、[Adapter 后续契约](spike/P2_adapter_contracts.md)。

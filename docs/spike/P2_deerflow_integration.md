@@ -1,5 +1,7 @@
 # P2 DeerFlow 集成预检与验证记录
 
+> 当前进度（2026-11-15）：P2-0B 真实 Gateway Smoke 已完成（第 19 节）；P2-0C 的四 Agent、恢复、Memory 与薄适配验证见第 20 节及其专项报告。第 1–18 节保留历史时间点的证据与限制，不代表最新状态。Sandbox 仍 BLOCKED，完整 P2 尚未验收，不进入 P3。
+
 - 日期：2026-11-08（Asia/Singapore）
 - 本次范围：**P2-0A 基线冻结与环境预检**；P2-0B 尚未执行。
 - MIS 分支：`feat/p2-deerflow-integration`，检查基点 `18b107c`。
@@ -692,3 +694,66 @@ SSE HTTP 200，实际事件依次为 metadata、6 个 values、end；Adapter 映
 - `uv run python -m mis.schemas.export --check`、`git diff --check`、报告与索引的代码围栏/本地链接检查：PASS。
 
 P1 最终人工评审记录仍待确认；此次有限 Smoke 不代表完整 P2、Checkpoint 恢复或 Docker/Sandbox 验收通过。不自动进入下一任务或 P3，不合并 main。
+
+
+## 20. P2-0C：Agent 集成与关键验证（2026-11-15）
+
+本轮从 `0d4ca22` 同步启动，按负责人要求转向实际 MIS Agent 集成，不重复基础 Gateway/模型 Smoke。上游仍固定 DeerFlow v2.2.0 / `58fc5bd5b8e6ea46538e9481ba06ca2a46e14e2a`，不改核心、不升级依赖，不改变 MIS 业务 Schema。三个并行工作线分别验证原生 Agent、Checkpoint 与 Memory；主线增加业务关联并交叉审查。
+
+### 20.1 四 Agent 与原生编排
+
+实现与逐次调用证据见 [Agent 集成专项](P2_agent_integration.md)。`src/mis/agents/profiles.py` 生成官方 AgentConfig 与 AppConfig/Subagents 配置：Project Copilot 为 Lead，允许的 Specialist 为 lab/research/procurement；每个 Specialist 无工具、无技能，禁止嵌套 task，单轮返回未审核候选。Lead 仅开放原生 task，角色资料经 `context_mode=isolated` 分派。RBAC 禁止 Sandbox、技能与宿主机执行，未引入第二套调度引擎。
+
+离线验证实际使用上游 `assemble_lead_agent → ToolNode/task_tool → SubagentExecutor` 与原生 Middleware，仅模型边界为固定假模型。三个 Specialist 的 barrier 与执行区间证明并行，角色 canary 不互相混入，Lead 收到并汇总三个结果。Sandbox 获取 trap 未触发。补充 `--http-mock` 模式进一步经过真实 ChatOpenAI/AsyncOpenAI SDK/Responses 序列化，仅用公开 http_async_client + MockTransport 拦截 HTTP，5 次 SDK 请求、0 外网，三并发与汇总通过；仍未复现真实失败。这些结果证明指定 mock 路径的原生隔离和编排，不是任意 Prompt 的权限证明。
+
+一次受控真实任务整体 **FAIL**：Lead 先分派 Lab，再同时分派 Research/Procurement；Procurement 真实模型结果已返回 Lead，Lab/Research handler 快速失败且缺失 usage，最终 Lead 汇总的第六次调用被硬上限拒绝。真实 Lead → Procurement → Lead 的往返成立，但三角色真实成功、至少两个真实模型并行成功及最终汇总尚未验收。失败原因未定位，不把跨事件循环 client 缓存风险当成已证实根因；未再次发真实请求。配置在临时独立 Harness 中装配；不宣称已把四 Agent 持久部署到 Gateway。默认配置仍需由操作方合并到既有锁定运行配置，并以官方 Agent store 安装 Lead。
+
+### 20.2 Checkpoint：两个不同的通过项目
+
+[Checkpoint 专项](P2_checkpoint_recovery.md) 已验证：
+
+- **已完成 Thread 跨进程读回 PASS**：新的 Gateway worker 通过官方内部认证读取 P2-0B 已完成 Thread，全部 messages/metadata 与此前证据精确相等，含原 OK；没有重新执行 Run 或调用模型。原 PAT 已撤销，临时内部服务令牌仅在进程内存中传递。
+- **底层持久 interrupt / Command.resume PASS**：同一 PostgreSQL `runtime`，身份 `mis_runtime`；pause/resume/repeat 三独立进程的 checkpoint 数 2→3→3、完成计数 0→1→1，重复恢复 checkpoint ID 不变。
+- 错误 question/choice 的离线 preflight 拒绝后，暂停 checkpoint 和 interrupt 保持不变。新增持久 reject 模式未实际运行，不能写为 PostgreSQL 错误答案验收。
+- **Gateway 原生 command.resume + MIS UserQuestion/回答 Evidence 闭环仍未验收**。底层恢复不是整个 A4 业务恢复的替代；并发重复恢复和外部副作用 exactly-once 也未验证。
+
+Gateway 已优雅停止。此次恢复专项模型调用、Token、费用均为 0。
+
+### 20.3 Memory 内容隔离与独立缺口
+
+[Memory 专项](P2_memory_isolation.md) 的固定 canary probe 通过：关闭全局写入/注入后，sync/async after_agent、compaction flush、自动读回均未获取 manager；临时真实 Memory 中的 A canary 正向对照可读取，同 user 的两个其他项目新 Thread 在模型请求假 handler 边界均无 A 内容，没有自动写回或模型调用。
+
+仅关闭两个全局开关会保留历史 Checkpoint 的冻结 Memory，已作为负向测试复现；Lead 必须使用原生 `memory_enabled=false`，其 sync/async 清理行为已验证。Specialist 不能添加不存在的配置字段；原生子 Agent 使用 date-only Middleware 并禁止 compaction memory flush，实际装配检查见 Agent 专项。禁止跨项目/角色复用 Thread；任意已污染摘要或历史不能靠切开关自动净化。
+
+空 FTS 文件根因是 Gateway 无条件 tokenizer warm 调用 manager 工厂，构造 storage 即创建空索引；不是模型写入或 Checkpoint 的 SQLite 回退。独立归档 **MEM-INIT-01**，不改核心、不无限阻塞主线。当前通过的是 disabled 内容隔离，不是启用 native Memory 的 MIS 项目权限；其原生作用域不含 MIS project_id。正式经验库写入 0。DeerMem 候选抽取/去重/整合仍待专项。
+
+### 20.4 薄适配、业务关联与后续接口
+
+[Adapter 契约](P2_adapter_contracts.md) 记录了代码与未完成项：
+
+- TaskBrief ID 关联 Thread task_id，RunBinding 关联 MIS/upstream Run；TaskRunLink 保存 Brief Hash、基线版本与角色。提交前校验本地范围并 GET 上游 Thread 核对 metadata；角色内容不从其他 Thread 或全项目历史组装。
+- `start_run` 支持部署拥有的命名 profile 与显式 `subagent_enabled` 布尔开关，`start_task_run` 固定 Project Copilot。不从模型/Brief 接收工具权限或任意 Runtime 配置。
+- `receive_artifact` 要求稳定 Artifact/Claim ID，检查 P1 schema、项目/Brief/run/角色/需求范围与 draft 状态，只返回待校验候选；不自动写入/采纳。Evidence、规则与事务继续复用 ProjectService 的授权边界。
+- `event_envelope` 仅输出版本与关联信息，不暴露 raw 模型/工具消息，不把 SSE end 当成功。
+- 持久 ID 映射仅定义 Protocol，**未实现数据库存储、命令意图/outbox、崩溃窗口对账或 durable 事件重放**。接收候选到正式业务写入也未串联，不宣称 P3 闭环通过。
+
+### 20.5 检查、预算与剩余验收
+
+真实调用使用进程共享准入锁，最多 5 个模型 handler，每次 max_tokens=1024、消息/工具 schema JSON <=90000字节并保留8192输入Token协议余量，SDK零重试、上游retry_max_attempts=1，仅官方gpt-6-luna/Responses端点，单轮预留上界 **0.051656 USD**。全局Memory、标题、建议、摘要等后台模型功能关闭；子图同样装入guard。该Spike限制器不是正式多进程预算治理。
+
+实际可见三次usage合计 **input=14348、output=528**，可核算新增 **0.0016988 USD**，加此前 **0.0003295** 为可核算累计 **0.0020283 USD**。两次失败handler缺少usage，费用未知；为预算保守占用整轮预留，累计上界 **0.0519855 USD / 10 USD**，剩余额度保守至少 **9.9480145 USD**（仅本轮与此前已知调用范围；其他会话消费和账户账单未知）。不将失败或缺失usage记为零费用。
+
+提交前检查全部通过：
+
+- 最终 `uv run pytest`：**170 passed in 351.30s**；先前166项全量后补强远端Thread关联与稳定ID检查，再对最终代码重新全量验证。现有P1独立测试目标保持不变，未修改 `.env` 或把业务fixture指向runtime身份。
+- `uv run pytest tests/test_task_bridge.py tests/test_deerflow_adapter.py tests/test_agent_profiles.py -q`：**44 passed**。
+- 原生固定模型Probe与guard负向检查 PASS；官方SDK/HTTP Mock全图独立复验PASS（5次SDK、0外网）。复验曾发现Windows低精度monotonic导致快速子调用区间同值的测试假失败，改用perf_counter后连续通过；不重算原始真实记录，不将真实失败改写为成功。
+- Memory probe、Checkpoint offline错误答案preflight重跑PASS；持久恢复与Gateway重启读回以专项原始证据为准，没有重复基础Smoke。
+- `uv run ruff check .`、`uv run ruff format --check .`、`uv run python -m mis.schemas.export --check`、`git diff --check`及8份相关文档的本地链接/代码围栏检查PASS。
+- 最终上游HEAD仍为固定commit、工作树干净；`backend/uv.lock` SHA-256仍为 `94bf2c5c0d136d8632775f899b65afa8992d68117771ee70dc61cfaebe9e4eb5`。
+
+此次新增Agent配置与薄适配、离线/持久化验证脚本及专项报告；未新增业务表、正式BFF/UI或Trace基础设施。真实调用原始证据 `mis-p2-gateway-evidence/agents-live.json` SHA-256为 `709a6ff172351af43529bfb29c1d83c1df434ef652413e63e317693ca0b9fff9`，位于仓库外，含固定虚构任务和原始usage，不含密钥。
+
+剩余 P2 门槛：Gateway 四 Agent 持久配置与完整真实结果验收、MIS 问答 Evidence/Checkpoint 幂等恢复串联、Artifact 经 ProjectService/规则幂等接收、ID 映射持久化与事件重连契约、压缩/文件卸载后的硬约束/Evidence 保真、DeerMem 候选能力、取消/失败/部分结果与预算治理、最小 REST/SSE/React 验证页及 C1 适配路径。正式 BFF/UI/Trace 基础设施不在本轮实现。
+
+Docker/Sandbox 文件/网络/资源隔离及取消清理继续 **BLOCKED**，镜像 digest 尚未闭合，不以宿主机执行替代。火绒告警仍未完成独立复核，不将临时关闭安全软件记作安全验收。P1 最终人工评审证据仍待确认。完整 P2 尚未验收，不自动合并 main、不进入 P3。

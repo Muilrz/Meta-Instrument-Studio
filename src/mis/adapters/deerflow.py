@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 from collections.abc import Iterator
 from dataclasses import dataclass
 from time import monotonic
@@ -189,8 +190,14 @@ class DeerFlowClient:
         *,
         idempotency_key: str,
         assistant_id: str = "lead_agent",
+        agent_name: str | None = None,
+        enable_subagents: bool = False,
     ) -> RunResult:
         _segment(run_id)
+        if agent_name is not None and not re.fullmatch(r"[a-z0-9][a-z0-9_-]{0,63}", agent_name):
+            raise ValueError("agent_name must be a deployment-owned profile name")
+        if not isinstance(enable_subagents, bool) or (enable_subagents and agent_name is None):
+            raise ValueError("subagents require an explicit deployment-owned agent profile")
         if (
             not idempotency_key.strip()
             or len(idempotency_key) > 255
@@ -211,6 +218,11 @@ class DeerFlowClient:
                     "mis_run_id": run_id,
                 },
                 "multitask_strategy": "reject",
+                **(
+                    {"context": {"agent_name": agent_name, "subagent_enabled": enable_subagents}}
+                    if agent_name is not None
+                    else {}
+                ),
             },
         )
         upstream_run_id = data.get("run_id")
