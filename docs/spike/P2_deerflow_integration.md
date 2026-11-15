@@ -1,6 +1,6 @@
 # P2 DeerFlow 集成预检与验证记录
 
-> 当前进度（2026-11-15）：P2-0B 真实 Gateway Smoke 已完成（第 19 节）；P2-0C 的四 Agent、恢复、Memory 与薄适配验证见第 20 节；P2-0D 诊断、唯一真实复验与 Gateway A4 见第 21 节；新凭据到位后的持久映射与 A4 补验见第 22 节。第 1–18 节保留历史时间点的证据与限制，不代表最新状态。Sandbox 仍 BLOCKED，完整 P2 尚未验收，不进入 P3。
+> 当前进度（2026-11-15）：P2-0B 真实 Gateway Smoke 已完成（第19节）；P2-0C 见第20节，P2-0D 诊断/持久映射/A4 见第21–22节；**最新 P2-0E 执行完整性、候选业务接收及真实 Sandbox 授权阻塞见第23节**。早期章节保留历史时间点证据，不代表最新状态。Sandbox 仍 BLOCKED，完整 P2 尚未验收，不进入 P3。
 
 - 日期：2026-11-08（Asia/Singapore）
 - 本次范围：**P2-0A 基线冻结与环境预检**；P2-0B 尚未执行。
@@ -854,3 +854,62 @@ MIS客户端每个DB阶段均在独立进程执行、每事务角色为mis_app�
 - `ruff check`、`ruff format --check`（82文件）、P1 JSON Schema一致性、diff与文档链接检查通过；未改P1迁移或上游核心。
 - 本轮模型调用/Token/费用新增均0。可核算累计仍为 **0.0036288 USD**，保守占用 **0.0535860 USD / 10 USD**；不核销原Lab/Research缺失usage。
 - 当前剩余重点：真实三Specialist完整返回与Lead汇总、未知provider历史根因、预算多进程治理、并发/多Question恢复、压缩/卸载保真及Sandbox专项。Docker/Sandbox仍BLOCKED，火绒复核未完成，不合并main、不进入P3。
+
+## 23. P2-0E：执行完整性与候选业务接收
+
+基于 `a07dea9`，继续固定上游 `58fc5bd5b8e6ea46538e9481ba06ca2a46e14e2a`。不重复基础数据库、Checkpoint 或 A4 Smoke；未改 P1 Schema、迁移、依赖锁、上游核心或正式经验库。实现与复现详见 [执行完整性和 Artifact 专项](P2_completion_and_artifacts.md)。
+
+### 23.1 四 Agent 和完整性
+
+Project Copilot 与 Lab、Research、Procurement 继续使用原生 AgentConfig/SubagentsAppConfig。Lead 只允许 task，三个子 Agent tools=[]、skills=[]、max_turns=1，各有独立 TaskBrief/Evidence。MIS 在官方 after_model 扩展点核验派发：对合法 task 参数填入授权输入；若 Lead 提前汇总，最多补一批尚未执行的必需角色，仍交给原生 ToolNode/task/SubagentExecutor。补派来源明确标为 MIS 合同约束，原始模型输出和 Hash 保留，不伪称 Lead 主动调用。
+
+三个可信原生调用/结果加 Lead 三角色非空汇总才允许执行 completed；缺失、失败、待返回或未汇总保留 missing/failed/partial。安全/长度/错误 fallback 不触发补派，已失败角色不重试。没有第二套执行引擎，没有取消 Budget Guard。
+
+离线官方 Responses SDK + MockTransport 的完整原生图 **PASS**：故意 Lead→Lab→提前汇总后补 Research/Procurement，一批补派、6次 handler、三个结果及最终汇总；Barrier 和 handler 区间证明两补派角色确实执行重叠，不是仅并发调度。各角色 CANARY/Brief/Evidence 输入隔离通过。Research HTTP503 注入正确为 partial，6次准入且不重试失败角色。第三个原生负向探针在固定技能投影/Runtime thread context 下正确拒绝 Sandbox，模型准入0。
+
+离线成功图没有 Gateway runtime.context.thread_id，不能代表物理技能投影路径通过；此覆盖差异已显式记录，不以离线 PASS 覆盖真实失败。
+
+### 23.2 唯一真实 Run：模型调用前被 Sandbox 拒绝
+
+正式任务前修正两个零 Run/零模型的 runner 配置错误并各自留证：PAT 不支持 agents scope（400），Agent 管理 API 默认未启用（403）。固定版源码确认后改为官方 `agents_api.enabled=true`、会话认证导入/导出 Agent、仅 Thread/Run scopes 的 PAT；测试 user 路由 allow 明确限定 Agent/Thread/Run 所需六项，其他资源保持拒绝，不关闭鉴权。
+
+随后仅提交 **一个**真实 Run：`05c2b79e-0753-4a44-95e0-d983bdb4c4df`。配置导入201、导出200，确认 Lead memory=false、工具组/技能/MCP 均为空、子角色严格三个；在首个模型处理前失败：
+
+`SandboxMiddleware.abefore_agent → authorize_sandbox_execution_async → SandboxAuthorizationError: Sandbox execution is not permitted for your role (role=user)`。
+
+固定版的技能投影代码对 Agent 的限定技能集创建物理投影，即使白名单为空；当 Gateway 注入 thread_id 时，这条路径在 before_agent 仍须通过 Sandbox 授权。role=user 拒绝是实际阻塞。它不证明 task 工具本身必然依赖 Sandbox；本轮尚未执行到 task。没有开放任意宿主机执行，没有赋予 Sandbox 权限，没有第二个 Run 或模型重试。
+
+| 验收项 | 实际状态 |
+|---|---|
+| 四角色配置 | 实现完成，原生离线图通过；真实 Gateway Lead 安装/回读通过，三个自定义子角色配置已加载 |
+| Lab / Research / Procurement | 本轮均 missing，没有原生 task 调用或结果 |
+| Lead 完整汇总 / 真实并行 | 未通过；不能用 Prompt 或离线重叠作为真实并行证据 |
+| Runtime / MIS 状态 | Runtime error；精确范围只读 PG 查询核验后持久命令 failed，独立事务重载一致，业务 failed |
+| Artifact | 0，无成功候选或方案采纳 |
+| 清理 | PAT 撤销200，Gateway退出0，4个模型client无send事件且均关闭，无cleanup异常；0 active/0 warm Sandbox |
+
+原始证据位于仓库外 `mis-p2-gateway-evidence/agents-live-0e.json`、`gateway-0e.log`、`multi-agent-0e.json`、`multi-agent-0e-reconciliation.json`；两个前检失败分别以 `-preflight`、`-management-disabled` 后缀保留。runner 原来错误地等待失败 Run 不会生成的成功 duration 标记，故最终证据生成后通过 `reconcile_multi_agent.py` 仅以 mis_runtime 只读该确切 Run，核验 metadata 再以 mis_app 对账；未重新启动 Gateway 或 POST。已修正后续 runner 的失败终态分支和证据提前保存，未再次真实执行它。
+
+历史 Lab/Research provider 错误根因仍 UNKNOWN；本轮没有调用它们，不能倒推为 Sandbox、供应商或网络问题。
+
+### 23.3 Artifact 业务接收
+
+新增 `artifact_receiver.receive_bundle`，持久命令的 request_sha256 绑定完整的三 Brief/Evidence 清单，父 Run 保持唯一映射，子结果由原生 task call ID/receipt 关联。不伪造多个 upstream Run，不用 SSE end 推断成功。
+
+接收端重新读取项目、当前基线、Brief/Evidence 快照，核验 Schema、指定参数、角色/需求/Evidence 范围、原生 receipt、单位及硬约束，通过后调用既有 ProjectService 幂等保存 draft。固定结构化 Evidence 的数值还要与来源事实一致；非结构化文本只验证引用/范围，语义审查仍属后续边界。角色间 savepoint 隔离，缺口和冲突显式返回，有效部分可以保存但不能标完整批 completed。adoption=unreviewed，不自动采纳 InstrumentPlan。
+
+两项数据库测试覆盖部分失败、缺失角色、重复事件/写入、冲突、错误单位、错任务/其他角色 Evidence、无来源支持数值、硬约束未知与不创建 InstrumentPlan。本轮真实 Run 未产出结果，故**真实模型 → draft 写入与跨事务重放未验收**，不能用离线数据库测试冒充。
+
+### 23.4 预算、检查口径和剩余项
+
+保留 7次 handler 硬上限：一批派发的理想 `1+3+1=5`，逐个分派最多 `3+3+1=7`；提前结束后的单批补派也在7次内。每次输入 JSON≤90000字节，额外8192输入Token余量，输出≤1024，SDK retries=0 / DeerFlow attempts=1。最坏新增预留 **0.0723184 USD**，含旧保守占用入场上界 **0.1259044 /10 USD**。
+
+本轮真实准入0、模型HTTP请求0、Runtime llm_call_count/total_tokens=0，故本轮实际新增 **0 USD**；可核算累计仍 **0.0036288 USD**，保守累计仍 **0.0535860 USD /10 USD**。旧缺失 usage 不核销；账户其他会话消费未知。没有后台模型、正式经验写入或未经验证的工具执行。
+
+统计口径：基线 `a07dea9` 的远端 CI 为 **242 passed、1 skipped（收集243）**。第22节的240是补充最后两个 A4 测试之前的历史完整运行，不应当作基线最终数量。本轮新增21项完整性单测和2项 Artifact 数据库测试，常规**收集266**；默认跳过1项显式P2数据库opt-in。原生 MockTransport 探针、实际 Run、PG失败对账分别记录，不叠加为pytest总数。最终回归与CI结果在本节后补记。
+
+检查记录：新增完整性21项及两项 Artifact 数据库用例均已通过；后者独立重跑为 **2 passed in64.33s**。ruff check、format check（95个文件）、Schema导出一致性、文档本地链接、staged密钥值扫描和diff检查通过。最终完整运行为 **264 passed、1 failed、1 skipped in582.77s**，唯一失败为既有并发用例 `identical-project` 的BrokenBarrierError；该确切用例不改代码独立重跑 **1 passed in16.58s**，不等于整套回归已通过。本地完整回归尚未全绿：此前还出现dump的服务端断连与数据库setup建连失败。保留仓库外 `regression-0e/` 原始日志，不把分次通过拼成完整通过。测试fixture增加仅输出阶段/类型/有限类别/SQLSTATE的脱敏诊断，未放宽业务断言。
+
+当前提交/CI状态：负责人已明确批准本次本地数据库异常的提交例外，允许提交推送当前功能分支并由Docker CI作最终验证；CI失败仍须修复，不合并main。此批准仅豁免本次 [AGENTS.md](../../AGENTS.md) 的本地全绿提交门槛，不把本地失败改写为通过，也不代表真实多Agent或Sandbox验收通过。远端结果在核验后补记。
+
+剩余重点是固定版技能投影的合规无 Sandbox 集成方式、真实三角色返回及完整汇总/候选写入、压缩卸载保真、事件重连、DeerMem候选复用、跨进程预算和并发恢复。Docker/Sandbox继续BLOCKED，火绒复核未完成。没有合并main，没有进入P3。

@@ -60,3 +60,7 @@ Run command 终态与业务 Thread 状态必须分离：固定版 before_agent i
 
 
 P2-0D补验：批准P2目标已安装两表并通过真实PostgreSQL测试；固定A4流程也已将ProjectService Question/回答Evidence与两条独立命令映射接合，通过跨MIS客户端进程重载与Gateway重启恢复。原生interrupt ID允许明确缺失，仅作审计；单Question/当前Checkpoint/唯一节点与Evidence绑定不放宽。已核验的持久Question可为业务waiting_user提供证明，不能凭模型文本或伪造ID完成此证明。参见[Gateway持久化补验](P2_gateway_a4.md)。尚未推广为通用生产恢复接口或并发exactly-once。
+
+## P2-0E：候选接收实现
+
+新增 `artifact_receiver.receive_bundle`，复用 AgentArtifact 校验、ProjectService 和规则引擎，将可信原生 task receipt 及结果转换为未审核 draft；同内容重复事件幂等，冲突拒绝，部分有效结果逐角色保存。协调 Run 仍唯一映射，子 Brief 的清单/Evidence 绑定于命令 request_sha256，而非伪造多个 Gateway Run。详见 [接收专项](P2_completion_and_artifacts.md)。数据库测试通过不等于真实模型到 Artifact 通过；本轮唯一真实 Run 在 Sandbox 授权处失败，没有任何候选写入。原始失败经 PostgreSQL 的精确范围只读查询后对账为 ledger.failed，不重发。

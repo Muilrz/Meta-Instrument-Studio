@@ -10,7 +10,9 @@ SPECIALISTS = ("lab", "research", "procurement")
 _BOUNDARY = (
     "Use only your assigned TaskBrief and its authorized evidence references. "
     "Do not contact another Specialist, read project history, or use shared files. "
-    "Return a JSON candidate with role, task_id, summary, evidence_refs, unknowns. "
+    "Return only JSON with role, task_id, summary, claims and unknowns. "
+    "Each claim has statement, subject, metric and value. Follow the assigned "
+    "result_contract for the exact known/unknown value schema and evidence IDs. "
     "Preserve units, hard constraints, and evidence IDs. Mark missing facts unknown. "
     "Do not write business records, approve a plan, or perform external actions."
 )

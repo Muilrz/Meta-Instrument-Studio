@@ -19,15 +19,37 @@ from mis.schemas.values import Known, Quantity, Unknown
 @pytest.fixture(scope="session")
 def db_engine():
     failure = None
+    stage = "connect"
     try:
         engine = engine_for(test=True)
         with engine.begin() as connection:
+            stage = "init"
             connection.exec_driver_sql((ROOT / "db/init.sql").read_text(encoding="utf-8"))
+            stage = "migration"
             config = Config(str(ROOT / "alembic.ini"))
             config.attributes["connection"] = connection
             command.upgrade(config, "head")
     except Exception as exc:
-        failure = type(exc).__name__
+        original = getattr(exc, "orig", exc)
+        detail = str(original).lower()
+        category = next(
+            (
+                label
+                for phrase, label in (
+                    ("server closed", "server_closed"),
+                    ("authentication", "authentication"),
+                    ("timeout", "timeout"),
+                    ("ssl", "tls"),
+                    ("resolve", "dns"),
+                )
+                if phrase in detail
+            ),
+            "unclassified",
+        )
+        failure = (
+            f"{type(exc).__name__}; stage={stage}; category={category}; "
+            f"sqlstate={getattr(original, 'sqlstate', None)}"
+        )
     if failure:
         pytest.fail(
             f"Test database setup failed ({failure}); configure "

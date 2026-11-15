@@ -109,6 +109,13 @@ def receive_artifact(
     This is a pure receiving boundary, not ProjectService.add or acceptance.
     """
     link.check(brief)
+    return validate_artifact_candidate(payload, brief, link.binding.run_id)
+
+
+def validate_artifact_candidate(
+    payload: dict[str, Any], brief: AgentTaskBrief, run_id: str
+) -> AgentArtifact:
+    """Shared draft checks after the caller verifies a standalone or bundle binding."""
     artifact = AgentArtifact.model_validate(payload)
     if not payload.get("id") or any(
         not isinstance(claim, dict) or not claim.get("claim_id")
@@ -119,7 +126,7 @@ def receive_artifact(
         brief.status == "stale"
         or artifact.project_id != brief.project_id
         or artifact.brief_id != brief.id
-        or artifact.produced_by.run_id != link.binding.run_id
+        or artifact.produced_by.run_id != run_id
         or artifact.produced_by.actor != brief.specialist
         or not set(artifact.requirement_refs) <= set(brief.requirement_refs)
         or artifact.status != "draft"

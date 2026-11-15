@@ -136,3 +136,13 @@ Lab/Research 的 handler 异常没有在第一次版本 guard 中被捕获，只
 唯一一次新真实任务整体仍**FAIL**：3次HTTP200且有usage，Lead→Lab→Lead成功，但Lead随后直接最终汇总，Research/Procurement没有分派，汇总显式列summary=null/No result received；未触发7次上限。实际3次底层请求均stream=false，不能由graph.astream推断必然Streaming。没有追加请求或真实三角色并发证明。
 
 本轮新增可核算0.0016005 USD，已知累计0.0036288 USD；保留旧未知usage占用后保守累计0.0535860 USD/10 USD。新原始证据为仓库外agents-live-0d.json；旧agents-live.json保持不变。9项结果完整性单测和原始证据离线校验确保missing角色不因Lead的unreviewed汇总而被判完成；这仍不是正式Artifact采纳或P3闭环。
+
+## P2-0E：完整性补派与真实阻塞
+
+新增官方 AgentMiddleware 薄扩展，在 Lead 提前结束时最多补派一批尚未执行的必需角色，仍通过原生 task/ToolNode/SubagentExecutor 执行；拒绝重复和失败重试，三个 TaskBrief 各绑定自己的 Evidence。6次 SDK MockTransport 原生闭环和至少两角色真实执行区间重叠通过；HTTP503 注入为 partial。缺失/失败/未汇总不能标整体 completed。
+
+唯一新真实 Run 在 before_agent 阶段被 SandboxAuthorizationError 拒绝：空 skills 白名单仍触发物理技能投影，现有 role=user 明确拒绝 Sandbox。没有执行 task 或模型请求，三个角色 missing，业务 failed，无 Artifact。没有放开 Sandbox/宿主机，没有再次提交 Run。真实三角色完整返回、汇总和并行仍未验收。
+
+成功的原生执行策略探针没有 Gateway runtime.context.thread_id，不能覆盖实际投影门槛；追加固定投影的原生拒绝探针确认 0 次模型准入。配置安装之前还记录两次零 Run/零模型的认证前检修正（PAT不支持Agent scope；官方 agents_api 默认关闭），原始证据分别保留，不能当作真实模型复验次数。
+
+具体实现、Artifact 校验边界和复现见 [完整性与业务接收专项](P2_completion_and_artifacts.md)，最终检查及费用口径见 [主报告第23节](P2_deerflow_integration.md#23-p2-0e执行完整性与候选业务接收)。历史 Lab/Research provider 根因仍 UNKNOWN，本轮没有请求它们，不能用本轮 Sandbox 错误倒推旧错误。

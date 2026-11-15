@@ -1,6 +1,6 @@
 # P2 任务草案：DeerFlow 集成验证
 
-- 状态：P2 集成验证进行中；P2-0B 已通过真实 Gateway Smoke，P2-0D 继续真实 Agent 诊断、持久映射与 Gateway A4；最新证据见 [Spike 报告](../spike/P2_deerflow_integration.md)，完整 P2 尚未验收
+- 状态：P2 集成验证进行中；P2-0D 持久映射与固定 A4 已通过；P2-0E 完整性补派/候选接收离线通过，真实 Run 被技能投影的 Sandbox 授权阻塞，详见 [Spike 报告第23节](../spike/P2_deerflow_integration.md#23-p2-0e执行完整性与候选业务接收)，完整 P2 尚未验收
 - 日期：2026-11-08
 - 更新：2026-11-08，增加 DeerFlow 原生 Context 验证、DeerMem 无正式库写入的候选抽取/去重 Spike 与回退决策
 - 依据：[ADR-0002](../adr/0002-agent-runtime-and-integration.md)、[开发计划](development_plan.md)
