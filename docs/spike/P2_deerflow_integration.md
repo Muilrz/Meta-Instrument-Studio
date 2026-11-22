@@ -1,6 +1,6 @@
 # P2 DeerFlow 集成预检与验证记录
 
-> 当前进度（2026-11-15）：P2-0B 真实 Gateway Smoke 已完成（第19节）；P2-0C 见第20节，P2-0D 诊断/持久映射/A4 见第21–22节；**最新 P2-0E 执行完整性、候选业务接收及真实 Sandbox 授权阻塞见第23节**。早期章节保留历史时间点证据，不代表最新状态。Sandbox 仍 BLOCKED，完整 P2 尚未验收，不进入 P3。
+> 当前进度（2026-11-22）：**第24节的 P2-0F 已跑通容器 Sandbox、三个真实 Specialist 与 Lead 汇总及 draft 接收**。第19–23节保留之前各轮的成功、失败和限制，不代表最新状态；第23节的 Sandbox 阻塞已由本次授权部署解除。完整 P2 尚未验收，不进入 P3。
 
 - 日期：2026-11-08（Asia/Singapore）
 - 本次范围：**P2-0A 基线冻结与环境预检**；P2-0B 尚未执行。
@@ -915,3 +915,47 @@ Project Copilot 与 Lab、Research、Procurement 继续使用原生 AgentConfig/
 实现提交 **`dc9dcba`** 已推送至 `feat/p2-deerflow-integration`；[Docker CI #43731967818](https://github.com/Muilrz/Meta-Instrument-Studio/actions/runs/43731967818) 的 test job **132866185749 全部成功**，实际日志为 **265 passed、1 skipped in2.98s（collected266）**，Lint、format、JSON Schema一致性均成功。跳过项仍为需要显式批准目标/凭据的P2数据库opt-in，本轮不重复该已验收Smoke。CI的完整通过与本地网络/Barrier波动分别保留，不将其合并成另一套数量；CI通过也不改变23.2的真实Run失败结论。
 
 剩余重点是固定版技能投影的合规无 Sandbox 集成方式、真实三角色返回及完整汇总/候选写入、压缩卸载保真、事件重连、DeerMem候选复用、跨进程预算和并发恢复。Docker/Sandbox继续BLOCKED，火绒复核未完成。没有合并main，没有进入P3。
+
+## 24. P2-0F：容器 Sandbox 与真实协作
+
+2026-11-22，负责人已安装 Docker Desktop/WSL2，并明确授权拉取官方镜像、部署 Sandbox 和给 P2 测试账号开放 sandbox:execute。本轮目标仅为真实协作，沿用分支、Gateway、Neon、GPT-6 Luna、四 Agent 和现有 Adapter，没有重新部署数据库或改上游核心。固定 DeerFlow commit仍为 `58fc5bd5b8e6ea46538e9481ba06ca2a46e14e2a`。部署命令、digest与生命周期见 [容器部署专项](P2_sandbox_multi_agent.md)。
+
+### 24.1 部署与权限
+
+Docker Linux Engine **29.9.3** 已可用。使用固定版官方配置推荐的 AIO **1.11.0**，固定digest `sha256:6328d7fd2f0ff0b4c147c3d05b3df1ce331f4a482eb6e550ecd64ed1fcf906e7`。网络代理因GHCR拉取无进展，从固定提交的官方Dockerfile原样构建并固定digest，未更改源码。
+
+官方 AioSandboxProvider 管理每个Thread的容器；启用原生isolated网络、deny出网审批、127.0.0.1控制端口、非privileged、2GB/2CPU/512PID、官方capability/no-new-privileges约束，allow_host_bash=false。无Docker socket或额外宿主机目录挂载，无模型/数据库凭据注入。模型仍由有认证的Gateway调用，Sandbox只承担隔离执行和技能投影，不开放任意宿主机执行。
+
+新增专用 p2-sandbox 角色，仅给本轮绑定ID/email的新P2测试账号赋予该角色；普通user仍拒绝Sandbox。通过既有mis_runtime对该账号作精确绑定角色更新，并以原生 `/auth/me` 核验，未使用owner提权或DDL。Lead仍仅task，三个Specialist仍tools=[]、skills=[]、max_turns=1；Memory/标题/建议/摘要/scheduler等后台模型功能继续关闭。
+
+容器启动前检健康和隔离通过（0模型调用）；实际运行容器另留检查快照。验证结束按原生生命周期回收本轮容器，撤销PAT并退出验证Gateway；Docker Desktop、镜像、角色和生成配置保留。
+
+### 24.2 首轮 partial 与最小修复
+
+首轮 Run `0458a30a-eb99-4ce1-8761-495238c63f9a`：Lab、Research、Procurement都完成并返回，Lead返回三角色JSON，三个draft均规则通过。但继承旧Smoke的原生累计Token上限仅8000输入/192输出/8192总量，在累计输入25538后给JSON追加 `[TOKEN BUDGET EXCEEDED]` 文本，严格接收正确返回partial，未直接剥除警告或降低完成条件。
+
+修复只用官方 token_budget 配置，保持enabled=true，输入687344、输出7168、总量694512，与原有7次handler × 98192输入保守边界/1024输出一致。共享Guard仍限制JSON输入90000字节、handler≤7、每次输出≤1024、官方API，SDK retries=0、原生attempts=1；每任务最坏费用预留仍0.0723184 USD。没有取消预算Guard。首轮原始证据以 `*-initial-token-limit.*` 完整保留，usage完整入账后才进行修正复验，无自动模型重试。
+
+### 24.3 最终真实闭环 PASS
+
+最终 Run **`e40791d4-f899-4222-bf53-ffc621546d10`**：Runtime success，MIS execution completed、lead_final=true，三角色均completed，业务接收completed。
+
+| 项目 | 实际证据 |
+|---|---|
+| 调用路径 | Lead原生派发Lab；提前汇总时MIS完整性中间件补一批Research/Procurement，仍经原生task/ToolNode/SubagentExecutor执行；共6次handler，未达到7次上限 |
+| 三个Specialist | 各一次真实官方API请求，原生call/result/receipt可核验；各自收到自己的Brief/Evidence/CANARY，无其他角色canary |
+| 并行 | Lab先完成；Research/Procurement的真实模型handler区间重叠 **3.868098秒**，不是只看Prompt或并发队列。不能据此声称三者全程并行或供应商内部计算并行 |
+| Lead汇总 | 获得三者结果并生成三个非空角色汇总，无Token终止附加文本，严格完成校验通过 |
+| 候选接收 | 3个AgentArtifact均经Schema/Evidence/基线/单位/硬约束校验并stored_draft，adoption=unreviewed；跨事务重放完全一致，无重复写入 |
+| 费用与清理 | 6次HTTP200、6条完整usage；所有模型client关闭，无cleanup异常；PAT撤销200，Gateway退出0，任务容器回收 |
+
+固定合成事实仍为500mW及450mW最低约束，只验协作和接收契约，不是实际实验室/科研/供应商承诺；未自动采纳InstrumentPlan或写正式经验。
+
+### 24.4 用量、检查与交付
+
+- 首轮：26521输入、722输出，按既定单价核算 **0.0030131 USD**。
+- 修正复验：26674输入、883输出，核算 **0.0031089 USD**。
+- 本轮合计12次模型调用、53195输入/1605输出，新增 **0.0061220 USD**；可核算累计 **0.0097508 USD**，保留旧未知usage后的累计保守占用 **0.0597080 /10 USD**。缓存输入仍按普通输入价作保守核算，不是账户账单；未核销旧未知费用。最新预算基线已写回限制配置。
+- 完整本地回归 **266 passed、1 skipped in759.55s（收集267）**；相对上轮新增1项角色/工具边界与容器配置测试。随后Token配置修复的相关22项测试通过；ruff、format（98文件）、Schema一致性和diff检查通过。显式P2存储opt-in仍默认跳过，不重跑数据库/Checkpoint/A4 Smoke。
+- 仓库外证据：`sandbox-0f-preflight.json`、`sandbox-0f-runtime-initial-token-limit.json`、`agents-live-0f*.json`、`multi-agent-0f*.json`、`gateway-0f*.log/yaml`、`pytest-0f.txt`。初始前检脚本曾把原生create的位置参数传错，未调用模型，已改为显式关键字参数并通过真实前检；未修改上游以迁就脚本。
+- 提交和远端CI结果核验后补记。无main合并、无P3开发；此次解除的是容器Sandbox功能和本固定真实协作阻塞，不替代完整P2安全验收或火绒告警人工复核。

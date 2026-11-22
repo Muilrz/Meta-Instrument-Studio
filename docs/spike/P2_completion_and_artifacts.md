@@ -74,3 +74,5 @@ Remove-Item Env:P2E_OFFLINE_FAILURE
 真实 runner `gateway_multi_agent.py` 使用官方管理 API 安装配置，Thread/Run 使用独立受限 PAT；进程共享 Guard 和仓库外 exclusive-create 证据文件防止自动重跑。Agent 管理接口为部署方显式启用的官方 `agents_api.enabled`，不赋予 Lead 修改配置的工具。业务数据通过 owner 连接后每事务 SET LOCAL ROLE mis_app；Gateway 始终使用 mis_runtime，无 DDL 或增权。
 
 Sandbox / Docker 仍 BLOCKED，火绒告警复核未完成。接下来仍须验证压缩/卸载保真、正式事件重连边界、DeerMem 候选复用和多进程预算治理；不合并 main，不进入 P3。
+
+2026-11-22后续：负责人已授权并完成官方容器Sandbox部署，真实三角色、Lead汇总、draft接收及跨事务重放通过；上述BLOCKED为P2-0E历史状态。最新证据见 [P2-0F主报告](P2_deerflow_integration.md#24-p2-0f容器-sandbox-与真实协作)，完整P2与安全告警复核仍分别验收。

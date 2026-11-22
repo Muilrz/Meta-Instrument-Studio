@@ -1,4 +1,4 @@
-"""One P2-0E bounded real task. No baseline, checkpoint or A4 smoke is repeated.
+"""Bounded real task; --sandbox uses pinned AIO and a scoped P2 account role.
 
 Workers use the pinned DeerFlow environment; MIS uses its own environment and
 approved P2 role. No DDL, automatic model retry, plan adoption or host execution.
@@ -106,7 +106,9 @@ def control():
 
     # Reviewable finite reservation before any real model request.
     assert Guard.MAX_CALLS == 7 and Guard.PRIOR_OCCUPANCY_USD + Guard.RESERVED_USD < Decimal("10")
-    outcome_path = EVIDENCE / "agents-live-0e.json"
+    sandbox_enabled = "--sandbox" in sys.argv
+    suffix = "0f" if sandbox_enabled else "0e"
+    outcome_path = EVIDENCE / f"agents-live-{suffix}.json"
     with outcome_path.open("x", encoding="utf-8") as handle:
         json.dump(
             {
@@ -151,14 +153,18 @@ def control():
             "agents:write",
         ]
     }
+    if sandbox_enabled:
+        from p2_sandbox import configure
+
+        configure(config)
     for feature in ("title", "suggestions", "summarization", "scheduler"):
         assert config[feature]["enabled"] is False
     assert config["memory"]["enabled"] is False and config["memory"]["injection_enabled"] is False
     assert config["tools"] == [] and config["skills"]
     assert not config["sandbox"].get("allow_host_bash") and not config["sandbox"].get("prewarm")
-    path = EVIDENCE / "gateway-0e.yaml"
+    path = EVIDENCE / f"gateway-{suffix}.yaml"
     path.write_text(yaml.safe_dump(config), encoding="utf-8")
-    prefix = "mis-p2-0e-" + secrets.token_hex(6)
+    prefix = f"mis-p2-{suffix}-" + secrets.token_hex(6)
     run_id = prefix + "-run"
     stop = EVIDENCE / (prefix + "-stop")
     env = {
@@ -180,7 +186,7 @@ def control():
         "MONOCLE_TRACING": "false",
         "PYTHONIOENCODING": "utf-8",
     }
-    log = (EVIDENCE / "gateway-0e.log").open("w", encoding="utf-8")
+    log = (EVIDENCE / f"gateway-{suffix}.log").open("w", encoding="utf-8")
     process = None
     credential = None
     evidence = {"project_id": data["project"]["id"], "run_id": run_id, "state": "preparing"}
@@ -215,11 +221,20 @@ def control():
             },
         )
         response.raise_for_status()
+        if sandbox_enabled:
+            from p2_sandbox import ROLE, grant_test_account
+
+            account = response.json()
+            grant_test_account(runtime, account["id"], prefix + "@example.com")
+            me = auth.get("/api/v1/auth/me")
+            me.raise_for_status()
+            assert me.json()["system_role"] == ROLE
+            evidence["test_account_role"] = ROLE
         auth.headers["X-CSRF-Token"] = auth.cookies["csrf_token"]
         issued = auth.post(
             "/api/v1/auth/pats",
             json={
-                "name": "P2-0E disposable",
+                "name": f"P2-{suffix.upper()} disposable",
                 "expires_in_days": 1,
                 "scopes": [
                     "threads:read",
@@ -401,7 +416,7 @@ def control():
         auth.close()
         engine.dispose()
         log.close()
-        (EVIDENCE / "multi-agent-0e.json").write_text(
+        (EVIDENCE / f"multi-agent-{suffix}.json").write_text(
             json.dumps(evidence, default=str, indent=2), encoding="utf-8"
         )
 

@@ -146,3 +146,7 @@ Lab/Research 的 handler 异常没有在第一次版本 guard 中被捕获，只
 成功的原生执行策略探针没有 Gateway runtime.context.thread_id，不能覆盖实际投影门槛；追加固定投影的原生拒绝探针确认 0 次模型准入。配置安装之前还记录两次零 Run/零模型的认证前检修正（PAT不支持Agent scope；官方 agents_api 默认关闭），原始证据分别保留，不能当作真实模型复验次数。
 
 具体实现、Artifact 校验边界和复现见 [完整性与业务接收专项](P2_completion_and_artifacts.md)，最终检查及费用口径见 [主报告第23节](P2_deerflow_integration.md#23-p2-0e执行完整性与候选业务接收)。历史 Lab/Research provider 根因仍 UNKNOWN，本轮没有请求它们，不能用本轮 Sandbox 错误倒推旧错误。
+
+## P2-0F：真实闭环通过（2026-11-22）
+
+负责人授权Docker容器部署与P2账号sandbox:execute后，固定版官方AIO 1.11.0已部署，普通用户仍拒绝Sandbox，模型工具边界不变。首轮三角色真实返回、Lead汇总和3个draft均成功，但旧Smoke累计Token上限追加终止文本，严格状态为partial。保留Guard并把原生累计Token配置校准到7次有限调用后，复验严格completed：三角色完成、Lead汇总、3个draft规则通过、跨事务重放一致；Research/Procurement实际模型handler重叠3.868098秒。未改上游核心或重部署数据库，未重跑Checkpoint/A4；详细用量和证据见 [最新主报告第24节](P2_deerflow_integration.md#24-p2-0f容器-sandbox-与真实协作)及[容器部署专项](P2_sandbox_multi_agent.md)。这不倒推历史provider错误的根因。

@@ -8,7 +8,7 @@
 |---|---|---|
 | 平台最终要做成什么样 | [architecture.md](architecture.md) | 目标架构，V4.0；已同步 DeerFlow / MIS 职责与独立部署 |
 | 分几个阶段做、每阶段做什么、怎样算完成 | [plans/development_plan.md](plans/development_plan.md) | v0.2.9，待评审；新增 Context 原生复用与 DeerMem 无正式写入 Spike |
-| 当前阶段（P2）具体怎么做 | [plans/P2_deerflow_integration.md](plans/P2_deerflow_integration.md) | 持久映射与固定 A4 已通过；P2-0E 完整性/候选接收离线通过，真实 Run 的 Sandbox 投影阻塞见主报告第23节 |
+| 当前阶段（P2）具体怎么做 | [plans/P2_deerflow_integration.md](plans/P2_deerflow_integration.md) | P2-0F 容器 Sandbox、三个真实Specialist与Lead汇总及draft接收已通过，最新见主报告第24节 |
 | Agent 架构要满足哪些要求、已经做了哪些决定 | [design/agent_architecture_requirements.md](design/agent_architecture_requirements.md) | 持续更新；A1–A11、C1、C2 已确认；B1、B2 的实现绑定在 P2 验证定稿 |
 | 技术栈、目录、数据库布局、部署 | [adr/0001-repo-structure-and-stack.md](adr/0001-repo-structure-and-stack.md) | 提议中，整体仍待评审；数据库与开发部署（Neon）、C1 Trace 存储与保留策略、C2 经验评分与生命周期存储规划已确认 |
 | Runtime 选什么、哪些复用和自研、何时重新评估 | [adr/0002-agent-runtime-and-integration.md](adr/0002-agent-runtime-and-integration.md) | 已接受 DeerFlow + MIS 分层集成；DeerMem 复用接口与效果待 P2 验证 |
@@ -22,7 +22,7 @@
 |---|---|---|
 | `plans/` | 开发计划、各阶段任务说明 | `development_plan.md`、`Px_<主题>.md` |
 | `design/` | 设计文档、需求清单 | 按主题命名 |
-| `spike/` | 集成预检与验证报告 | [P2 DeerFlow 验证记录](spike/P2_deerflow_integration.md)：第23节为 P2-0E 最新结果；Sandbox 仍为 BLOCKED |
+| `spike/` | 集成预检与验证报告 | [P2 DeerFlow 验证记录](spike/P2_deerflow_integration.md)：第24节为 P2-0F 最新结果；完整P2尚未验收 |
 | `adr/` | 架构决策记录 | `NNNN-<主题>.md`，模板见 `0000-template.md` |
 | `reviews/` | 阶段报告、审查记录 | `Px_report.md` |
 | `research/` | 调研资料和证据，只读存档 | 带日期 |
@@ -45,4 +45,6 @@
 
 - P2-0D 专项：[Provider 诊断与有界编排](spike/P2_provider_diagnostics.md)、[持久映射](spike/P2_mapping_storage.md)、[Gateway A4 恢复](spike/P2_gateway_a4.md)。
 
-- P2-0E 专项：[执行完整性与候选业务接收](spike/P2_completion_and_artifacts.md)：原生有界补派、部分结果、幂等 draft 写入；真实任务遇 Sandbox 技能投影授权阻塞，未调用模型，主报告第23节为当前验收状态。
+- P2-0E 专项：[执行完整性与候选业务接收](spike/P2_completion_and_artifacts.md)：原生有界补派、部分结果、幂等 draft 写入；第23节保留当时的Sandbox授权阻塞，最新状态见第24节。
+
+- P2-0F 专项：[容器 Sandbox 与真实 Multi-Agent](spike/P2_sandbox_multi_agent.md)：2026-11-22 已解除第23节的Sandbox阻塞，真实闭环和3个draft接收通过，模型预算/身份认证/容器隔离保留。
