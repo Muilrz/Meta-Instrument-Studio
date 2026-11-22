@@ -958,4 +958,4 @@ Docker Linux Engine **29.9.3** 已可用。使用固定版官方配置推荐的 
 - 本轮合计12次模型调用、53195输入/1605输出，新增 **0.0061220 USD**；可核算累计 **0.0097508 USD**，保留旧未知usage后的累计保守占用 **0.0597080 /10 USD**。缓存输入仍按普通输入价作保守核算，不是账户账单；未核销旧未知费用。最新预算基线已写回限制配置。
 - 完整本地回归 **266 passed、1 skipped in759.55s（收集267）**；相对上轮新增1项角色/工具边界与容器配置测试。随后Token配置修复的相关22项测试通过；ruff、format（98文件）、Schema一致性和diff检查通过。显式P2存储opt-in仍默认跳过，不重跑数据库/Checkpoint/A4 Smoke。
 - 仓库外证据：`sandbox-0f-preflight.json`、`sandbox-0f-runtime-initial-token-limit.json`、`agents-live-0f*.json`、`multi-agent-0f*.json`、`gateway-0f*.log/yaml`、`pytest-0f.txt`。初始前检脚本曾把原生create的位置参数传错，未调用模型，已改为显式关键字参数并通过真实前检；未修改上游以迁就脚本。
-- 提交和远端CI结果核验后补记。无main合并、无P3开发；此次解除的是容器Sandbox功能和本固定真实协作阻塞，不替代完整P2安全验收或火绒告警人工复核。
+- 实现提交 **`abcc64f`** 已推送当前功能分支；[Docker CI #45029802324](https://github.com/Muilrz/Meta-Instrument-Studio/actions/runs/45029802324) 的test job **137230656039全绿**，实际 **266 passed、1 skipped in2.84s（收集267）**，Lint/format/Schema一致性均成功。无需沿用上轮本地异常的提交例外。无main合并、无P3开发；此次解除的是容器Sandbox功能和本固定真实协作阻塞，不替代完整P2安全验收或火绒告警人工复核。
